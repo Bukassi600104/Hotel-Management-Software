@@ -2,19 +2,27 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { Bed, Users, Maximize2, Lock, Sparkles } from "lucide-react";
+import { Bed, Users, Maximize2, Lock, Sparkles, Calendar } from "lucide-react";
 
 import { BookingForm } from "@/components/public/booking-form";
 import { Reveal } from "@/components/motion/reveal";
-import { rooms, getRoomBySlug } from "@/lib/data/rooms";
-import { formatNaira } from "@/lib/format";
+import { getRoomBySlug } from "@/lib/queries/rooms";
+import { formatNaira, formatDateLong } from "@/lib/format";
+import { calculateNights, isDateInPast, isValidDateString } from "@/lib/utils/dates";
+import { buildPricingBreakdown } from "@/lib/utils/pricing";
 
 export const metadata: Metadata = {
   title: "Confirm your booking",
   description: "Review your stay and complete the reservation.",
 };
 
-type SearchParams = Promise<{ room?: string; checkin?: string; checkout?: string }>;
+type SearchParams = Promise<{
+  room?: string;
+  checkin?: string;
+  checkout?: string;
+  adults?: string;
+  children?: string;
+}>;
 
 export default async function BookingConfirmPage({
   searchParams,
@@ -22,8 +30,29 @@ export default async function BookingConfirmPage({
   searchParams: SearchParams;
 }) {
   const sp = await searchParams;
-  const room = sp.room ? getRoomBySlug(sp.room) : rooms[2];
+
+  // Validate required params
+  if (
+    !sp.room ||
+    !sp.checkin ||
+    !sp.checkout ||
+    !isValidDateString(sp.checkin) ||
+    !isValidDateString(sp.checkout)
+  ) {
+    redirect("/rooms");
+  }
+
+  const nights = calculateNights(sp.checkin, sp.checkout);
+  if (nights < 1 || nights > 30 || isDateInPast(sp.checkin)) {
+    redirect("/rooms");
+  }
+
+  const room = await getRoomBySlug(sp.room);
   if (!room) redirect("/rooms");
+
+  const adults = Math.max(1, parseInt(sp.adults ?? "1", 10));
+  const children = Math.max(0, parseInt(sp.children ?? "0", 10));
+  const pricing = buildPricingBreakdown(room.pricePerNight, nights);
 
   return (
     <>
@@ -56,7 +85,15 @@ export default async function BookingConfirmPage({
 
       <div className="mx-auto -mt-12 max-w-7xl px-4 sm:px-6 lg:px-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_22rem] lg:gap-10 xl:gap-14">
-          <BookingForm room={room} />
+          <BookingForm
+            room={room}
+            checkin={sp.checkin}
+            checkout={sp.checkout}
+            nights={nights}
+            adults={adults}
+            children={children}
+            total={pricing.total}
+          />
 
           {/* Summary sidebar */}
           <aside className="lg:sticky lg:top-28 lg:self-start">
@@ -84,19 +121,28 @@ export default async function BookingConfirmPage({
               </div>
 
               <div className="space-y-4 p-6">
+                {/* Stay dates */}
+                <div className="flex items-start gap-3 rounded-lg bg-[var(--color-gold)]/8 p-3 text-sm">
+                  <Calendar className="mt-0.5 size-4 shrink-0 text-[var(--color-gold-dark)]" />
+                  <div className="space-y-0.5">
+                    <p className="font-medium">{formatDateLong(sp.checkin)} →</p>
+                    <p className="font-medium">{formatDateLong(sp.checkout)}</p>
+                    <p className="text-xs text-muted-foreground">{nights} night{nights !== 1 ? "s" : ""}</p>
+                  </div>
+                </div>
+
                 <ul className="space-y-2 text-sm">
                   <SpecRow icon={Bed} label={room.bedType} />
                   <SpecRow icon={Users} label={`${room.maxGuests} guests max`} />
-                  <SpecRow icon={Maximize2} label={`${room.roomSizeSqm} m2 interior`} />
+                  <SpecRow icon={Maximize2} label={`${room.roomSizeSqm} m² interior`} />
                 </ul>
 
                 <div className="luxe-divider opacity-50" />
 
                 <div className="space-y-2 text-sm">
-                  <SummaryRow label="Per night" value={formatNaira(room.pricePerNight)} />
-                  <SummaryRow label="Nights" value="2" />
-                  <SummaryRow label="Subtotal" value={formatNaira(room.pricePerNight * 2)} />
-                  <SummaryRow label="VAT (7.5%)" value={formatNaira(Math.round(room.pricePerNight * 2 * 0.075))} />
+                  <SummaryRow label="Per night" value={formatNaira(pricing.pricePerNight)} />
+                  <SummaryRow label={`${nights} night${nights !== 1 ? "s" : ""}`} value={formatNaira(pricing.subtotal)} />
+                  <SummaryRow label="VAT (7.5%)" value={formatNaira(pricing.vat)} />
                 </div>
 
                 <div className="luxe-divider opacity-50" />
@@ -104,7 +150,7 @@ export default async function BookingConfirmPage({
                 <div className="flex items-baseline justify-between">
                   <span className="text-sm text-muted-foreground">Total</span>
                   <span className="font-heading text-2xl tracking-tight">
-                    {formatNaira(Math.round(room.pricePerNight * 2 * 1.075))}
+                    {formatNaira(pricing.total)}
                   </span>
                 </div>
               </div>

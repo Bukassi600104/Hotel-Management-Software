@@ -48,7 +48,7 @@ export default function RootLayout({
       className="h-full antialiased"
       suppressHydrationWarning
     >
-      <body className="min-h-full bg-background font-sans text-foreground">
+      <body className="min-h-full bg-background font-sans text-foreground" suppressHydrationWarning>
         {children}
         <Toaster richColors position="top-right" />
       </body>

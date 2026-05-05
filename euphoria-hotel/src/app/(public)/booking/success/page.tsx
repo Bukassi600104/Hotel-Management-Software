@@ -1,27 +1,41 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { CheckCircle2, MapPin, CalendarCheck, Mail } from "lucide-react";
+import { CheckCircle2, MapPin, CalendarCheck, Mail, Bed } from "lucide-react";
+import { notFound } from "next/navigation";
 
 import { Reveal } from "@/components/motion/reveal";
 import { siteConfig } from "@/lib/site";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { formatDateLong } from "@/lib/format";
 
-export const metadata: Metadata = {
-  title: "Booking confirmed",
-};
+export const metadata: Metadata = { title: "Booking confirmed" };
 
-function makeReference() {
-  const year = new Date().getFullYear();
-  const random = Array.from({ length: 6 })
-    .map(() =>
-      "ABCDEFGHJKMNPQRSTUVWXYZ23456789".charAt(Math.floor(Math.random() * 30))
+type SearchParams = Promise<{ ref?: string }>;
+
+export default async function BookingSuccessPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const { ref } = await searchParams;
+  if (!ref) notFound();
+
+  const admin = createAdminClient();
+  const { data: booking } = await admin
+    .from("bookings")
+    .select(
+      "booking_reference, guest_name, check_in_date, check_out_date, total_nights, rooms(name)"
     )
-    .join("");
-  return `EUP-${year}-${random}`;
-}
+    .eq("booking_reference", ref)
+    .in("status", ["confirmed", "checked_in", "checked_out"])
+    .single();
 
-export default function BookingSuccessPage() {
-  const reference = makeReference();
+  if (!booking) notFound();
+
+  const roomName =
+    (booking.rooms as { name: string } | null)?.name ?? "Your room";
+  const firstName = booking.guest_name.split(" ")[0];
 
   return (
     <>
@@ -37,7 +51,10 @@ export default function BookingSuccessPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-charcoal)]/78 via-[var(--color-charcoal)]/68 to-[var(--color-charcoal)]" />
 
         <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-10">
-          <Reveal variant="scale" className="mx-auto inline-flex size-20 items-center justify-center rounded-full bg-[var(--color-gold)]/15 text-[var(--color-gold-light)] ring-1 ring-[var(--color-gold)]/30">
+          <Reveal
+            variant="scale"
+            className="mx-auto inline-flex size-20 items-center justify-center rounded-full bg-[var(--color-gold)]/15 text-[var(--color-gold-light)] ring-1 ring-[var(--color-gold)]/30"
+          >
             <CheckCircle2 className="size-10" />
           </Reveal>
 
@@ -47,11 +64,11 @@ export default function BookingSuccessPage() {
               Booking confirmed
             </span>
             <h1 className="mt-4 font-heading text-5xl leading-[1.05] tracking-tight text-balance sm:text-6xl">
-              We have your room held.
+              Welcome, {firstName}.
             </h1>
             <p className="mt-4 text-lg text-white/75 text-pretty">
-              A confirmation email is on its way with everything you need for
-              your stay. We look forward to welcoming you.
+              Your {roomName} is reserved. A confirmation email is on its
+              way with everything you need for your stay.
             </p>
           </Reveal>
 
@@ -61,7 +78,7 @@ export default function BookingSuccessPage() {
                 Booking reference
               </span>
               <span className="mt-2 font-heading text-3xl tabular-nums tracking-[0.18em] text-[var(--color-gold-light)]">
-                {reference}
+                {booking.booking_reference}
               </span>
               <span className="mt-3 max-w-xs text-xs text-white/55">
                 Quote this when you arrive at reception or contact us.
@@ -75,19 +92,27 @@ export default function BookingSuccessPage() {
             className="mt-10 grid gap-3 text-left sm:grid-cols-3"
           >
             <InfoTile
+              icon={Bed}
+              title="Your room"
+              body={`${roomName} · ${booking.total_nights} night${booking.total_nights !== 1 ? "s" : ""}`}
+            />
+            <InfoTile
               icon={CalendarCheck}
               title="Check-in"
-              body={`Doors open from ${siteConfig.hours.checkIn}.`}
+              body={`${formatDateLong(booking.check_in_date)} from ${siteConfig.hours.checkIn}`}
             />
             <InfoTile
               icon={MapPin}
               title="Find us"
               body={siteConfig.contact.addressShort}
             />
+          </Reveal>
+
+          <Reveal variant="fade-up" delay={0.35} className="mt-4">
             <InfoTile
               icon={Mail}
               title="Questions?"
-              body={siteConfig.contact.email}
+              body={`Email ${siteConfig.contact.email} or call ${siteConfig.contact.phones[0].number}`}
             />
           </Reveal>
 

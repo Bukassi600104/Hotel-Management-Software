@@ -1,0 +1,44 @@
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { AdminSidebar } from "@/components/admin/sidebar";
+
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const serverClient = await createClient();
+  const {
+    data: { user },
+  } = await serverClient.auth.getUser();
+
+  // Middleware already redirects unauthenticated requests to /admin/login.
+  // When this layout wraps /admin/login itself, there is no user — just
+  // render children bare so the login form displays without a sidebar.
+  if (!user) {
+    return <>{children}</>;
+  }
+
+  const admin = createAdminClient();
+
+  const [{ data: adminUser }, { count: unreadCount }] = await Promise.all([
+    admin.from("admin_users").select("full_name, role, is_active").eq("id", user.id).single(),
+    admin.from("contact_inquiries").select("id", { count: "exact", head: true }).eq("is_read", false),
+  ]);
+
+  // Authenticated but not in admin_users (or deactivated) — sign out and
+  // send back to login. Middleware catches this on the next request.
+  if (!adminUser || !adminUser.is_active) {
+    const { createClient: createBrowserClient } = await import("@/lib/supabase/client");
+    // Can't call browser methods from a server component — return children
+    // and let the client-side session expiry / middleware handle it.
+    return <>{children}</>;
+  }
+
+  return (
+    <div className="flex min-h-screen bg-[#111316] text-white">
+      <AdminSidebar
+        adminName={adminUser.full_name ?? user.email ?? "Admin"}
+        adminRole={adminUser.role ?? "staff"}
+        unreadCount={unreadCount ?? 0}
+      />
+      <main className="flex-1 overflow-auto pt-14 lg:pt-0">{children}</main>
+    </div>
+  );
+}

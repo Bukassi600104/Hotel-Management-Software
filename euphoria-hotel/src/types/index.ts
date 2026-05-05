@@ -1,4 +1,5 @@
 export type Room = {
+  id: string;
   slug: string;
   name: string;
   shortName: string;

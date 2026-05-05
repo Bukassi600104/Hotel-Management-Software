@@ -57,15 +57,31 @@ export function ContactForm() {
   });
   const [submitting, setSubmitting] = React.useState(false);
 
-  function onSubmit(values: FormValues) {
+  async function onSubmit(values: FormValues) {
     setSubmitting(true);
-    setTimeout(() => {
-      setSubmitting(false);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? "Something went wrong");
+      }
+
       form.reset();
       toast.success("Message sent", {
         description: `Thanks ${values.name.split(" ")[0]} — our team will reply within one business day.`,
       });
-    }, 900);
+    } catch (err) {
+      toast.error("Couldn't send your message", {
+        description: err instanceof Error ? err.message : "Please try again or call us directly.",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (

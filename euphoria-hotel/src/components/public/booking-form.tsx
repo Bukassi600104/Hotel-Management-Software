@@ -1,11 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowRight, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   Form,
@@ -35,8 +35,25 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export function BookingForm({ room }: { room: Room }) {
-  const router = useRouter();
+interface BookingFormProps {
+  room: Room;
+  checkin: string;
+  checkout: string;
+  nights: number;
+  adults: number;
+  children: number;
+  total: number;
+}
+
+export function BookingForm({
+  room,
+  checkin,
+  checkout,
+  nights,
+  adults,
+  children,
+  total,
+}: BookingFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -51,12 +68,41 @@ export function BookingForm({ room }: { room: Room }) {
   });
   const [submitting, setSubmitting] = React.useState(false);
 
-  function onSubmit() {
+  async function onSubmit(values: FormValues) {
     setSubmitting(true);
-    // UI-only — real Paystack init happens server-side in a later phase.
-    setTimeout(() => {
-      router.push(`/booking/success?room=${room.slug}`);
-    }, 800);
+    try {
+      const res = await fetch("/api/bookings/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          roomSlug: room.slug,
+          checkin,
+          checkout,
+          numAdults: adults,
+          numChildren: children,
+          firstName: values.firstName,
+          lastName: values.lastName,
+          email: values.email,
+          phone: values.phone,
+          arrivalTime: values.arrivalTime || undefined,
+          notes: values.notes || undefined,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.error ?? "Something went wrong. Please try again.");
+        setSubmitting(false);
+        return;
+      }
+
+      // Redirect to Paystack — this leaves the page so we don't reset state
+      window.location.href = data.paymentUrl;
+    } catch {
+      toast.error("Network error. Please check your connection and try again.");
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -140,10 +186,7 @@ export function BookingForm({ room }: { room: Room }) {
             <FormItem className="mt-4">
               <FormLabel>Approximate arrival (optional)</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="e.g. 6pm, flying in from Abuja"
-                  {...field}
-                />
+                <Input placeholder="e.g. 6pm, flying in from Abuja" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -190,6 +233,14 @@ export function BookingForm({ room }: { room: Room }) {
             </FormItem>
           )}
         />
+
+        {/* Hidden booking summary for screen readers */}
+        <p className="sr-only">
+          Booking {room.name} for {nights} night{nights !== 1 ? "s" : ""}.
+          Check-in {checkin}, check-out {checkout}.
+          {adults} adult{adults !== 1 ? "s" : ""}
+          {children > 0 ? `, ${children} child${children !== 1 ? "ren" : ""}` : ""}.
+        </p>
 
         <button
           type="submit"

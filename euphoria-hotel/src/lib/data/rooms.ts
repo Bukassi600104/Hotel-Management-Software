@@ -21,6 +21,7 @@ export const rooms: Room[] = [
       `${BASE}/room-standard.png`,
       `${BASE}/room-deluxe.jpg`,
     ],
+    id: '',
     displayOrder: 1,
   },
   {
@@ -41,6 +42,7 @@ export const rooms: Room[] = [
       `${BASE}/room-mini-standard.png`,
       `${BASE}/room-deluxe.jpg`,
     ],
+    id: '',
     displayOrder: 2,
   },
   {
@@ -62,6 +64,7 @@ export const rooms: Room[] = [
       `${BASE}/room-executive.png`,
     ],
     badge: "Popular",
+    id: '',
     displayOrder: 3,
   },
   {
@@ -82,6 +85,7 @@ export const rooms: Room[] = [
       `${BASE}/room-deluxe.jpg`,
       `${BASE}/room-executive.png`,
     ],
+    id: '',
     displayOrder: 4,
   },
   {
@@ -102,6 +106,7 @@ export const rooms: Room[] = [
       `${BASE}/room-super-executive.jpg`,
       `${BASE}/room-deluxe-suite.png`,
     ],
+    id: '',
     displayOrder: 5,
   },
   {
@@ -122,6 +127,7 @@ export const rooms: Room[] = [
       `${BASE}/room-executive.png`,
       `${BASE}/room-deluxe-suite.png`,
     ],
+    id: '',
     displayOrder: 6,
   },
   {
@@ -143,6 +149,7 @@ export const rooms: Room[] = [
       `${BASE}/room-presidential.jpg`,
     ],
     badge: "Suite",
+    id: '',
     displayOrder: 7,
   },
   {
@@ -164,6 +171,7 @@ export const rooms: Room[] = [
       `${BASE}/room-presidential.jpg`,
     ],
     badge: "Suite",
+    id: '',
     displayOrder: 8,
   },
   {
@@ -185,6 +193,7 @@ export const rooms: Room[] = [
       `${BASE}/room-deluxe-suite.png`,
     ],
     badge: "Flagship",
+    id: '',
     displayOrder: 9,
   },
 ];

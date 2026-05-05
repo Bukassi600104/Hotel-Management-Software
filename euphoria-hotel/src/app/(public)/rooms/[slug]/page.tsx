@@ -9,11 +9,12 @@ import { RoomCard } from "@/components/public/room-card";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/reveal";
 import { Badge } from "@/components/ui/badge";
 
-import { rooms, getRoomBySlug } from "@/lib/data/rooms";
+import { getAllRooms, getRoomBySlug } from "@/lib/queries/rooms";
 import { siteConfig } from "@/lib/site";
 import { formatNaira } from "@/lib/format";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const rooms = await getAllRooms().catch(() => []);
   return rooms.map((r) => ({ slug: r.slug }));
 }
 
@@ -21,7 +22,7 @@ export async function generateMetadata(
   props: PageProps<"/rooms/[slug]">
 ): Promise<Metadata> {
   const { slug } = await props.params;
-  const room = getRoomBySlug(slug);
+  const room = await getRoomBySlug(slug);
   if (!room) return { title: "Room not found" };
   return {
     title: room.name,
@@ -33,12 +34,10 @@ export default async function RoomDetailPage(
   props: PageProps<"/rooms/[slug]">
 ) {
   const { slug } = await props.params;
-  const room = getRoomBySlug(slug);
+  const [room, allRooms] = await Promise.all([getRoomBySlug(slug), getAllRooms().catch(() => [])]);
   if (!room) notFound();
 
-  const related = rooms
-    .filter((r) => r.slug !== room.slug)
-    .slice(0, 3);
+  const related = allRooms.filter((r) => r.slug !== room.slug).slice(0, 3);
 
   return (
     <>
