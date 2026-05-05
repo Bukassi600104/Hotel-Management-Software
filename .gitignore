@@ -1,0 +1,23 @@
+# Screenshots and test images
+*.jpeg
+*.jpg
+*.png
+!euphoria-hotel/**/*.jpg
+!euphoria-hotel/**/*.jpeg
+!euphoria-hotel/**/*.png
+!euphoria-hotel/**/*.webp
+
+# Archives
+*.zip
+
+# Tool folders
+.codex/
+.playwright-mcp/
+
+# Old handoff copy
+handoff/
+
+# Node / Next.js (handled by euphoria-hotel/.gitignore too)
+euphoria-hotel/node_modules/
+euphoria-hotel/.next/
+euphoria-hotel/.env.local
