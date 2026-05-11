@@ -1,8 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, CalendarDays } from "lucide-react";
+import { format } from "date-fns";
 import { formatDateShort } from "@/lib/format";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 type Room = { id: string; name: string };
 type Block = {
@@ -20,6 +27,8 @@ export function BlocksClient() {
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
   const [form, setForm] = React.useState({ roomId: "", blockedFrom: "", blockedTo: "", reason: "" });
+  const [fromDate, setFromDate] = React.useState<Date | undefined>(undefined);
+  const [toDate, setToDate] = React.useState<Date | undefined>(undefined);
   const [error, setError] = React.useState<string | null>(null);
 
   async function load() {
@@ -63,6 +72,8 @@ export function BlocksClient() {
       return;
     }
     setForm({ roomId: "", blockedFrom: "", blockedTo: "", reason: "" });
+    setFromDate(undefined);
+    setToDate(undefined);
     await load();
   }
 
@@ -102,23 +113,59 @@ export function BlocksClient() {
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label className="mb-1.5 block text-xs text-white/45">From *</label>
-              <input
-                type="date"
-                value={form.blockedFrom}
-                onChange={(e) => setForm({ ...form, blockedFrom: e.target.value })}
-                required
-                className="w-full rounded-lg border border-white/10 bg-[#0f1012] px-3 py-2.5 text-sm text-white focus:border-[#c9a961]/40 focus:outline-none"
-              />
+              <Popover>
+                <PopoverTrigger
+                  render={
+                    <button
+                      type="button"
+                      className="flex w-full items-center gap-2 rounded-lg border border-white/10 bg-[#0f1012] px-3 py-2.5 text-sm text-white text-left hover:border-white/20 focus:border-[#c9a961]/40 focus:outline-none"
+                    >
+                      <CalendarDays className="size-4 text-[#c9a961]/60" />
+                      {fromDate ? format(fromDate, "MMM d, yyyy") : <span className="text-white/30">Select date</span>}
+                    </button>
+                  }
+                />
+                <PopoverContent align="start" className="w-auto p-0 rounded-xl border border-white/10 bg-[#111316]">
+                  <Calendar
+                    mode="single"
+                    selected={fromDate}
+                    onSelect={(d) => {
+                      setFromDate(d ?? undefined);
+                      if (d) setForm({ ...form, blockedFrom: format(d, "yyyy-MM-dd") });
+                    }}
+                    disabled={{ before: new Date() }}
+                    className="p-3"
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <div>
               <label className="mb-1.5 block text-xs text-white/45">To *</label>
-              <input
-                type="date"
-                value={form.blockedTo}
-                onChange={(e) => setForm({ ...form, blockedTo: e.target.value })}
-                required
-                className="w-full rounded-lg border border-white/10 bg-[#0f1012] px-3 py-2.5 text-sm text-white focus:border-[#c9a961]/40 focus:outline-none"
-              />
+              <Popover>
+                <PopoverTrigger
+                  render={
+                    <button
+                      type="button"
+                      className="flex w-full items-center gap-2 rounded-lg border border-white/10 bg-[#0f1012] px-3 py-2.5 text-sm text-white text-left hover:border-white/20 focus:border-[#c9a961]/40 focus:outline-none"
+                    >
+                      <CalendarDays className="size-4 text-[#c9a961]/60" />
+                      {toDate ? format(toDate, "MMM d, yyyy") : <span className="text-white/30">Select date</span>}
+                    </button>
+                  }
+                />
+                <PopoverContent align="start" className="w-auto p-0 rounded-xl border border-white/10 bg-[#111316]">
+                  <Calendar
+                    mode="single"
+                    selected={toDate}
+                    onSelect={(d) => {
+                      setToDate(d ?? undefined);
+                      if (d) setForm({ ...form, blockedTo: format(d, "yyyy-MM-dd") });
+                    }}
+                    disabled={{ before: fromDate || new Date() }}
+                    className="p-3"
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 

@@ -63,8 +63,8 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
           <div className="grid gap-14 lg:grid-cols-2 lg:items-center lg:gap-20">
             <Reveal variant="scale" className="relative">
-              <div className="grid grid-cols-5 grid-rows-6 gap-3 [&>*]:rounded-3xl [&>*]:overflow-hidden">
-                <div className="col-span-3 row-span-4 relative">
+              <div className="grid h-[32rem] sm:h-[36rem] lg:h-[40rem] grid-cols-5 grid-rows-6 gap-3 [&>*]:rounded-3xl [&>*]:overflow-hidden [&>*]:relative">
+                <div className="col-span-3 row-span-4">
                   <Image
                     src="/hotel-assets/about.webp"
                     alt="A guest suite"
@@ -73,7 +73,7 @@ export default function AboutPage() {
                     className="object-cover"
                   />
                 </div>
-                <div className="col-span-2 row-span-3 col-start-4 row-start-1 relative">
+                <div className="col-span-2 row-span-3 col-start-4 row-start-1">
                   <Image
                     src="/hotel-assets/restaurant-dsc6939.jpg"
                     alt="The restaurant"
@@ -82,7 +82,7 @@ export default function AboutPage() {
                     className="object-cover"
                   />
                 </div>
-                <div className="col-span-2 row-span-3 col-start-4 row-start-4 relative">
+                <div className="col-span-2 row-span-3 col-start-4 row-start-4">
                   <Image
                     src="/hotel-assets/facility-pool.png"
                     alt="The pool"
@@ -91,7 +91,7 @@ export default function AboutPage() {
                     className="object-cover"
                   />
                 </div>
-                <div className="col-span-3 row-span-2 col-start-1 row-start-5 relative">
+                <div className="col-span-3 row-span-2 col-start-1 row-start-5">
                   <Image
                     src="/hotel-assets/facility-rooftop.png"
                     alt="The rooftop lounge"

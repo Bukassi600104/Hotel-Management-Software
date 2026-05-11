@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { formatNaira } from "@/lib/format";
 import { TrendingUp, BedDouble, LogIn, LogOut } from "lucide-react";
 import Link from "next/link";
+import { DashboardCharts } from "@/components/admin/dashboard-charts";
 
 export const dynamic = "force-dynamic";
 
@@ -112,6 +113,9 @@ export default async function AdminDashboardPage() {
           </div>
         ))}
       </div>
+
+      {/* Analytics charts */}
+      <DashboardCharts />
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         {/* Upcoming arrivals */}

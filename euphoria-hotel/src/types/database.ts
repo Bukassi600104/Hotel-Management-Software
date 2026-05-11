@@ -124,6 +124,7 @@ export type Database = {
         Row: {
           arrival_time: string | null
           booking_reference: string
+          booking_type: string
           cancellation_reason: string | null
           cancelled_at: string | null
           check_in_date: string
@@ -150,6 +151,7 @@ export type Database = {
         Insert: {
           arrival_time?: string | null
           booking_reference: string
+          booking_type?: string
           cancellation_reason?: string | null
           cancelled_at?: string | null
           check_in_date: string
@@ -176,6 +178,7 @@ export type Database = {
         Update: {
           arrival_time?: string | null
           booking_reference?: string
+          booking_type?: string
           cancellation_reason?: string | null
           cancelled_at?: string | null
           check_in_date?: string

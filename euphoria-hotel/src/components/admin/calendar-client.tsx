@@ -73,22 +73,6 @@ export function CalendarClient() {
     return `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
   }
 
-  function bookingsForRoomDay(roomId: string, d: number) {
-    const day = dayStr(d);
-    return bookings.filter(
-      (b) => b.rooms === undefined || true // we filter by checking dates
-    ).filter(() => true); // placeholder — filtered below
-  }
-
-  function getBookingsForRoom(roomId: string) {
-    return bookings.filter((b) => {
-      // We need room_id on the booking; since we join rooms(name) we don't have room_id directly
-      // The API returns bookings with rooms as an object, not room_id
-      // For the calendar we need a different query — simplified view here
-      return true;
-    });
-  }
-
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
   return (

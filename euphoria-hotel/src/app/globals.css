@@ -220,6 +220,19 @@
   .text-balance { text-wrap: balance; }
   .text-pretty { text-wrap: pretty; }
 
+  .gold-gradient {
+    background: linear-gradient(135deg, #d4bc96 0%, #c6a87d 50%, #9b7e3e 100%);
+  }
+
+  .text-charcoal {
+    color: var(--color-charcoal);
+  }
+
+  .luxe-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-gold) 50%, transparent);
+  }
+
   .label-tag {
     font-family: var(--font-montserrat), system-ui, sans-serif;
     font-size: 11px;

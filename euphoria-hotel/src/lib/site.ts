@@ -36,6 +36,7 @@ export const siteConfig = {
     { label: "Conference Room", href: "/conference" },
     { label: "Hotel Menu", href: "/menu" },
     { label: "Contact Us", href: "/contact" },
+    { label: "My Booking", href: "/booking/manage" },
   ],
   hours: {
     checkIn: "3:00 PM",

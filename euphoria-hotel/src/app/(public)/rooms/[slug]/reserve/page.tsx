@@ -1,54 +1,61 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import Image from "next/image";
-import { redirect } from "next/navigation";
-import { Bed, Users, Maximize2, Lock, Sparkles, Calendar } from "lucide-react";
+import Link from "next/link";
+import { redirect, notFound } from "next/navigation";
+import { Calendar, Bed, Users, Maximize2, ArrowLeft } from "lucide-react";
 
-import { BookingForm } from "@/components/public/booking-form";
+import { ReservationForm } from "@/components/public/reservation-form";
 import { Reveal } from "@/components/motion/reveal";
 import { getRoomBySlug } from "@/lib/queries/rooms";
 import { formatNaira, formatDateLong } from "@/lib/format";
 import { calculateNights, isDateInPast, isValidDateString } from "@/lib/utils/dates";
 import { buildPricingBreakdown } from "@/lib/utils/pricing";
 
-export const metadata: Metadata = {
-  title: "Confirm your booking",
-  description: "Review your stay and complete the reservation.",
-};
-
 type SearchParams = Promise<{
-  room?: string;
   checkin?: string;
   checkout?: string;
   adults?: string;
   children?: string;
 }>;
 
-export default async function BookingConfirmPage({
+type Params = Promise<{ slug: string }>;
+
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const { slug } = await params;
+  const room = await getRoomBySlug(slug);
+  if (!room) return { title: "Room not found" };
+  return {
+    title: `Reserve ${room.name} | Hilton Euphoria Hotel`,
+    description: `Reserve ${room.name} with payment at check-in. No payment required now.`,
+  };
+}
+
+export default async function ReservePage({
+  params,
   searchParams,
 }: {
+  params: Params;
   searchParams: SearchParams;
 }) {
+  const { slug } = await params;
   const sp = await searchParams;
 
-  // Validate required params
   if (
-    !sp.room ||
     !sp.checkin ||
     !sp.checkout ||
     !isValidDateString(sp.checkin) ||
     !isValidDateString(sp.checkout)
   ) {
-    redirect("/rooms");
+    redirect(`/rooms/${slug}`);
   }
 
   const nights = calculateNights(sp.checkin, sp.checkout);
   if (nights < 1 || nights > 30 || isDateInPast(sp.checkin)) {
-    redirect("/rooms");
+    redirect(`/rooms/${slug}`);
   }
 
-  const room = await getRoomBySlug(sp.room);
-  if (!room) redirect("/rooms");
+  const room = await getRoomBySlug(slug);
+  if (!room) notFound();
 
   const adults = Math.max(1, parseInt(sp.adults ?? "1", 10));
   const children = Math.max(0, parseInt(sp.children ?? "0", 10));
@@ -63,21 +70,28 @@ export default async function BookingConfirmPage({
           fill
           priority
           sizes="100vw"
-          className="object-cover opacity-35"
+          className="object-cover opacity-30"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-charcoal)]/72 via-[var(--color-charcoal)]/62 to-[var(--color-charcoal)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-charcoal)]/75 via-[var(--color-charcoal)]/65 to-[var(--color-charcoal)]" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
           <Reveal variant="fade-up" className="max-w-2xl">
+            <Link
+              href={`/rooms/${slug}`}
+              className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.32em] text-white/50 hover:text-white/80 transition-colors mb-5"
+            >
+              <ArrowLeft className="size-3.5" />
+              Back to room
+            </Link>
             <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] text-[var(--color-gold-light)]">
               <span className="block h-px w-10 bg-[var(--color-gold)]" />
-              Step 2 of 3 · Your details
+              Reserve — pay at check-in
             </span>
             <h1 className="mt-4 font-heading text-4xl leading-[1.05] tracking-tight text-balance sm:text-5xl">
-              Almost there.
+              Hold your room.
             </h1>
             <p className="mt-3 max-w-xl text-white/70">
-              Tell us a little about the booking and we will hold the room for
-              the next 15 minutes while you complete payment.
+              Reserve {room.name} now with no payment required. The full amount is due upon
+              arrival at the front desk.
             </p>
           </Reveal>
         </div>
@@ -85,17 +99,19 @@ export default async function BookingConfirmPage({
 
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_22rem] lg:gap-10 xl:gap-14">
-          <BookingForm
-            room={room}
-            checkin={sp.checkin}
-            checkout={sp.checkout}
-            nights={nights}
-            adults={adults}
-            children={children}
-            total={pricing.total}
-          />
+          {/* Form */}
+          <div>
+            <ReservationForm
+              room={{ slug: room.slug, name: room.name, maxGuests: room.maxGuests }}
+              checkin={sp.checkin}
+              checkout={sp.checkout}
+              nights={nights}
+              adults={adults}
+              children={children}
+            />
+          </div>
 
-          {/* Summary sidebar */}
+          {/* Sidebar summary */}
           <aside className="lg:sticky lg:top-28 lg:self-start">
             <Reveal
               variant="scale"
@@ -114,14 +130,12 @@ export default async function BookingConfirmPage({
                   <div className="text-[10px] uppercase tracking-[0.32em] text-[var(--color-gold-light)]">
                     Your room
                   </div>
-                  <h3 className="mt-1 font-heading text-2xl tracking-tight">
-                    {room.name}
-                  </h3>
+                  <h3 className="mt-1 font-heading text-2xl tracking-tight">{room.name}</h3>
                 </div>
               </div>
 
               <div className="space-y-4 p-6">
-                {/* Stay dates */}
+                {/* Dates */}
                 <div className="flex items-start gap-3 rounded-lg bg-[var(--color-gold)]/8 p-3 text-sm">
                   <Calendar className="mt-0.5 size-4 shrink-0 text-[var(--color-gold-dark)]" />
                   <div className="space-y-0.5">
@@ -132,44 +146,57 @@ export default async function BookingConfirmPage({
                 </div>
 
                 <ul className="space-y-2 text-sm">
-                  <SpecRow icon={Bed} label={room.bedType} />
-                  <SpecRow icon={Users} label={`${room.maxGuests} guests max`} />
-                  <SpecRow icon={Maximize2} label={`${room.roomSizeSqm} m² interior`} />
+                  <li className="flex items-center gap-3 text-foreground/80">
+                    <Bed className="size-4 text-[var(--color-gold-dark)]" />
+                    <span>{room.bedType}</span>
+                  </li>
+                  <li className="flex items-center gap-3 text-foreground/80">
+                    <Users className="size-4 text-[var(--color-gold-dark)]" />
+                    <span>{room.maxGuests} guests max</span>
+                  </li>
+                  <li className="flex items-center gap-3 text-foreground/80">
+                    <Maximize2 className="size-4 text-[var(--color-gold-dark)]" />
+                    <span>{room.roomSizeSqm} m² interior</span>
+                  </li>
                 </ul>
 
                 <div className="luxe-divider opacity-50" />
 
                 <div className="space-y-2 text-sm">
-                  <SummaryRow label="Per night" value={formatNaira(pricing.pricePerNight)} />
-                  <SummaryRow label={`${nights} night${nights !== 1 ? "s" : ""}`} value={formatNaira(pricing.subtotal)} />
-                  <SummaryRow label="VAT (7.5%)" value={formatNaira(pricing.vat)} />
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>Per night</span>
+                    <span>{formatNaira(pricing.pricePerNight)}</span>
+                  </div>
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>{nights} night{nights !== 1 ? "s" : ""}</span>
+                    <span>{formatNaira(pricing.subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>VAT (7.5%)</span>
+                    <span>{formatNaira(pricing.vat)}</span>
+                  </div>
                 </div>
 
                 <div className="luxe-divider opacity-50" />
 
                 <div className="flex items-baseline justify-between">
-                  <span className="text-sm text-muted-foreground">Total</span>
+                  <span className="text-sm text-muted-foreground">Total due at check-in</span>
                   <span className="font-heading text-2xl tracking-tight">
                     {formatNaira(pricing.total)}
                   </span>
                 </div>
+
+                <div className="rounded-lg border border-[var(--color-gold)]/25 bg-[var(--color-gold)]/5 p-3 text-xs text-[var(--color-gold-dark)]">
+                  No payment taken now. Amount due on arrival.
+                </div>
               </div>
             </Reveal>
 
-            <div className="mt-4 flex items-start gap-3 rounded-2xl border border-[var(--color-gold)]/30 bg-[var(--color-gold)]/5 p-4 text-xs text-foreground/75">
-              <Lock className="mt-0.5 size-4 shrink-0 text-[var(--color-gold-dark)]" />
-              <p>
-                Your details are encrypted in transit. Card payments are
-                handled by Paystack; we never see your card number.
-              </p>
-            </div>
-
             <Link
-              href="/rooms"
+              href={`/booking/confirm?room=${room.slug}&checkin=${sp.checkin}&checkout=${sp.checkout}&adults=${adults}&children=${children}`}
               className="mt-3 inline-flex w-full items-center justify-center gap-2 border border-[#e8dfd1] bg-card px-5 py-2.5 text-xs uppercase tracking-[0.18em] hover:bg-muted/60 transition-colors"
             >
-              <Sparkles className="size-3.5" />
-              Choose a different room
+              Pay online instead
             </Link>
           </aside>
         </div>
@@ -177,29 +204,5 @@ export default async function BookingConfirmPage({
 
       <div className="h-24" />
     </>
-  );
-}
-
-function SpecRow({
-  icon: Icon,
-  label,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-}) {
-  return (
-    <li className="flex items-center gap-3 text-foreground/80">
-      <Icon className="size-4 text-[var(--color-gold-dark)]" />
-      <span className="text-sm">{label}</span>
-    </li>
-  );
-}
-
-function SummaryRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium tabular-nums">{value}</span>
-    </div>
   );
 }

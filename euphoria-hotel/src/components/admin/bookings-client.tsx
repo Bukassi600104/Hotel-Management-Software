@@ -20,6 +20,7 @@ type Booking = {
   vat_amount: number;
   price_per_night: number;
   status: string;
+  booking_type: string | null;
   num_adults: number;
   num_children: number | null;
   arrival_time: string | null;
@@ -180,7 +181,14 @@ export function BookingsClient() {
                       onClick={() => setSelectedId(b.id)}
                       className="cursor-pointer transition-colors hover:bg-white/3"
                     >
-                      <td className="px-4 py-3 font-mono text-xs text-[#c9a961]">{b.booking_reference}</td>
+                      <td className="px-4 py-3">
+                        <p className="font-mono text-xs text-[#c9a961]">{b.booking_reference}</p>
+                        {b.booking_type === "reservation" && (
+                          <span className="mt-0.5 inline-block rounded-full bg-violet-400/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-violet-400">
+                            Pay at check-in
+                          </span>
+                        )}
+                      </td>
                       <td className="px-4 py-3">
                         <p className="font-medium text-white/85">{b.guest_name}</p>
                         <p className="text-xs text-white/35">{b.guest_email}</p>
