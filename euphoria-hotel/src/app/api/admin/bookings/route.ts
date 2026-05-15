@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
 import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
 import { listDemoBookings } from "@/lib/demo/store";
+import { requireActiveAdmin } from "@/lib/admin/auth";
 
 export async function GET(req: NextRequest) {
   if (!hasSupabaseAdminEnv()) {
@@ -26,11 +26,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ bookings, total: bookings.length });
   }
 
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireActiveAdmin();
+  if (auth.error) return auth.error;
 
   const { searchParams } = req.nextUrl;
   const status = searchParams.get("status");

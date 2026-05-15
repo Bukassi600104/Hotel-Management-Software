@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { requireActiveAdmin } from "@/lib/admin/auth";
 import { sendEmail } from "@/lib/email/send";
 import { formatDateLong } from "@/lib/format";
 import { siteConfig } from "@/lib/site";
@@ -15,11 +15,8 @@ const updateSchema = z.object({
 });
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireActiveAdmin();
+  if (auth.error) return auth.error;
 
   const { id } = await params;
   const admin = createAdminClient();
@@ -34,11 +31,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireActiveAdmin();
+  if (auth.error) return auth.error;
+  const { user } = auth;
 
   const { id } = await params;
 

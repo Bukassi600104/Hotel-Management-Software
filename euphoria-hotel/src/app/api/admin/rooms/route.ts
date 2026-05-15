@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
 import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
 import { rooms } from "@/lib/data/rooms";
+import { requireActiveAdmin } from "@/lib/admin/auth";
 
 const createRoomSchema = z.object({
   name: z.string().min(2),
@@ -43,11 +43,8 @@ export async function GET() {
     );
   }
 
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireActiveAdmin();
+  if (auth.error) return auth.error;
 
   const admin = createAdminClient();
   const { data, error } = await admin
@@ -67,11 +64,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireActiveAdmin(["super_admin", "manager"]);
+  if (auth.error) return auth.error;
 
   let body: unknown;
   try {

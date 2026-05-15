@@ -1,21 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
-
-async function assertAdmin() {
-  const server = await createClient();
-  const { data: { user } } = await server.auth.getUser();
-  if (!user) return null;
-  const admin = createAdminClient();
-  const { data } = await admin.from("admin_users").select("role, is_active").eq("id", user.id).single();
-  if (!data?.is_active) return null;
-  return data;
-}
+import { requireActiveAdmin } from "@/lib/admin/auth";
 
 export async function GET() {
-  const adminUser = await assertAdmin();
-  if (!adminUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireActiveAdmin();
+  if (auth.error) return auth.error;
 
   const admin = createAdminClient();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,8 +33,8 @@ const settingsSchema = z.object({
 });
 
 export async function PATCH(request: NextRequest) {
-  const adminUser = await assertAdmin();
-  if (!adminUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireActiveAdmin(["super_admin"]);
+  if (auth.error) return auth.error;
 
   const body = await request.json();
   const parsed = settingsSchema.safeParse(body);

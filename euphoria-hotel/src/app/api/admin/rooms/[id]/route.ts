@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { requireActiveAdmin } from "@/lib/admin/auth";
 
 const updateSchema = z.object({
   name: z.string().min(2).optional(),
@@ -17,17 +17,10 @@ const updateSchema = z.object({
   is_active: z.boolean().optional(),
 });
 
-async function requireAdmin() {
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  return user;
-}
-
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const user = await requireAdmin();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireActiveAdmin(["super_admin", "manager"]);
+  if (auth.error) return auth.error;
+  const { user } = auth;
 
   const { id } = await params;
 
@@ -65,8 +58,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const user = await requireAdmin();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireActiveAdmin(["super_admin"]);
+  if (auth.error) return auth.error;
+  const { user } = auth;
 
   const { id } = await params;
   const admin = createAdminClient();

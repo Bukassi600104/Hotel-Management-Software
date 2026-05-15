@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
 import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
 import { listDemoBookings } from "@/lib/demo/store";
+import { requireActiveAdmin } from "@/lib/admin/auth";
 
 export async function GET() {
   const now = new Date();
@@ -39,11 +39,8 @@ export async function GET() {
     });
   }
 
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireActiveAdmin();
+  if (auth.error) return auth.error;
 
   const admin = createAdminClient();
   const today = now.toISOString().split("T")[0];
@@ -144,7 +141,7 @@ export async function GET() {
   });
 
   const bookingTypeBreakdown = {
-    booking: bookingsData.filter((b) => !b.booking_type || b.booking_type === "booking").length,
+    booking: bookingsData.filter((b) => !b.booking_type || b.booking_type === "online").length,
     reservation: bookingsData.filter((b) => b.booking_type === "reservation").length,
   };
 

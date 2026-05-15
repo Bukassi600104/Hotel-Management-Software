@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
 import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
+import { requireActiveAdmin } from "@/lib/admin/auth";
 
 const demoUsers = [
   {
@@ -37,29 +37,11 @@ const updateSchema = z.object({
   isActive: z.boolean().optional(),
 });
 
-async function requireSuperAdmin() {
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return null;
-
-  const admin = createAdminClient();
-  const { data } = await admin
-    .from("admin_users")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (data?.role !== "super_admin") return null;
-  return user;
-}
-
 export async function GET() {
   if (!hasSupabaseAdminEnv()) return NextResponse.json(demoUsers);
 
-  const user = await requireSuperAdmin();
-  if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const auth = await requireActiveAdmin(["super_admin"]);
+  if (auth.error) return auth.error;
 
   const admin = createAdminClient();
   const { data, error } = await admin
@@ -76,8 +58,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, demo: true });
   }
 
-  const user = await requireSuperAdmin();
-  if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const auth = await requireActiveAdmin(["super_admin"]);
+  if (auth.error) return auth.error;
 
   let body: unknown;
   try {
@@ -120,8 +102,9 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ success: true, demo: true });
   }
 
-  const user = await requireSuperAdmin();
-  if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const auth = await requireActiveAdmin(["super_admin"]);
+  if (auth.error) return auth.error;
+  const { user } = auth;
 
   let body: unknown;
   try {

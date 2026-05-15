@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { hasSupabaseAdminEnv, hasSupabasePublicEnv } from '@/lib/supabase/config'
 import { rooms as staticRooms } from '@/lib/data/rooms'
@@ -9,6 +9,14 @@ export type RoomRow = Database['public']['Tables']['rooms']['Row']
 
 function demoRooms(): Room[] {
   return staticRooms.map((room) => ({ ...room, id: room.id || room.slug }))
+}
+
+function createPublicDataClient() {
+  return createSupabaseClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  )
 }
 
 // Converts a database row (snake_case) to the app Room type (camelCase)
@@ -35,7 +43,7 @@ function roomFromRow(row: RoomRow): Room {
 export async function getAllRooms(): Promise<Room[]> {
   if (!hasSupabasePublicEnv()) return demoRooms()
 
-  const supabase = await createClient()
+  const supabase = createPublicDataClient()
   const { data, error } = await supabase
     .from('rooms')
     .select('*')
@@ -51,7 +59,7 @@ export async function getRoomBySlug(slug: string): Promise<Room | null> {
     return demoRooms().find((room) => room.slug === slug) ?? null
   }
 
-  const supabase = await createClient()
+  const supabase = createPublicDataClient()
   const { data, error } = await supabase
     .from('rooms')
     .select('*')
@@ -66,7 +74,7 @@ export async function getRoomBySlug(slug: string): Promise<Room | null> {
 export async function getAllRoomSlugs(): Promise<string[]> {
   if (!hasSupabasePublicEnv()) return demoRooms().map((room) => room.slug)
 
-  const supabase = await createClient()
+  const supabase = createPublicDataClient()
   const { data } = await supabase
     .from('rooms')
     .select('slug')
