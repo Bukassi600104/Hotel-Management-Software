@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { Search, X, AlertTriangle, CheckCircle, Calendar, BedDouble, Clock } from "lucide-react";
+import { Search, X, AlertTriangle, CheckCircle, Calendar, Clock } from "lucide-react";
 import { formatNaira, formatDateLong } from "@/lib/format";
 
 type BookingData = {
@@ -45,6 +45,7 @@ const CANCELLABLE_STATUSES = ["confirmed", "pending"];
 type Step = "lookup" | "details" | "cancel-confirm" | "cancelled";
 
 export function ManageBookingForm() {
+  const [currentTime] = React.useState(() => Date.now());
   const [step, setStep] = React.useState<Step>("lookup");
   const [reference, setReference] = React.useState("");
   const [email, setEmail] = React.useState("");
@@ -143,7 +144,7 @@ export function ManageBookingForm() {
   if (step === "cancel-confirm" && booking) {
     const statusInfo = STATUS_LABELS[booking.status];
     const checkIn = new Date(booking.check_in_date);
-    const hoursUntil = (checkIn.getTime() - Date.now()) / 3_600_000;
+    const hoursUntil = (checkIn.getTime() - currentTime) / 3_600_000;
     const within24h = hoursUntil < 24 && hoursUntil > 0;
 
     return (

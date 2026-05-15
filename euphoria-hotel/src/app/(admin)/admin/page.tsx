@@ -3,13 +3,68 @@ import { formatNaira } from "@/lib/format";
 import { TrendingUp, BedDouble, LogIn, LogOut } from "lucide-react";
 import Link from "next/link";
 import { DashboardCharts } from "@/components/admin/dashboard-charts";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
+import { listDemoBookings } from "@/lib/demo/store";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
+  if (!hasSupabaseAdminEnv()) {
+    const bookings = listDemoBookings();
+    const confirmed = bookings.filter((booking) =>
+      ["confirmed", "checked_in", "checked_out"].includes(booking.status)
+    );
+    const monthRevenue = confirmed.reduce((sum, booking) => sum + booking.total_amount, 0);
+    return (
+      <DashboardShell
+        stats={[
+          {
+            label: "Checking in today",
+            value: "0",
+            icon: LogIn,
+            color: "text-emerald-400",
+            bg: "bg-emerald-400/10",
+          },
+          {
+            label: "Checking out today",
+            value: "0",
+            icon: LogOut,
+            color: "text-sky-400",
+            bg: "bg-sky-400/10",
+          },
+          {
+            label: "Revenue this month",
+            value: formatNaira(monthRevenue),
+            icon: TrendingUp,
+            color: "text-[#c9a961]",
+            bg: "bg-[#c9a961]/10",
+          },
+        ]}
+        upcoming={confirmed.slice(0, 8).map((booking) => ({
+          id: booking.id,
+          guest_name: booking.guest_name,
+          check_in_date: booking.check_in_date,
+          total_amount: booking.total_amount,
+          status: booking.status,
+          rooms: booking.rooms,
+        }))}
+        recent={bookings.slice(0, 10).map((booking) => ({
+          id: booking.id,
+          guest_name: booking.guest_name,
+          check_in_date: booking.check_in_date,
+          total_amount: booking.total_amount,
+          status: booking.status,
+          rooms: booking.rooms,
+        }))}
+      />
+    );
+  }
+
   const admin = createAdminClient();
-  const today = new Date().toISOString().split("T")[0];
-  const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  const now = new Date();
+  const today = now.toISOString().split("T")[0];
+  const nextWeek = new Date(now.getTime() + 7 * 86400000).toISOString().split("T")[0];
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
     .toISOString()
     .split("T")[0];
 
@@ -38,7 +93,7 @@ export default async function AdminDashboardPage() {
         .select("id, guest_name, check_in_date, booking_reference, status, rooms(name)")
         .eq("status", "confirmed")
         .gte("check_in_date", today)
-        .lte("check_in_date", new Date(Date.now() + 7 * 86400000).toISOString().split("T")[0])
+        .lte("check_in_date", nextWeek)
         .order("check_in_date", { ascending: true })
         .limit(8),
 
@@ -76,6 +131,53 @@ export default async function AdminDashboardPage() {
     },
   ];
 
+  return (
+    <DashboardShell
+      stats={stats}
+      upcoming={(upcomingArrivals.data ?? []).map((booking) => ({
+        id: booking.id,
+        guest_name: booking.guest_name,
+        check_in_date: booking.check_in_date,
+        total_amount: 0,
+        status: booking.status ?? "",
+        rooms: booking.rooms as { name: string } | null,
+      }))}
+      recent={(recentBookings.data ?? []).map((booking) => ({
+        id: booking.id,
+        guest_name: booking.guest_name,
+        check_in_date: booking.check_in_date,
+        total_amount: booking.total_amount,
+        status: booking.status ?? "",
+        rooms: booking.rooms as { name: string } | null,
+      }))}
+    />
+  );
+}
+
+type DashboardBooking = {
+  id: string;
+  guest_name: string;
+  check_in_date: string;
+  total_amount: number;
+  status: string;
+  rooms: { name: string } | null;
+};
+
+function DashboardShell({
+  stats,
+  upcoming,
+  recent,
+}: {
+  stats: Array<{
+    label: string;
+    value: string;
+    icon: React.ComponentType<{ className?: string }>;
+    color: string;
+    bg: string;
+  }>;
+  upcoming: DashboardBooking[];
+  recent: DashboardBooking[];
+}) {
   const statusColors: Record<string, string> = {
     confirmed: "bg-emerald-400/15 text-emerald-400",
     checked_in: "bg-sky-400/15 text-sky-400",
@@ -130,11 +232,11 @@ export default async function AdminDashboardPage() {
             </Link>
           </div>
           <div className="divide-y divide-white/6">
-            {(upcomingArrivals.data ?? []).length === 0 ? (
+            {upcoming.length === 0 ? (
               <p className="px-5 py-6 text-sm text-white/30">No arrivals in the next 7 days.</p>
             ) : (
-              upcomingArrivals.data?.map((b) => {
-                const room = (b.rooms as { name: string } | null)?.name ?? "Room";
+              upcoming.map((b) => {
+                const room = b.rooms?.name ?? "Room";
                 return (
                   <div key={b.id} className="flex items-center gap-3 px-5 py-3">
                     <div className="min-w-0 flex-1">
@@ -165,8 +267,8 @@ export default async function AdminDashboardPage() {
             </Link>
           </div>
           <div className="divide-y divide-white/6">
-            {(recentBookings.data ?? []).map((b) => {
-              const room = (b.rooms as { name: string } | null)?.name ?? "Room";
+            {recent.map((b) => {
+              const room = b.rooms?.name ?? "Room";
               const statusCls = statusColors[b.status ?? ""] ?? "bg-white/8 text-white/50";
               return (
                 <div key={b.id} className="flex items-center gap-3 px-5 py-3">

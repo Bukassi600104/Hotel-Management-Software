@@ -107,7 +107,7 @@ export default async function ReservePage({
               checkout={sp.checkout}
               nights={nights}
               adults={adults}
-              children={children}
+              childCount={children}
             />
           </div>
 

@@ -6,6 +6,14 @@ import { createClient } from "@/lib/supabase/client";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 
 export default function AdminLoginPage() {
+  return (
+    <React.Suspense fallback={null}>
+      <AdminLoginForm />
+    </React.Suspense>
+  );
+}
+
+function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next") ?? "/admin";

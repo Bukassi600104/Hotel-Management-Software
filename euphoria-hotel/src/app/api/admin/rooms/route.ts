@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
+import { rooms } from "@/lib/data/rooms";
 
 const createRoomSchema = z.object({
   name: z.string().min(2),
@@ -18,6 +20,29 @@ const createRoomSchema = z.object({
 });
 
 export async function GET() {
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json(
+      rooms.map((room) => ({
+        id: room.slug,
+        name: room.name,
+        slug: room.slug,
+        short_name: room.shortName,
+        description: room.description,
+        short_description: room.tagline,
+        price_per_night: room.pricePerNight,
+        max_guests: room.maxGuests,
+        bed_type: room.bedType,
+        room_size_sqm: room.roomSizeSqm,
+        thumbnail_url: room.thumbnail,
+        gallery_urls: room.gallery,
+        amenities: room.amenities,
+        badge: room.badge ?? null,
+        is_active: true,
+        display_order: room.displayOrder,
+      }))
+    );
+  }
+
   const serverClient = await createClient();
   const {
     data: { user },
@@ -35,6 +60,13 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json(
+      { error: "Demo mode uses the seeded room catalogue. Connect Supabase to persist new rooms." },
+      { status: 503 }
+    );
+  }
+
   const serverClient = await createClient();
   const {
     data: { user },

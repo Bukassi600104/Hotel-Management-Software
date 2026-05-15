@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
 
 const createSchema = z.object({
   roomId: z.string().uuid(),
@@ -11,6 +12,8 @@ const createSchema = z.object({
 });
 
 export async function GET() {
+  if (!hasSupabaseAdminEnv()) return NextResponse.json([]);
+
   const serverClient = await createClient();
   const {
     data: { user },
@@ -29,6 +32,13 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json(
+      { error: "Connect Supabase to persist blocked dates." },
+      { status: 503 }
+    );
+  }
+
   const serverClient = await createClient();
   const {
     data: { user },
@@ -76,6 +86,8 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  if (!hasSupabaseAdminEnv()) return NextResponse.json({ success: true });
+
   const serverClient = await createClient();
   const {
     data: { user },

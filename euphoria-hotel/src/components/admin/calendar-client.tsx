@@ -145,8 +145,6 @@ export function CalendarClient() {
 
                       if (booking) {
                         const isFirst = booking.check_in_date === day;
-                        const isLast = booking.check_out_date ===
-                          new Date(new Date(day).getTime() + 86400000).toISOString().split("T")[0];
                         const isConfirmed = booking.status === "confirmed" || booking.status === "checked_in";
                         return (
                           <td

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Search, X, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import { formatNaira, formatDateShort } from "@/lib/format";
 import { BookingDrawer } from "@/components/admin/booking-drawer";
@@ -48,8 +48,6 @@ const STATUS_COLORS: Record<string, string> = {
 
 export function BookingsClient() {
   const searchParams = useSearchParams();
-  const router = useRouter();
-
   const [bookings, setBookings] = React.useState<Booking[]>([]);
   const [total, setTotal] = React.useState(0);
   const [loading, setLoading] = React.useState(true);

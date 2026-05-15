@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { hasSupabasePublicEnv } from "@/lib/supabase/config";
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -11,6 +12,10 @@ export async function middleware(req: NextRequest) {
 
   // Login page is always publicly accessible — never redirect here
   if (pathname.startsWith("/admin/login")) {
+    return NextResponse.next();
+  }
+
+  if (!hasSupabasePublicEnv()) {
     return NextResponse.next();
   }
 

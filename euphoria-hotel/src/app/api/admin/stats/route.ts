@@ -1,8 +1,44 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
+import { listDemoBookings } from "@/lib/demo/store";
 
 export async function GET() {
+  const now = new Date();
+
+  if (!hasSupabaseAdminEnv()) {
+    const bookings = listDemoBookings().filter((booking) =>
+      ["confirmed", "checked_in", "checked_out"].includes(booking.status)
+    );
+    const months: { label: string; start: string; end: string }[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const start = d.toISOString().split("T")[0];
+      const end = new Date(d.getFullYear(), d.getMonth() + 1, 0).toISOString().split("T")[0];
+      const label = d.toLocaleDateString("en-NG", { month: "short", year: "2-digit" });
+      months.push({ label, start, end });
+    }
+    return NextResponse.json({
+      checkingInToday: 0,
+      checkingOutToday: 0,
+      monthRevenue: bookings.reduce((sum, booking) => sum + booking.total_amount, 0),
+      occupancyPct: 8,
+      monthlyRevenue: months.map(({ label }, index) => ({
+        month: label,
+        revenue: index === months.length - 1 ? bookings.reduce((sum, booking) => sum + booking.total_amount, 0) : 0,
+      })),
+      monthlyOccupancy: months.map(({ label }, index) => ({
+        month: label,
+        occupancy: index === months.length - 1 ? 8 : 0,
+      })),
+      bookingTypeBreakdown: {
+        booking: bookings.filter((booking) => booking.booking_type === "online").length,
+        reservation: bookings.filter((booking) => booking.booking_type === "reservation").length,
+      },
+    });
+  }
+
   const serverClient = await createClient();
   const {
     data: { user },
@@ -10,7 +46,6 @@ export async function GET() {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const admin = createAdminClient();
-  const now = new Date();
   const today = now.toISOString().split("T")[0];
 
   // Build last 6 months date range

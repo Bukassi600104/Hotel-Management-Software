@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { hasSupabaseAdminEnv } from '@/lib/supabase/config'
+import { findDemoBooking } from '@/lib/demo/store'
 
 const schema = z.object({
   bookingReference: z.string().min(1),
@@ -16,6 +18,15 @@ export async function POST(req: NextRequest) {
     }
 
     const { bookingReference, email } = parsed.data
+
+    if (!hasSupabaseAdminEnv()) {
+      const booking = findDemoBooking(bookingReference, email)
+      if (!booking) {
+        return NextResponse.json({ error: 'No booking found with that reference and email combination.' }, { status: 404 })
+      }
+      return NextResponse.json({ booking })
+    }
+
     const admin = createAdminClient()
 
     const { data: booking, error } = await admin

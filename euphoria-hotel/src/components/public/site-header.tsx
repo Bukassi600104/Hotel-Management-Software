@@ -75,9 +75,6 @@ export function SiteHeader() {
 }
 
 function DesktopNav({ pathname }: { pathname: string }) {
-  const reservation = siteConfig.nav.find((n) => false);
-  void reservation;
-
   return (
     <nav className="hidden lg:flex items-center gap-9">
       {siteConfig.nav.map((item) => (

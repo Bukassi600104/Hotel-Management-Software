@@ -2,11 +2,24 @@ import { Suspense } from "react";
 import { UsersClient } from "@/components/admin/users-client";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminUsersPage() {
+  if (!hasSupabaseAdminEnv()) {
+    return (
+      <div className="p-6 lg:p-8">
+        <h1 className="text-2xl font-semibold tracking-tight text-white">Users</h1>
+        <p className="mt-1 text-sm text-white/40">Manage admin accounts and roles.</p>
+        <Suspense>
+          <UsersClient />
+        </Suspense>
+      </div>
+    );
+  }
+
   const serverClient = await createClient();
   const {
     data: { user },

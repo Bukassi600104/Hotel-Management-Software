@@ -20,7 +20,7 @@ export const siteConfig = {
       { label: "Concierge", number: "+234 905 973 7707" },
       { label: "Events", number: "+234 809 999 0143" },
     ],
-    email: "booking@hitoneuphoriahotel.com",
+    email: "booking@hiltoneuphoriahotel.com",
     whatsapp: "2348060260260",
   },
   socials: [

@@ -5,6 +5,8 @@ import { sendEmail } from '@/lib/email/send'
 import BookingCancellation from '../../../../../emails/BookingCancellation'
 import { formatDateLong } from '@/lib/format'
 import React from 'react'
+import { hasSupabaseAdminEnv } from '@/lib/supabase/config'
+import { cancelDemoBooking } from '@/lib/demo/store'
 
 const schema = z.object({
   bookingReference: z.string().min(1),
@@ -23,6 +25,16 @@ export async function POST(req: NextRequest) {
     }
 
     const { bookingReference, email, reason } = parsed.data
+
+    if (!hasSupabaseAdminEnv()) {
+      const booking = cancelDemoBooking(bookingReference, email, reason)
+      if (!booking) {
+        return NextResponse.json({ error: 'Booking not found.' }, { status: 404 })
+      }
+      const hoursUntilCheckIn = (new Date(booking.check_in_date).getTime() - Date.now()) / 3_600_000
+      return NextResponse.json({ success: true, isWithin24Hours: hoursUntilCheckIn < 24 })
+    }
+
     const admin = createAdminClient()
 
     // Fetch and verify ownership

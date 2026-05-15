@@ -1,20 +1,20 @@
 const VAT_RATE = 0.075 // 7.5%
 
-export function calculateSubtotal(pricePerNightKobo: number, nights: number): number {
-  return pricePerNightKobo * nights
+export function calculateSubtotal(pricePerNightNaira: number, nights: number): number {
+  return pricePerNightNaira * nights
 }
 
-export function calculateVAT(subtotalKobo: number, rate = VAT_RATE): number {
-  return Math.round(subtotalKobo * rate)
+export function calculateVAT(subtotalNaira: number, rate = VAT_RATE): number {
+  return Math.round(subtotalNaira * rate)
 }
 
-export function calculateTotal(subtotalKobo: number, vatKobo: number): number {
-  return subtotalKobo + vatKobo
+export function calculateTotal(subtotalNaira: number, vatNaira: number): number {
+  return subtotalNaira + vatNaira
 }
 
-export function buildPricingBreakdown(pricePerNightKobo: number, nights: number) {
-  const subtotal = calculateSubtotal(pricePerNightKobo, nights)
+export function buildPricingBreakdown(pricePerNightNaira: number, nights: number) {
+  const subtotal = calculateSubtotal(pricePerNightNaira, nights)
   const vat = calculateVAT(subtotal)
   const total = calculateTotal(subtotal, vat)
-  return { subtotal, vat, total, nights, pricePerNight: pricePerNightKobo }
+  return { subtotal, vat, total, nights, pricePerNight: pricePerNightNaira }
 }

@@ -1,8 +1,18 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminSidebar } from "@/components/admin/sidebar";
+import { hasSupabasePublicEnv } from "@/lib/supabase/config";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  if (!hasSupabasePublicEnv()) {
+    return (
+      <div className="flex min-h-screen bg-[#111316] text-white">
+        <AdminSidebar adminName="Demo Manager" adminRole="super_admin" unreadCount={0} />
+        <main className="flex-1 overflow-auto pt-14 lg:pt-0">{children}</main>
+      </div>
+    );
+  }
+
   const serverClient = await createClient();
   const {
     data: { user },
@@ -25,7 +35,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   // Authenticated but not in admin_users (or deactivated) — sign out and
   // send back to login. Middleware catches this on the next request.
   if (!adminUser || !adminUser.is_active) {
-    const { createClient: createBrowserClient } = await import("@/lib/supabase/client");
     // Can't call browser methods from a server component — return children
     // and let the client-side session expiry / middleware handle it.
     return <>{children}</>;

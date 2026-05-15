@@ -23,7 +23,7 @@ export function InquiriesClient() {
   const [selected, setSelected] = React.useState<Inquiry | null>(null);
   const [unreadOnly, setUnreadOnly] = React.useState(false);
 
-  async function load() {
+  const load = React.useCallback(async () => {
     setLoading(true);
     const params = new URLSearchParams();
     if (unreadOnly) params.set("unread", "true");
@@ -31,9 +31,9 @@ export function InquiriesClient() {
     setInquiries(data.inquiries ?? []);
     setTotal(data.total ?? 0);
     setLoading(false);
-  }
+  }, [unreadOnly]);
 
-  React.useEffect(() => { load(); }, [unreadOnly]);
+  React.useEffect(() => { load(); }, [load]);
 
   async function markRead(id: string) {
     await fetch(`/api/admin/inquiries?id=${id}`, { method: "PATCH" });

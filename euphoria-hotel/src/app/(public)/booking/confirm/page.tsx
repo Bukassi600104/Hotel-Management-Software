@@ -91,8 +91,7 @@ export default async function BookingConfirmPage({
             checkout={sp.checkout}
             nights={nights}
             adults={adults}
-            children={children}
-            total={pricing.total}
+            childCount={children}
           />
 
           {/* Summary sidebar */}

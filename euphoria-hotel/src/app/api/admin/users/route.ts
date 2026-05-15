@@ -2,6 +2,28 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
+
+const demoUsers = [
+  {
+    id: "00000000-0000-4000-8000-000000000001",
+    email: "manager@hiltoneuphoriahotel.com",
+    full_name: "Demo Manager",
+    role: "super_admin",
+    is_active: true,
+    last_active_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000002",
+    email: "frontdesk@hiltoneuphoriahotel.com",
+    full_name: "Front Desk",
+    role: "staff",
+    is_active: true,
+    last_active_at: null,
+    created_at: new Date().toISOString(),
+  },
+];
 
 const inviteSchema = z.object({
   email: z.string().email(),
@@ -34,6 +56,8 @@ async function requireSuperAdmin() {
 }
 
 export async function GET() {
+  if (!hasSupabaseAdminEnv()) return NextResponse.json(demoUsers);
+
   const user = await requireSuperAdmin();
   if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
@@ -48,6 +72,10 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json({ success: true, demo: true });
+  }
+
   const user = await requireSuperAdmin();
   if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
@@ -88,6 +116,10 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json({ success: true, demo: true });
+  }
+
   const user = await requireSuperAdmin();
   if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 

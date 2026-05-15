@@ -1,9 +1,15 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { hasSupabaseAdminEnv, hasSupabasePublicEnv } from '@/lib/supabase/config'
+import { rooms as staticRooms } from '@/lib/data/rooms'
 import type { Database } from '@/types/database'
 import type { Room } from '@/types'
 
 export type RoomRow = Database['public']['Tables']['rooms']['Row']
+
+function demoRooms(): Room[] {
+  return staticRooms.map((room) => ({ ...room, id: room.id || room.slug }))
+}
 
 // Converts a database row (snake_case) to the app Room type (camelCase)
 function roomFromRow(row: RoomRow): Room {
@@ -27,6 +33,8 @@ function roomFromRow(row: RoomRow): Room {
 }
 
 export async function getAllRooms(): Promise<Room[]> {
+  if (!hasSupabasePublicEnv()) return demoRooms()
+
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('rooms')
@@ -39,6 +47,10 @@ export async function getAllRooms(): Promise<Room[]> {
 }
 
 export async function getRoomBySlug(slug: string): Promise<Room | null> {
+  if (!hasSupabasePublicEnv()) {
+    return demoRooms().find((room) => room.slug === slug) ?? null
+  }
+
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('rooms')
@@ -52,6 +64,8 @@ export async function getRoomBySlug(slug: string): Promise<Room | null> {
 }
 
 export async function getAllRoomSlugs(): Promise<string[]> {
+  if (!hasSupabasePublicEnv()) return demoRooms().map((room) => room.slug)
+
   const supabase = await createClient()
   const { data } = await supabase
     .from('rooms')
@@ -65,6 +79,10 @@ export async function getAvailableRooms(
   checkout: string,
   guests: number
 ): Promise<Room[]> {
+  if (!hasSupabaseAdminEnv()) {
+    return demoRooms().filter((room) => room.maxGuests >= guests)
+  }
+
   const admin = createAdminClient()
 
   const { data, error } = await admin.rpc('get_available_rooms', {
@@ -89,6 +107,10 @@ export async function getAvailableRooms(
 
 // Admin-only: all rooms regardless of is_active
 export async function getAllRoomsAdmin(): Promise<RoomRow[]> {
+  if (!hasSupabaseAdminEnv()) {
+    throw new Error('Supabase admin environment is not configured.')
+  }
+
   const admin = createAdminClient()
   const { data, error } = await admin
     .from('rooms')

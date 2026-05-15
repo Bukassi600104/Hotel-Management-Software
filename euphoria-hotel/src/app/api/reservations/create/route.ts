@@ -9,6 +9,8 @@ import ReservationConfirmation from '../../../../../emails/ReservationConfirmati
 import AdminReservationAlert from '../../../../../emails/AdminReservationAlert'
 import { formatDateLong } from '@/lib/format'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { hasSupabaseAdminEnv } from '@/lib/supabase/config'
+import { createDemoBooking } from '@/lib/demo/store'
 import React from 'react'
 
 const schema = z.object({
@@ -47,6 +49,57 @@ export async function POST(req: NextRequest) {
     }
     if (isStayTooLong(d.checkin, d.checkout)) {
       return NextResponse.json({ error: 'Maximum stay is 30 nights.' }, { status: 400 })
+    }
+
+    if (!hasSupabaseAdminEnv()) {
+      const reservation = createDemoBooking({
+        roomSlug: d.roomSlug,
+        bookingType: 'reservation',
+        checkin: d.checkin,
+        checkout: d.checkout,
+        firstName: d.firstName,
+        lastName: d.lastName,
+        email: d.email,
+        phone: d.phone,
+        numAdults: d.numAdults,
+        numChildren: d.numChildren,
+        arrivalTime: d.arrivalTime,
+        notes: d.notes,
+      })
+      const adminEmail = process.env.ADMIN_EMAIL ?? process.env.RESEND_FROM_EMAIL ?? 'booking@hiltoneuphoriahotel.com'
+      const roomName = reservation.rooms?.name ?? 'Your room'
+      Promise.allSettled([
+        sendEmail({
+          to: reservation.guest_email,
+          subject: `Reservation Confirmed - ${reservation.booking_reference}`,
+          react: React.createElement(ReservationConfirmation, {
+            guestName: reservation.guest_name,
+            bookingReference: reservation.booking_reference,
+            roomName,
+            checkInDate: formatDateLong(reservation.check_in_date),
+            checkOutDate: formatDateLong(reservation.check_out_date),
+            totalNights: reservation.total_nights,
+            totalAmountNaira: `₦${reservation.total_amount.toLocaleString()}`,
+            checkInTime: reservation.arrival_time ?? '3:00 PM',
+          }),
+        }),
+        sendEmail({
+          to: adminEmail,
+          subject: `New Demo Reservation - ${reservation.booking_reference}`,
+          react: React.createElement(AdminReservationAlert, {
+            guestName: reservation.guest_name,
+            bookingReference: reservation.booking_reference,
+            roomName,
+            checkInDate: formatDateLong(reservation.check_in_date),
+            checkOutDate: formatDateLong(reservation.check_out_date),
+            totalNights: reservation.total_nights,
+            totalAmountNaira: `₦${reservation.total_amount.toLocaleString()}`,
+            guestEmail: reservation.guest_email,
+            guestPhone: reservation.guest_phone,
+          }),
+        }),
+      ]).catch((err) => console.error('[demo reservation email]', err))
+      return NextResponse.json({ bookingReference: reservation.booking_reference, demo: true })
     }
 
     const admin = createAdminClient()

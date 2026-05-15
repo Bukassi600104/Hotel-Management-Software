@@ -16,10 +16,10 @@ type Props = {
   checkout: string;
   nights: number;
   adults: number;
-  children: number;
+  childCount: number;
 };
 
-export function ReservationForm({ room, checkin, checkout, nights, adults, children }: Props) {
+export function ReservationForm({ room, checkin, checkout, nights, adults, childCount }: Props) {
   const router = useRouter();
 
   const [form, setForm] = React.useState({
@@ -28,7 +28,7 @@ export function ReservationForm({ room, checkin, checkout, nights, adults, child
     email: "",
     phone: "",
     numAdults: adults,
-    numChildren: children,
+    numChildren: childCount,
     arrivalTime: "",
     notes: "",
   });
