@@ -69,7 +69,8 @@ export default function AboutPage() {
                     src="/hotel-assets/about.webp"
                     alt="A guest suite"
                     fill
-                    sizes="(min-width: 1024px) 32rem, 60vw"
+                    quality={70}
+                    sizes="(min-width: 1024px) 34vw, (min-width: 640px) 60vw, 100vw"
                     className="object-cover"
                   />
                 </div>
@@ -78,7 +79,8 @@ export default function AboutPage() {
                     src="/hotel-assets/restaurant-dsc6939.jpg"
                     alt="The restaurant"
                     fill
-                    sizes="(min-width: 1024px) 16rem, 30vw"
+                    quality={70}
+                    sizes="(min-width: 1024px) 18vw, (min-width: 640px) 40vw, 50vw"
                     className="object-cover"
                   />
                 </div>
@@ -87,7 +89,8 @@ export default function AboutPage() {
                     src="/hotel-assets/facility-pool.png"
                     alt="The pool"
                     fill
-                    sizes="(min-width: 1024px) 16rem, 30vw"
+                    quality={70}
+                    sizes="(min-width: 1024px) 18vw, (min-width: 640px) 40vw, 50vw"
                     className="object-cover"
                   />
                 </div>
@@ -96,7 +99,8 @@ export default function AboutPage() {
                     src="/hotel-assets/facility-rooftop.png"
                     alt="The rooftop lounge"
                     fill
-                    sizes="(min-width: 1024px) 26rem, 50vw"
+                    quality={70}
+                    sizes="(min-width: 1024px) 34vw, (min-width: 640px) 60vw, 100vw"
                     className="object-cover"
                   />
                 </div>

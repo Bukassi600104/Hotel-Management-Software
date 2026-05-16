@@ -61,7 +61,9 @@ export default async function BookingConfirmPage({
           src={room.thumbnail}
           alt=""
           fill
-          priority
+          preload
+          fetchPriority="high"
+          quality={75}
           sizes="100vw"
           className="object-cover opacity-35"
         />
@@ -105,6 +107,7 @@ export default async function BookingConfirmPage({
                   src={room.thumbnail}
                   alt={room.name}
                   fill
+                  quality={70}
                   sizes="(min-width: 1024px) 22rem, 100vw"
                   className="object-cover"
                 />

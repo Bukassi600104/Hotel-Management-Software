@@ -48,7 +48,9 @@ export default async function RoomDetailPage(
             src={room.thumbnail}
             alt=""
             fill
-            priority
+            preload
+            fetchPriority="high"
+            quality={75}
             sizes="100vw"
             className="object-cover opacity-42"
           />

@@ -69,6 +69,7 @@ function DishCard({ item, index }: { item: MenuItem; index: number }) {
           src={item.image}
           alt={item.name}
           fill
+          quality={70}
           sizes="(min-width: 1024px) 24rem, 50vw"
           className="object-cover transition-transform duration-700 group-hover:scale-105"
         />

@@ -60,7 +60,9 @@ export function HomeHero() {
             src={s.img}
             alt=""
             fill
-            priority={i === 0}
+            preload={i === 0}
+            fetchPriority={i === 0 ? "high" : "auto"}
+            quality={75}
             sizes="100vw"
             className="object-cover"
             style={{ filter: "brightness(0.5)" }}

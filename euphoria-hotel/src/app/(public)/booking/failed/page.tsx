@@ -55,7 +55,9 @@ export default async function BookingFailedPage({
           src="/hotel-assets/welcome-slide.jpg"
           alt=""
           fill
-          priority
+          preload
+          fetchPriority="high"
+          quality={75}
           sizes="100vw"
           className="object-cover opacity-25"
         />

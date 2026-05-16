@@ -241,6 +241,7 @@ export function ManageBookingForm() {
                 src={booking.rooms.thumbnail_url}
                 alt={booking.rooms.name}
                 fill
+                quality={70}
                 className="object-cover"
                 sizes="(min-width: 768px) 672px, 100vw"
               />

@@ -68,7 +68,9 @@ export default async function ReservePage({
           src={room.thumbnail}
           alt=""
           fill
-          priority
+          preload
+          fetchPriority="high"
+          quality={75}
           sizes="100vw"
           className="object-cover opacity-30"
         />
@@ -122,6 +124,7 @@ export default async function ReservePage({
                   src={room.thumbnail}
                   alt={room.name}
                   fill
+                  quality={70}
                   sizes="(min-width: 1024px) 22rem, 100vw"
                   className="object-cover"
                 />

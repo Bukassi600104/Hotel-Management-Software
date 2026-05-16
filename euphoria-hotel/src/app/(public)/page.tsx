@@ -44,6 +44,7 @@ function AboutSection() {
               src={about1}
               alt="Hotel interior"
               fill
+              quality={70}
               sizes="(min-width: 1024px) 40vw, 85vw"
               className="object-cover"
             />
@@ -54,6 +55,7 @@ function AboutSection() {
               src={about2}
               alt="Hotel room"
               fill
+              quality={70}
               sizes="(min-width: 1024px) 25vw, 50vw"
               className="object-cover"
             />
@@ -146,6 +148,7 @@ function CTABanner() {
         src={rooftop}
         alt=""
         fill
+        quality={70}
         sizes="100vw"
         className="object-cover"
       />

@@ -166,6 +166,7 @@ export default function ConferencePage() {
                     src={src}
                     alt=""
                     fill
+                    quality={70}
                     sizes="(min-width: 1024px) 24rem, 50vw"
                     className="object-cover transition-transform duration-700 hover:scale-105"
                   />

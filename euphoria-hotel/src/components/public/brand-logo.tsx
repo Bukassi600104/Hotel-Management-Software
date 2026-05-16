@@ -21,7 +21,9 @@ export function BrandLogo({ height = 44, className, invert = false }: Props) {
       alt="Hilton Euphoria Hotel"
       width={Math.round(height * 4)}
       height={height}
-      priority
+      preload
+      fetchPriority="high"
+      quality={85}
       sizes={`${Math.round(height * 4)}px`}
       style={{ height, width: "auto" }}
       className={cn(
