@@ -27,7 +27,7 @@ export default async function CheckoutPage({
   if (!booking) notFound();
 
   return (
-    <section className="min-h-screen bg-[var(--color-charcoal)] px-4 py-10 text-white sm:px-6 lg:px-10">
+    <section className="min-h-screen bg-[var(--color-charcoal)] px-4 pb-16 pt-28 text-white sm:px-6 sm:pt-32 lg:px-10 lg:pt-36">
       <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1fr_26rem]">
         <div className="rounded-2xl border border-white/10 bg-white/6 p-6 shadow-2xl backdrop-blur">
           <div className="inline-flex items-center gap-2 rounded-full border border-[var(--color-gold)]/30 bg-[var(--color-gold)]/10 px-3 py-1 text-[10px] uppercase tracking-[0.28em] text-[var(--color-gold-light)]">
