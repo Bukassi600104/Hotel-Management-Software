@@ -13,8 +13,8 @@ import {
   Users,
   Settings,
   LogOut,
-  Menu,
   X,
+  Crown,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
@@ -34,12 +34,19 @@ type Props = {
   adminName: string;
   adminRole: string;
   unreadCount?: number;
+  mobileOpen?: boolean;
+  onMobileOpenChange?: (open: boolean) => void;
 };
 
-export function AdminSidebar({ adminName, adminRole, unreadCount = 0 }: Props) {
+export function AdminSidebar({
+  adminName,
+  adminRole,
+  unreadCount = 0,
+  mobileOpen = false,
+  onMobileOpenChange,
+}: Props) {
   const pathname = usePathname();
   const router = useRouter();
-  const [open, setOpen] = React.useState(false);
 
   async function signOut() {
     const supabase = createClient();
@@ -53,28 +60,46 @@ export function AdminSidebar({ adminName, adminRole, unreadCount = 0 }: Props) {
 
   const content = (
     <div className="flex h-full flex-col">
-      {/* Logo */}
-      <div className="border-b border-white/8 px-6 py-5">
-        <p className="text-[10px] uppercase tracking-[0.35em] text-[#c9a961]">Hilton Euphoria</p>
-        <p className="mt-0.5 text-[10px] text-white/40">Admin Panel</p>
+      <div className="flex items-center gap-3 px-5 py-5">
+        <div className="grid size-10 place-items-center rounded-2xl bg-[#c9a961] text-lg font-semibold text-[#17181a] shadow-[0_18px_50px_rgba(201,169,97,0.24)]">
+          H
+        </div>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-white">Hilton Euphoria</p>
+          <p className="mt-0.5 text-[11px] text-white/38">Hotel operations</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => onMobileOpenChange?.(false)}
+          className="ml-auto grid size-8 place-items-center rounded-lg text-white/40 hover:bg-white/8 hover:text-white lg:hidden"
+          aria-label="Close menu"
+        >
+          <X className="size-4" />
+        </button>
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-3">
         {navItems.map(({ href, label, icon: Icon, exact }) => (
           <Link
             key={href}
             href={href}
-            onClick={() => setOpen(false)}
+            onClick={() => onMobileOpenChange?.(false)}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors",
+              "group flex items-center gap-3 rounded-2xl px-3.5 py-3 text-sm transition-all",
               isActive(href, exact)
-                ? "bg-[#c9a961]/15 text-[#c9a961]"
-                : "text-white/55 hover:bg-white/5 hover:text-white/90"
+                ? "bg-[#c9a961]/16 text-[#c9a961] shadow-[inset_0_0_0_1px_rgba(201,169,97,0.13)]"
+                : "text-white/52 hover:bg-white/[0.045] hover:text-white/88"
             )}
           >
-            <Icon className="size-4 shrink-0" />
-            <span>{label}</span>
+            <span
+              className={cn(
+                "grid size-8 shrink-0 place-items-center rounded-xl transition",
+                isActive(href, exact) ? "bg-[#c9a961]/18" : "bg-white/[0.035] group-hover:bg-white/[0.06]"
+              )}
+            >
+              <Icon className="size-4" />
+            </span>
+            <span className="truncate">{label}</span>
             {label === "Inquiries" && unreadCount > 0 && (
               <span className="ml-auto flex size-5 items-center justify-center rounded-full bg-[#c9a961] text-[10px] font-bold text-[#17181a]">
                 {unreadCount > 9 ? "9+" : unreadCount}
@@ -84,20 +109,34 @@ export function AdminSidebar({ adminName, adminRole, unreadCount = 0 }: Props) {
         ))}
       </nav>
 
-      {/* Footer */}
+      <div className="mx-4 mb-4 rounded-2xl border border-[#c9a961]/20 bg-[#c9a961]/12 p-4 shadow-[0_18px_55px_rgba(0,0,0,0.18)]">
+        <div className="grid size-9 place-items-center rounded-xl bg-[#c9a961]/18 text-[#c9a961]">
+          <Crown className="size-4" />
+        </div>
+        <p className="mt-3 text-sm font-semibold text-white">Appraisal mode</p>
+        <p className="mt-1 text-xs leading-5 text-white/48">Demo-ready operations with live admin controls.</p>
+        <Link
+          href="/admin/settings"
+          onClick={() => onMobileOpenChange?.(false)}
+          className="mt-4 inline-flex items-center rounded-xl bg-[#c9a961] px-3 py-2 text-xs font-semibold text-[#17181a] transition hover:bg-[#d4bc96]"
+        >
+          Tune settings
+        </Link>
+      </div>
+
       <div className="border-t border-white/8 px-4 py-4">
-        <div className="mb-3 flex items-center gap-3 px-2">
-          <div className="grid size-8 shrink-0 place-items-center rounded-full bg-[#c9a961]/20 text-xs font-semibold text-[#c9a961]">
+        <div className="mb-3 flex items-center gap-3 rounded-2xl bg-white/[0.035] px-3 py-3">
+          <div className="grid size-9 shrink-0 place-items-center rounded-full bg-[#c9a961]/18 text-xs font-semibold text-[#c9a961]">
             {adminName.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">
-            <p className="truncate text-xs font-medium text-white/80">{adminName}</p>
+            <p className="truncate text-xs font-semibold text-white/82">{adminName}</p>
             <p className="text-[10px] capitalize text-white/40">{adminRole.replace("_", " ")}</p>
           </div>
         </div>
         <button
           onClick={signOut}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-white/40 transition-colors hover:bg-white/5 hover:text-white/70"
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-white/42 transition-colors hover:bg-white/5 hover:text-white/75"
         >
           <LogOut className="size-4" />
           Sign out
@@ -108,33 +147,20 @@ export function AdminSidebar({ adminName, adminRole, unreadCount = 0 }: Props) {
 
   return (
     <>
-      {/* Desktop sidebar */}
-      <aside className="hidden w-60 shrink-0 border-r border-white/8 bg-[#0f1012] lg:block">
+      <aside className="hidden w-64 shrink-0 border-r border-white/8 bg-[#0d0e10] lg:block">
         {content}
       </aside>
 
-      {/* Mobile top bar */}
-      <div className="fixed inset-x-0 top-0 z-40 flex items-center justify-between border-b border-white/8 bg-[#0f1012] px-4 py-3 lg:hidden">
-        <p className="text-[11px] uppercase tracking-[0.35em] text-[#c9a961]">Euphoria Admin</p>
-        <button
-          onClick={() => setOpen(!open)}
-          className="text-white/60 hover:text-white"
-        >
-          {open ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
-      </div>
-
-      {/* Mobile drawer */}
-      {open && (
+      {mobileOpen && (
         <div
           className="fixed inset-0 z-30 bg-black/60 lg:hidden"
-          onClick={() => setOpen(false)}
+          onClick={() => onMobileOpenChange?.(false)}
         />
       )}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 w-64 border-r border-white/8 bg-[#0f1012] transition-transform lg:hidden",
-          open ? "translate-x-0" : "-translate-x-full"
+          "fixed inset-y-0 left-0 z-40 w-72 border-r border-white/8 bg-[#0d0e10] transition-transform lg:hidden",
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {content}

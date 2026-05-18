@@ -4,6 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import { Pencil, Power, PowerOff, X, Save, Plus, Trash2, AlertTriangle } from "lucide-react";
 import { formatNaira } from "@/lib/format";
+import { adminButtonClass, adminGhostButtonClass, adminInputClass, adminPanelClass } from "@/components/admin/page-shell";
 
 type Room = {
   id: string;
@@ -180,11 +181,11 @@ export function RoomsClient() {
   return (
     <>
       {/* Header with Add Room button */}
-      <div className="mt-6 flex items-center justify-between">
+      <div className={`${adminPanelClass} flex items-center justify-between p-4`}>
         <p className="text-sm text-white/40">{rooms.length} room{rooms.length !== 1 ? "s" : ""}</p>
         <button
           onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 rounded-lg bg-[#c9a961] px-4 py-2 text-xs font-semibold text-[#17181a] hover:opacity-90 transition-opacity"
+          className={adminButtonClass}
         >
           <Plus className="size-3.5" />
           Add room
@@ -194,7 +195,7 @@ export function RoomsClient() {
       {/* Create room modal */}
       {showCreate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-[#111316] border border-white/10 p-6">
+          <div className={`w-full max-w-lg max-h-[90vh] overflow-y-auto ${adminPanelClass} bg-[#111316] p-6`}>
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-base font-semibold text-white">Add new room</h3>
               <button onClick={() => { setShowCreate(false); setCreateError(null); setNewRoom(emptyNewRoom); }} className="text-white/40 hover:text-white/80">
@@ -218,7 +219,7 @@ export function RoomsClient() {
                   value={newRoom.description}
                   onChange={(e) => setNewRoom({ ...newRoom, description: e.target.value })}
                   placeholder="Room description…"
-                  className="w-full resize-none rounded-lg border border-white/10 bg-[#0f1012] px-3 py-2 text-sm text-white focus:border-[#c9a961]/40 focus:outline-none"
+                  className={`${adminInputClass} resize-none`}
                 />
               </div>
               <div>
@@ -228,7 +229,7 @@ export function RoomsClient() {
                   value={newRoom.amenities}
                   onChange={(e) => setNewRoom({ ...newRoom, amenities: e.target.value })}
                   placeholder={"Free Wi-Fi\nAir conditioning\nFlat-screen TV\nMini bar"}
-                  className="w-full resize-none rounded-lg border border-white/10 bg-[#0f1012] px-3 py-2 text-sm text-white focus:border-[#c9a961]/40 focus:outline-none"
+                  className={`${adminInputClass} resize-none`}
                 />
               </div>
             </div>
@@ -244,14 +245,14 @@ export function RoomsClient() {
               <button
                 onClick={createRoom}
                 disabled={creating}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#c9a961] py-2.5 text-xs font-semibold text-[#17181a] hover:opacity-90 disabled:opacity-50"
+                className={`${adminButtonClass} flex-1`}
               >
                 <Plus className="size-3.5" />
                 {creating ? "Creating…" : "Create room"}
               </button>
               <button
                 onClick={() => { setShowCreate(false); setCreateError(null); setNewRoom(emptyNewRoom); }}
-                className="rounded-lg border border-white/10 px-4 py-2.5 text-xs text-white/50 hover:border-white/20"
+                className={adminGhostButtonClass}
               >
                 Cancel
               </button>
@@ -263,7 +264,7 @@ export function RoomsClient() {
       {/* Delete confirmation modal */}
       {deleteId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div className="w-full max-w-sm rounded-2xl bg-[#111316] border border-white/10 p-6">
+          <div className={`w-full max-w-sm ${adminPanelClass} bg-[#111316] p-6`}>
             <div className="mx-auto mb-4 inline-grid size-12 place-items-center rounded-full bg-red-500/15 text-red-400">
               <Trash2 className="size-6" />
             </div>
@@ -281,7 +282,7 @@ export function RoomsClient() {
               </button>
               <button
                 onClick={() => setDeleteId(null)}
-                className="rounded-lg border border-white/10 px-4 py-2.5 text-xs text-white/50 hover:border-white/20"
+                className={adminGhostButtonClass}
               >
                 Cancel
               </button>
@@ -293,7 +294,7 @@ export function RoomsClient() {
       {/* Edit room modal */}
       {editingId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-[#111316] border border-white/10 p-6">
+          <div className={`w-full max-w-lg max-h-[90vh] overflow-y-auto ${adminPanelClass} bg-[#111316] p-6`}>
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-base font-semibold text-white">Edit room</h3>
               <button onClick={cancelEdit} className="text-white/40 hover:text-white/80">
@@ -315,7 +316,7 @@ export function RoomsClient() {
                   rows={3}
                   value={editForm.description ?? ""}
                   onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                  className="w-full resize-none rounded-lg border border-white/10 bg-[#0f1012] px-3 py-2 text-sm text-white focus:border-[#c9a961]/40 focus:outline-none"
+                  className={`${adminInputClass} resize-none`}
                 />
               </div>
               <div>
@@ -324,7 +325,7 @@ export function RoomsClient() {
                   rows={4}
                   value={(editForm.amenities ?? []).join("\n")}
                   onChange={(e) => setEditForm({ ...editForm, amenities: e.target.value.split("\n").filter(Boolean) })}
-                  className="w-full resize-none rounded-lg border border-white/10 bg-[#0f1012] px-3 py-2 text-sm text-white focus:border-[#c9a961]/40 focus:outline-none"
+                  className={`${adminInputClass} resize-none`}
                 />
               </div>
             </div>
@@ -333,14 +334,14 @@ export function RoomsClient() {
               <button
                 onClick={saveEdit}
                 disabled={saving}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#c9a961] py-2.5 text-xs font-semibold text-[#17181a] hover:opacity-90 disabled:opacity-50"
+                className={`${adminButtonClass} flex-1`}
               >
                 <Save className="size-3.5" />
                 {saving ? "Saving…" : "Save changes"}
               </button>
               <button
                 onClick={cancelEdit}
-                className="rounded-lg border border-white/10 px-4 py-2.5 text-xs text-white/50 hover:border-white/20"
+                className={adminGhostButtonClass}
               >
                 Cancel
               </button>
@@ -350,12 +351,12 @@ export function RoomsClient() {
       )}
 
       {/* Room cards */}
-      <div className="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {rooms.map((room) => (
           <div
             key={room.id}
-            className={`rounded-xl border bg-white/3 overflow-hidden ${
-              room.is_active ? "border-white/8" : "border-white/4 opacity-60"
+            className={`overflow-hidden ${adminPanelClass} ${
+              room.is_active ? "" : "opacity-60"
             }`}
           >
             {room.thumbnail_url && (
@@ -394,7 +395,7 @@ export function RoomsClient() {
               <div className="mt-3 flex gap-2">
                 <button
                   onClick={() => startEdit(room)}
-                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-white/10 py-2 text-xs text-white/55 hover:border-white/20 hover:text-white/80 transition-colors"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.025] py-2 text-xs text-white/58 transition-colors hover:border-white/20 hover:text-white/84"
                 >
                   <Pencil className="size-3.5" />
                   Edit
@@ -403,8 +404,8 @@ export function RoomsClient() {
                   onClick={() => toggleActive(room.id, room.is_active)}
                   className={`flex items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs transition-colors ${
                     room.is_active !== false
-                      ? "border-amber-500/20 text-amber-400/60 hover:border-amber-500/40 hover:text-amber-400"
-                      : "border-emerald-500/20 text-emerald-400/60 hover:border-emerald-500/40 hover:text-emerald-400"
+                      ? "border-amber-500/20 bg-amber-500/5 text-amber-400/70 hover:border-amber-500/40 hover:text-amber-400"
+                      : "border-emerald-500/20 bg-emerald-500/5 text-emerald-400/70 hover:border-emerald-500/40 hover:text-emerald-400"
                   }`}
                 >
                   {room.is_active !== false ? <PowerOff className="size-3.5" /> : <Power className="size-3.5" />}
@@ -423,7 +424,7 @@ export function RoomsClient() {
         ))}
 
         {rooms.length === 0 && (
-          <div className="col-span-full rounded-xl border border-white/8 bg-white/3 p-12 text-center">
+          <div className={`col-span-full ${adminPanelClass} p-12 text-center`}>
             <p className="text-sm text-white/30">No rooms yet. Click &quot;Add room&quot; to create the first one.</p>
           </div>
         )}
@@ -450,7 +451,7 @@ function EditField({
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-white/10 bg-[#0f1012] px-3 py-2 text-sm text-white focus:border-[#c9a961]/40 focus:outline-none"
+        className={adminInputClass}
       />
     </div>
   );
@@ -477,7 +478,7 @@ function CreateField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-white/10 bg-[#0f1012] px-3 py-2 text-sm text-white placeholder:text-white/20 focus:border-[#c9a961]/40 focus:outline-none"
+        className={adminInputClass}
       />
     </div>
   );

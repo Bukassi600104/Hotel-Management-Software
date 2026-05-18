@@ -1,15 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { AdminSidebar } from "@/components/admin/sidebar";
+import { AdminShell } from "@/components/admin/admin-shell";
 import { hasSupabasePublicEnv } from "@/lib/supabase/config";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   if (!hasSupabasePublicEnv()) {
     return (
-      <div className="flex min-h-screen bg-[#111316] text-white">
-        <AdminSidebar adminName="Demo Manager" adminRole="super_admin" unreadCount={0} />
-        <main className="flex-1 overflow-auto pt-14 lg:pt-0">{children}</main>
-      </div>
+      <AdminShell adminName="Demo Manager" adminRole="super_admin" unreadCount={0}>
+        {children}
+      </AdminShell>
     );
   }
 
@@ -41,13 +40,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div className="flex min-h-screen bg-[#111316] text-white">
-      <AdminSidebar
-        adminName={adminUser.full_name ?? user.email ?? "Admin"}
-        adminRole={adminUser.role ?? "staff"}
-        unreadCount={unreadCount ?? 0}
-      />
-      <main className="flex-1 overflow-auto pt-14 lg:pt-0">{children}</main>
-    </div>
+    <AdminShell
+      adminName={adminUser.full_name ?? user.email ?? "Admin"}
+      adminRole={adminUser.role ?? "staff"}
+      unreadCount={unreadCount ?? 0}
+    >
+      {children}
+    </AdminShell>
   );
 }

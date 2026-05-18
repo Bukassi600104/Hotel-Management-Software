@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireActiveAdmin } from "@/lib/admin/auth";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
 
 export async function GET(req: NextRequest) {
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json({ inquiries: [], total: 0 });
+  }
+
   const auth = await requireActiveAdmin();
   if (auth.error) return auth.error;
 
@@ -27,6 +32,10 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json({ success: true, demo: true });
+  }
+
   const auth = await requireActiveAdmin();
   if (auth.error) return auth.error;
 
@@ -42,6 +51,10 @@ export async function PATCH(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json({ success: true, demo: true });
+  }
+
   const auth = await requireActiveAdmin(["super_admin", "manager"]);
   if (auth.error) return auth.error;
 

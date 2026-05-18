@@ -1,22 +1,21 @@
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
 import { UsersClient } from "@/components/admin/users-client";
+import { AdminPageShell, adminPanelClass } from "@/components/admin/page-shell";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
-import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminUsersPage() {
   if (!hasSupabaseAdminEnv()) {
     return (
-      <div className="p-6 lg:p-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-white">Users</h1>
-        <p className="mt-1 text-sm text-white/40">Manage admin accounts and roles.</p>
+      <AdminPageShell title="Users" description="Manage admin accounts, roles, and staff access.">
         <Suspense>
           <UsersClient />
         </Suspense>
-      </div>
+      </AdminPageShell>
     );
   }
 
@@ -35,22 +34,21 @@ export default async function AdminUsersPage() {
 
   if (adminUser?.role !== "super_admin") {
     return (
-      <div className="p-6 lg:p-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-white">Users</h1>
-        <p className="mt-4 text-sm text-white/40">
-          Only super admins can manage user accounts. Contact your administrator.
-        </p>
-      </div>
+      <AdminPageShell title="Users" description="Manage admin accounts, roles, and staff access.">
+        <div className={`${adminPanelClass} p-6`}>
+          <p className="text-sm text-white/52">
+            Only super admins can manage user accounts. Contact your administrator.
+          </p>
+        </div>
+      </AdminPageShell>
     );
   }
 
   return (
-    <div className="p-6 lg:p-8">
-      <h1 className="text-2xl font-semibold tracking-tight text-white">Users</h1>
-      <p className="mt-1 text-sm text-white/40">Manage admin accounts and roles.</p>
+    <AdminPageShell title="Users" description="Manage admin accounts, roles, and staff access.">
       <Suspense>
         <UsersClient />
       </Suspense>
-    </div>
+    </AdminPageShell>
   );
 }

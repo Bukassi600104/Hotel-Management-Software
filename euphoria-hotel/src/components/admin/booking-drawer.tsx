@@ -14,6 +14,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { formatNaira, formatDateLong, formatDateShort } from "@/lib/format";
+import { adminGhostButtonClass, adminInputClass } from "@/components/admin/page-shell";
 
 type Booking = {
   id: string;
@@ -119,9 +120,9 @@ export function BookingDrawer({
       <div className="fixed inset-0 z-40 bg-black/60" onClick={onClose} />
 
       {/* Drawer */}
-      <div className="fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l border-white/8 bg-[#111316] shadow-2xl sm:max-w-lg overflow-y-auto">
+      <div className="fixed inset-y-0 right-0 z-50 flex w-full flex-col overflow-y-auto border-l border-white/8 bg-[#101113] shadow-2xl sm:max-w-xl">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/8 px-5 py-4">
+        <div className="flex items-center justify-between border-b border-white/8 bg-white/[0.025] px-5 py-4">
           <div>
             <p className="font-mono text-sm text-[#c9a961]">
               {booking?.booking_reference ?? "Loading…"}
@@ -182,7 +183,7 @@ export function BookingDrawer({
             {/* Pricing */}
             <section>
               <p className="mb-3 text-[10px] uppercase tracking-[0.3em] text-white/35">Payment</p>
-              <div className="rounded-lg border border-white/8 bg-white/3 p-4 space-y-2 text-sm">
+              <div className="space-y-2 rounded-2xl border border-white/8 bg-white/[0.035] p-4 text-sm">
                 <div className="flex justify-between text-white/55">
                   <span>{formatNaira(booking.price_per_night)} × {booking.total_nights} nights</span>
                   <span>{formatNaira(booking.subtotal)}</span>
@@ -226,12 +227,12 @@ export function BookingDrawer({
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Add a note visible only to staff…"
-                className="w-full resize-none rounded-lg border border-white/10 bg-white/4 p-3 text-sm text-white/80 placeholder:text-white/20 focus:border-[#c9a961]/40 focus:outline-none"
+                className={`${adminInputClass} resize-none`}
               />
               <button
                 onClick={saveNotes}
                 disabled={savingNotes}
-                className="mt-2 rounded-lg bg-white/8 px-3 py-1.5 text-xs text-white/60 hover:bg-white/12 disabled:opacity-40"
+                className={`${adminGhostButtonClass} mt-2 px-3 py-1.5`}
               >
                 {savingNotes ? "Saving…" : "Save notes"}
               </button>
@@ -257,7 +258,7 @@ export function BookingDrawer({
                   <button
                     disabled={actionLoading}
                     onClick={() => performAction("check_in")}
-                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500/15 py-2.5 text-sm font-medium text-emerald-400 hover:bg-emerald-500/25 disabled:opacity-40 transition-colors"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500/15 py-2.5 text-sm font-medium text-emerald-400 transition-colors hover:bg-emerald-500/25 disabled:opacity-40"
                   >
                     <LogIn className="size-4" />
                     Mark as Checked In
@@ -268,7 +269,7 @@ export function BookingDrawer({
                   <button
                     disabled={actionLoading}
                     onClick={() => performAction("check_out")}
-                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-sky-500/15 py-2.5 text-sm font-medium text-sky-400 hover:bg-sky-500/25 disabled:opacity-40 transition-colors"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-sky-500/15 py-2.5 text-sm font-medium text-sky-400 transition-colors hover:bg-sky-500/25 disabled:opacity-40"
                   >
                     <LogOut className="size-4" />
                     Mark as Checked Out
@@ -278,7 +279,7 @@ export function BookingDrawer({
                 {canCancel && (
                   <button
                     onClick={() => setShowCancelDialog(true)}
-                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-red-500/20 py-2.5 text-sm text-red-400/70 hover:border-red-500/40 hover:text-red-400 transition-colors"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-500/20 bg-red-500/5 py-2.5 text-sm text-red-400/70 transition-colors hover:border-red-500/40 hover:text-red-400"
                   >
                     <AlertTriangle className="size-4" />
                     Cancel booking
@@ -298,7 +299,7 @@ export function BookingDrawer({
       {showCancelDialog && (
         <>
           <div className="fixed inset-0 z-50 bg-black/70" />
-          <div className="fixed inset-x-4 top-1/2 z-50 -translate-y-1/2 rounded-xl border border-white/10 bg-[#1a1c20] p-6 shadow-2xl sm:inset-x-auto sm:left-1/2 sm:w-full sm:max-w-md sm:-translate-x-1/2">
+          <div className="fixed inset-x-4 top-1/2 z-50 -translate-y-1/2 rounded-[1.35rem] border border-white/10 bg-[#1a1c20] p-6 shadow-2xl sm:inset-x-auto sm:left-1/2 sm:w-full sm:max-w-md sm:-translate-x-1/2">
             <h2 className="text-base font-semibold text-white">Cancel this booking?</h2>
             <p className="mt-2 text-sm text-white/50">
               A cancellation email will be sent to the guest. This action cannot be undone.
@@ -310,13 +311,13 @@ export function BookingDrawer({
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
                 placeholder="e.g. Guest requested cancellation"
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder:text-white/25 focus:border-[#c9a961]/40 focus:outline-none"
+                className={adminInputClass}
               />
             </div>
             <div className="mt-5 flex gap-3">
               <button
                 onClick={() => setShowCancelDialog(false)}
-                className="flex-1 rounded-lg border border-white/10 py-2.5 text-sm text-white/60 hover:border-white/20"
+                className={`${adminGhostButtonClass} flex-1`}
               >
                 Keep booking
               </button>

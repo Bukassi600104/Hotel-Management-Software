@@ -2,8 +2,30 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { z } from "zod";
 import { requireActiveAdmin } from "@/lib/admin/auth";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
+
+const demoSettings = {
+  hotel_name: "Hilton Euphoria Hotel",
+  short_name: "Hilton Euphoria",
+  tagline: "Unparalleled Comfort and Extraordinary Hospitality",
+  email: "booking@hiltoneuphoriahotel.com",
+  address: "Plot 18, 21/22 Road, Gowon Estate, Egbeda, Lagos State, Nigeria",
+  address_short: "Gowon Estate, Egbeda, Lagos",
+  phone_reservation: "+234 806 026 0260",
+  phone_front_desk: "+234 808 081 4342",
+  phone_concierge: "+234 905 973 7707",
+  phone_events: "+234 809 999 0143",
+  whatsapp: "2348060260260",
+  check_in_time: "3:00 PM",
+  check_out_time: "12:00 PM",
+  vat_rate: 7.5,
+  cancellation_policy:
+    "Free cancellation up to 48 hours before check-in. Cancellations within 48 hours are subject to a one-night charge.",
+};
 
 export async function GET() {
+  if (!hasSupabaseAdminEnv()) return NextResponse.json(demoSettings);
+
   const auth = await requireActiveAdmin();
   if (auth.error) return auth.error;
 
@@ -33,6 +55,10 @@ const settingsSchema = z.object({
 });
 
 export async function PATCH(request: NextRequest) {
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json({ ok: true, demo: true });
+  }
+
   const auth = await requireActiveAdmin(["super_admin"]);
   if (auth.error) return auth.error;
 

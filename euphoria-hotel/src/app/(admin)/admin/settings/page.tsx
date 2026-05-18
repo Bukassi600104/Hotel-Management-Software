@@ -3,6 +3,12 @@
 import * as React from "react";
 import { Save, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  AdminPageShell,
+  adminButtonClass,
+  adminInputClass,
+  adminPanelClass,
+} from "@/components/admin/page-shell";
 
 type Settings = {
   hotel_name: string;
@@ -76,8 +82,7 @@ export default function AdminSettingsPage() {
 
   if (error || !settings) {
     return (
-      <div className="p-6 lg:p-8">
-        <h1 className="text-2xl font-semibold tracking-tight text-white">Settings</h1>
+      <AdminPageShell title="Settings" description="Hotel information shown on the public site and in email templates.">
         <div className="mt-4 rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3">
           <p className="text-sm text-red-300">
             {error ?? "Could not load settings."} — Make sure the{" "}
@@ -108,18 +113,14 @@ INSERT INTO settings (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
 ALTER TABLE settings ENABLE ROW LEVEL SECURITY;`}
           </pre>
         </div>
-      </div>
+      </AdminPageShell>
     );
   }
 
   return (
-    <div className="p-6 lg:p-8">
-      <h1 className="text-2xl font-semibold tracking-tight text-white">Settings</h1>
-      <p className="mt-1 text-sm text-white/40">
-        Hotel information shown on the public site and in emails.
-      </p>
-
-      <form onSubmit={handleSave} className="mt-6 max-w-xl space-y-5">
+    <AdminPageShell title="Settings" description="Hotel information shown on the public site and in email templates.">
+      <form onSubmit={handleSave} className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="space-y-5">
         <Section title="Hotel identity">
           <Field label="Hotel name">
             <input
@@ -235,12 +236,18 @@ ALTER TABLE settings ENABLE ROW LEVEL SECURITY;`}
             />
           </Field>
         </Section>
+        </div>
 
-        <div className="pt-2">
+        <div className="xl:sticky xl:top-24 xl:self-start">
+          <div className={`${adminPanelClass} p-5`}>
+            <p className="text-sm font-semibold text-white/88">Publishing controls</p>
+            <p className="mt-2 text-sm leading-6 text-white/42">
+              Changes update the public hotel details and the operational defaults used by the booking engine.
+            </p>
           <button
             type="submit"
             disabled={saving}
-            className="flex items-center gap-2 rounded-lg bg-[#c9a961] px-6 py-2.5 text-xs font-semibold uppercase tracking-wide text-[#17181a] transition-opacity hover:opacity-90 disabled:opacity-60"
+            className={`${adminButtonClass} mt-5 w-full`}
           >
             {saving ? (
               <Loader2 className="size-4 animate-spin" />
@@ -251,19 +258,19 @@ ALTER TABLE settings ENABLE ROW LEVEL SECURITY;`}
             )}
             {saved ? "Saved" : "Save changes"}
           </button>
+          </div>
         </div>
       </form>
-    </div>
+    </AdminPageShell>
   );
 }
 
-const inputCls =
-  "w-full rounded-lg border border-white/10 bg-white/4 px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:border-[#c9a961]/40 focus:outline-none focus:ring-1 focus:ring-[#c9a961]/20 transition-colors";
+const inputCls = adminInputClass;
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-white/8 bg-white/3 p-5">
-      <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-[#c9a961]/70">
+    <div className={`${adminPanelClass} p-5`}>
+      <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.24em] text-[#c9a961]/78">
         {title}
       </h2>
       <div className="space-y-3">{children}</div>

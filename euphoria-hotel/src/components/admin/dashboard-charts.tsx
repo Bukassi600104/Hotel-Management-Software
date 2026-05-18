@@ -14,6 +14,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import { adminPanelClass } from "@/components/admin/page-shell";
 
 type StatsData = {
   monthlyRevenue: { month: string; revenue: number }[];
@@ -41,7 +42,7 @@ export function DashboardCharts() {
 
   if (loading) {
     return (
-      <div className="mt-8 flex justify-center py-12">
+      <div className="flex justify-center py-12">
         <div className="size-6 animate-spin rounded-full border-2 border-white/20 border-t-[#c9a961]" />
       </div>
     );
@@ -56,12 +57,12 @@ export function DashboardCharts() {
   ];
 
   return (
-    <div className="mt-8 grid gap-6 lg:grid-cols-2">
+    <div className="grid gap-5 lg:grid-cols-2">
       {/* Monthly Revenue */}
-      <div className="rounded-xl border border-white/8 bg-white/4 p-5">
-        <h3 className="text-sm font-semibold text-white/80">Monthly Revenue (last 6 months)</h3>
-        <p className="mt-0.5 text-xs text-white/35">Total amount from confirmed bookings</p>
-        <div className="mt-4 h-52">
+      <div className={`${adminPanelClass} p-5`}>
+        <h3 className="text-sm font-semibold text-white/88">Monthly revenue</h3>
+        <p className="mt-1 text-xs text-white/38">Total amount from confirmed bookings over the last 6 months.</p>
+        <div className="mt-4 h-52 min-w-0">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data.monthlyRevenue} barCategoryGap="28%">
               <XAxis
@@ -86,17 +87,17 @@ export function DashboardCharts() {
                 labelStyle={{ color: "#ffffff80" }}
                 formatter={(value) => [`₦${Number(value).toLocaleString()}`, "Revenue"]}
               />
-              <Bar dataKey="revenue" fill="#c9a961" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="revenue" fill="#c9a961" radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       {/* Occupancy Rate Trend */}
-      <div className="rounded-xl border border-white/8 bg-white/4 p-5">
-        <h3 className="text-sm font-semibold text-white/80">Occupancy Rate (last 6 months)</h3>
-        <p className="mt-0.5 text-xs text-white/35">Percentage of booked room-nights</p>
-        <div className="mt-4 h-52">
+      <div className={`${adminPanelClass} p-5`}>
+        <h3 className="text-sm font-semibold text-white/88">Occupancy trend</h3>
+        <p className="mt-1 text-xs text-white/38">Percentage of booked room-nights over the last 6 months.</p>
+        <div className="mt-4 h-52 min-w-0">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data.monthlyOccupancy}>
               <XAxis
@@ -136,11 +137,11 @@ export function DashboardCharts() {
       </div>
 
       {/* Booking Type Breakdown */}
-      <div className="rounded-xl border border-white/8 bg-white/4 p-5 lg:col-span-2">
-        <h3 className="text-sm font-semibold text-white/80">Booking Type Breakdown (last 6 months)</h3>
-        <p className="mt-0.5 text-xs text-white/35">Online payments vs pay-at-check-in reservations</p>
+      <div className={`${adminPanelClass} p-5 lg:col-span-2`}>
+        <h3 className="text-sm font-semibold text-white/88">Booking type breakdown</h3>
+        <p className="mt-1 text-xs text-white/38">Online payments vs pay-at-check-in reservations.</p>
         <div className="mt-4 flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:gap-10">
-          <div className="h-44 w-44">
+          <div className="h-44 w-44 min-w-44">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
