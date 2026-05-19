@@ -64,6 +64,7 @@ export function BookingDrawer({
 }) {
   const [booking, setBooking] = React.useState<Booking | null>(null);
   const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
   const [notes, setNotes] = React.useState("");
   const [savingNotes, setSavingNotes] = React.useState(false);
   const [showCancelDialog, setShowCancelDialog] = React.useState(false);
@@ -72,11 +73,22 @@ export function BookingDrawer({
   const [actionLoading, setActionLoading] = React.useState(false);
 
   React.useEffect(() => {
+    setLoading(true);
+    setError(null);
     fetch(`/api/admin/bookings/${bookingId}`)
-      .then((r) => r.json())
+      .then(async (r) => {
+        const data = await r.json().catch(() => null);
+        if (!r.ok) throw new Error(data?.error ?? "Could not load booking.");
+        return data;
+      })
       .then((data) => {
         setBooking(data);
         setNotes(data.internal_notes ?? "");
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err instanceof Error ? err.message : "Could not load booking.");
+        setBooking(null);
         setLoading(false);
       });
   }, [bookingId]);
@@ -141,6 +153,16 @@ export function BookingDrawer({
         {loading ? (
           <div className="flex flex-1 items-center justify-center">
             <div className="size-6 animate-spin rounded-full border-2 border-white/20 border-t-[#c9a961]" />
+          </div>
+        ) : error ? (
+          <div className="flex flex-1 items-center justify-center p-5">
+            <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-5 text-center">
+              <p className="text-sm font-semibold text-red-200">Booking could not load</p>
+              <p className="mt-2 text-sm text-red-200/70">{error}</p>
+              <button onClick={onClose} className={`${adminGhostButtonClass} mt-4`}>
+                Close
+              </button>
+            </div>
           </div>
         ) : booking ? (
           <div className="flex-1 space-y-6 p-5">

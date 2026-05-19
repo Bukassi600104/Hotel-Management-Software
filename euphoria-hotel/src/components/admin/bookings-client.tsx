@@ -59,19 +59,35 @@ export function BookingsClient() {
   const [selectedId, setSelectedId] = React.useState<string | null>(searchParams.get("id"));
 
   const limit = 20;
+  const queryString = searchParams.toString();
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(queryString);
+    setSearch(params.get("search") ?? "");
+    setStatus(params.get("status") ?? "all");
+    setPage(Number(params.get("page") ?? "1"));
+    setSelectedId(params.get("id"));
+  }, [queryString]);
 
   const fetchBookings = React.useCallback(async () => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (search) params.set("search", search);
-    if (status !== "all") params.set("status", status);
-    params.set("page", String(page));
+    try {
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      if (status !== "all") params.set("status", status);
+      params.set("page", String(page));
 
-    const res = await fetch(`/api/admin/bookings?${params.toString()}`);
-    const data = await res.json();
-    setBookings(data.bookings ?? []);
-    setTotal(data.total ?? 0);
-    setLoading(false);
+      const res = await fetch(`/api/admin/bookings?${params.toString()}`);
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(data?.error ?? "Failed to load bookings.");
+      setBookings(data?.bookings ?? []);
+      setTotal(data?.total ?? 0);
+    } catch {
+      setBookings([]);
+      setTotal(0);
+    } finally {
+      setLoading(false);
+    }
   }, [search, status, page]);
 
   React.useEffect(() => {

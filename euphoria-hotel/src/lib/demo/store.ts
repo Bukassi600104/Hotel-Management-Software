@@ -162,6 +162,10 @@ export function listDemoBookings() {
   return demoStore().bookings;
 }
 
+export function findDemoBookingById(id: string) {
+  return demoStore().bookings.find((booking) => booking.id === id);
+}
+
 export function findDemoBooking(reference: string, email?: string) {
   return demoStore().bookings.find(
     (booking) =>
@@ -178,4 +182,3 @@ export function cancelDemoBooking(reference: string, email: string, reason?: str
   booking.cancellation_reason = reason ?? "Cancelled by guest";
   return booking;
 }
-
