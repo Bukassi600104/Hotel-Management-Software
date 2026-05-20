@@ -14,15 +14,14 @@ import { FacilityCard } from "@/components/public/facility-card";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/reveal";
 import { CountUp } from "@/components/motion/count-up";
 import { facilities } from "@/lib/data/facilities";
+import { getCmsPage } from "@/lib/cms/content";
+import { textContent } from "@/lib/cms/defaults";
 
 export const metadata: Metadata = {
   title: "About Us",
   description:
     "Quietly placed in Gowon Estate, Egbeda, Euphoria has spent a decade refining a single idea — that hospitality, done patiently, is still the most generous thing a building can offer.",
 };
-
-const heroImage =
-  "/hotel-assets/about.webp";
 
 const values = [
   {
@@ -47,14 +46,15 @@ const values = [
   },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const cms = await getCmsPage("about");
   return (
     <>
       <PageHero
-        eyebrow="Our story"
-        title="A decade of quiet hospitality."
-        description="Euphoria opened in 2014 with a small team and a single idea: that a hotel should feel like a generous host, not a transactional one."
-        image={heroImage}
+        eyebrow={cms.hero_eyebrow}
+        title={cms.hero_title}
+        description={cms.hero_description}
+        image={cms.hero_image}
         crumbs={[{ label: "About" }]}
       />
 
@@ -110,10 +110,10 @@ export default function AboutPage() {
             <Reveal variant="fade-up" className="space-y-6">
               <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] text-[var(--color-gold-dark)]">
                 <span className="block h-px w-10 bg-[var(--color-gold)]" />
-                Our story
+                {textContent(cms, "storyEyebrow", "Our story")}
               </span>
               <h2 className="font-heading text-4xl leading-[1.05] tracking-tight text-balance sm:text-5xl">
-                Built slowly, on a quiet street.
+                {textContent(cms, "storyTitle", "Built slowly, on a quiet street.")}
               </h2>
               <div className="space-y-4 text-base leading-relaxed text-foreground/85 sm:text-lg">
                 <p>
@@ -217,12 +217,14 @@ export default function AboutPage() {
         <div className="relative mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.4fr_1fr] lg:items-center lg:px-10">
           <Reveal variant="fade-up" className="space-y-5">
             <h2 className="font-heading text-4xl leading-[1.05] tracking-tight text-balance sm:text-5xl lg:text-6xl">
-              Come and see for yourself.
+              {textContent(cms, "ctaTitle", "Come and see for yourself.")}
             </h2>
             <p className="max-w-xl text-white/70 text-pretty">
-              Book a room, drop in for breakfast, or hold your next gathering
-              in our conference room. We are quietly here, on a quiet street,
-              with the lights on.
+              {textContent(
+                cms,
+                "ctaBody",
+                "Book a room, drop in for breakfast, or hold your next gathering in our conference room."
+              )}
             </p>
           </Reveal>
           <Reveal

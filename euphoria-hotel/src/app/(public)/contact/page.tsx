@@ -12,15 +12,14 @@ import {
   YoutubeIcon,
 } from "@/components/public/social-icons";
 import { siteConfig } from "@/lib/site";
+import { getCmsPage } from "@/lib/cms/content";
+import { textContent } from "@/lib/cms/defaults";
 
 export const metadata: Metadata = {
   title: "Contact",
   description:
     "Get in touch with Euphoria Hotel. Reservations, events, or a question for the front desk — we are usually quick to reply.",
 };
-
-const heroImage =
-  "/hotel-assets/about.webp";
 
 const socialMap = {
   facebook: FacebookIcon,
@@ -30,14 +29,15 @@ const socialMap = {
   youtube: YoutubeIcon,
 } as const;
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const cms = await getCmsPage("contact");
   return (
     <>
       <PageHero
-        eyebrow="Get in touch"
-        title="We are quietly here, on a quiet street."
-        description="Send a note, call the front desk, or drop in unannounced. The reception is staffed twenty-four hours a day."
-        image={heroImage}
+        eyebrow={cms.hero_eyebrow}
+        title={cms.hero_title}
+        description={cms.hero_description}
+        image={cms.hero_image}
         crumbs={[{ label: "Contact" }]}
       />
 
@@ -48,10 +48,10 @@ export default function ContactPage() {
             <div>
               <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] text-[var(--color-gold-dark)]">
                 <span className="block h-px w-10 bg-[var(--color-gold)]" />
-                Visit us
+                {textContent(cms, "infoEyebrow", "Visit us")}
               </span>
               <h2 className="mt-3 font-heading text-4xl leading-[1.05] tracking-tight text-balance sm:text-5xl">
-                Where to find us.
+                {textContent(cms, "infoTitle", "Where to find us.")}
               </h2>
             </div>
 
@@ -88,7 +88,7 @@ export default function ContactPage() {
             {/* Socials */}
             <div className="space-y-4 pt-4">
               <div className="text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
-                Stay in touch
+                {textContent(cms, "socialTitle", "Stay in touch")}
               </div>
               <div className="flex items-center gap-2">
                 {siteConfig.socials.map((s) => {

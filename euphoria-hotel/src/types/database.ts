@@ -248,6 +248,91 @@ export type Database = {
         }
         Relationships: []
       }
+      cms_pages: {
+        Row: {
+          content: Json
+          hero_description: string
+          hero_eyebrow: string
+          hero_image: string
+          hero_title: string
+          published_at: string | null
+          seo_description: string
+          seo_title: string
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          content?: Json
+          hero_description?: string
+          hero_eyebrow?: string
+          hero_image?: string
+          hero_title?: string
+          published_at?: string | null
+          seo_description?: string
+          seo_title?: string
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          content?: Json
+          hero_description?: string
+          hero_eyebrow?: string
+          hero_image?: string
+          hero_title?: string
+          published_at?: string | null
+          seo_description?: string
+          seo_title?: string
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cms_pages_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cms_site_settings: {
+        Row: {
+          content: Json
+          key: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          content?: Json
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          content?: Json
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cms_site_settings_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rooms: {
         Row: {
           amenities: string[] | null

@@ -5,8 +5,8 @@ import { hasSupabasePublicEnv } from "@/lib/supabase/config";
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Only guard admin routes
-  if (!pathname.startsWith("/admin")) {
+  // Only guard admin and CMS routes
+  if (!pathname.startsWith("/admin") && !pathname.startsWith("/cms")) {
     return NextResponse.next();
   }
 
@@ -62,5 +62,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/cms/:path*"],
 };
