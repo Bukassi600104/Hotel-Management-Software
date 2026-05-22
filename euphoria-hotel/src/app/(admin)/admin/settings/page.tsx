@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Save, Check, Loader2 } from "lucide-react";
+import { Save, Check, Loader2, Eye, EyeOff, KeyRound, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import {
   AdminPageShell,
@@ -9,6 +9,7 @@ import {
   adminInputClass,
   adminPanelClass,
 } from "@/components/admin/page-shell";
+import { createClient } from "@/lib/supabase/client";
 
 type Settings = {
   hotel_name: string;
@@ -34,6 +35,13 @@ export default function AdminSettingsPage() {
   const [saving, setSaving] = React.useState(false);
   const [saved, setSaved] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [passwordState, setPasswordState] = React.useState({
+    current: "",
+    next: "",
+    confirm: "",
+  });
+  const [showPasswords, setShowPasswords] = React.useState(false);
+  const [changingPassword, setChangingPassword] = React.useState(false);
 
   React.useEffect(() => {
     fetch("/api/admin/settings")
@@ -69,6 +77,71 @@ export default function AdminSettingsPage() {
       toast.error(err instanceof Error ? err.message : "Save failed");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handlePasswordChange(e: React.FormEvent) {
+    e.preventDefault();
+    const currentPassword = passwordState.current.trim();
+    const nextPassword = passwordState.next.trim();
+    const confirmPassword = passwordState.confirm.trim();
+
+    if (!currentPassword || !nextPassword || !confirmPassword) {
+      toast.error("Enter your current password and the new password.");
+      return;
+    }
+    if (nextPassword !== confirmPassword) {
+      toast.error("The new passwords do not match.");
+      return;
+    }
+    if (nextPassword.length < 12) {
+      toast.error("Use at least 12 characters for the new password.");
+      return;
+    }
+    if (!/[a-z]/.test(nextPassword) || !/[A-Z]/.test(nextPassword) || !/\d/.test(nextPassword) || !/[^A-Za-z0-9]/.test(nextPassword)) {
+      toast.error("Use uppercase, lowercase, a number, and a symbol.");
+      return;
+    }
+    if (nextPassword === currentPassword) {
+      toast.error("Choose a new password that is different from the current password.");
+      return;
+    }
+
+    setChangingPassword(true);
+    try {
+      const supabase = createClient();
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user?.email) {
+        throw new Error("Your admin session has expired. Please sign in again.");
+      }
+
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: currentPassword,
+      });
+
+      if (signInError) {
+        throw new Error("Current password is incorrect.");
+      }
+
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: nextPassword,
+      });
+
+      if (updateError) {
+        throw new Error(updateError.message);
+      }
+
+      setPasswordState({ current: "", next: "", confirm: "" });
+      toast.success("Password changed. Use the new password next time you sign in.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Password change failed.");
+    } finally {
+      setChangingPassword(false);
     }
   }
 
@@ -119,8 +192,9 @@ ALTER TABLE settings ENABLE ROW LEVEL SECURITY;`}
 
   return (
     <AdminPageShell title="Settings" description="Hotel information shown on the public site and in email templates.">
-      <form onSubmit={handleSave} className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
         <div className="space-y-5">
+        <form id="hotel-settings-form" onSubmit={handleSave} className="space-y-5">
         <Section title="Hotel identity">
           <Field label="Hotel name">
             <input
@@ -236,9 +310,10 @@ ALTER TABLE settings ENABLE ROW LEVEL SECURITY;`}
             />
           </Field>
         </Section>
+        </form>
         </div>
 
-        <div className="xl:sticky xl:top-24 xl:self-start">
+        <div className="space-y-5 xl:sticky xl:top-24 xl:self-start">
           <div className={`${adminPanelClass} p-5`}>
             <p className="text-sm font-semibold text-white/88">Publishing controls</p>
             <p className="mt-2 text-sm leading-6 text-white/42">
@@ -246,6 +321,7 @@ ALTER TABLE settings ENABLE ROW LEVEL SECURITY;`}
             </p>
           <button
             type="submit"
+            form="hotel-settings-form"
             disabled={saving}
             className={`${adminButtonClass} mt-5 w-full`}
           >
@@ -259,8 +335,70 @@ ALTER TABLE settings ENABLE ROW LEVEL SECURITY;`}
             {saved ? "Saved" : "Save changes"}
           </button>
           </div>
+
+          <form onSubmit={handlePasswordChange} className={`${adminPanelClass} p-5`}>
+            <div className="flex items-start gap-3">
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#c9a961]/14 text-[#c9a961]">
+                <KeyRound className="size-4" />
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-white/88">Change admin password</p>
+                <p className="mt-1 text-sm leading-6 text-white/42">
+                  Use this immediately after handover so only the hotel team knows the live admin credentials.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-5 space-y-3">
+              <PasswordField
+                label="Current password"
+                value={passwordState.current}
+                show={showPasswords}
+                onChange={(value) => setPasswordState((prev) => ({ ...prev, current: value }))}
+              />
+              <PasswordField
+                label="New password"
+                value={passwordState.next}
+                show={showPasswords}
+                autoComplete="new-password"
+                onChange={(value) => setPasswordState((prev) => ({ ...prev, next: value }))}
+              />
+              <PasswordField
+                label="Confirm new password"
+                value={passwordState.confirm}
+                show={showPasswords}
+                autoComplete="new-password"
+                onChange={(value) => setPasswordState((prev) => ({ ...prev, confirm: value }))}
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowPasswords((value) => !value)}
+              className="mt-3 inline-flex items-center gap-2 text-xs text-white/45 hover:text-white/75"
+            >
+              {showPasswords ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
+              {showPasswords ? "Hide passwords" : "Show passwords"}
+            </button>
+
+            <div className="mt-5 rounded-xl border border-white/8 bg-black/18 p-3">
+              <div className="flex gap-2 text-xs leading-5 text-white/48">
+                <ShieldCheck className="mt-0.5 size-4 shrink-0 text-[#c9a961]" />
+                <span>Minimum 12 characters with uppercase, lowercase, number, and symbol.</span>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={changingPassword}
+              className={`${adminButtonClass} mt-5 w-full`}
+            >
+              {changingPassword ? <Loader2 className="size-4 animate-spin" /> : <KeyRound className="size-4" />}
+              Update password
+            </button>
+          </form>
         </div>
-      </form>
+      </div>
     </AdminPageShell>
   );
 }
@@ -284,5 +422,31 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <label className="mb-1.5 block text-xs font-medium text-white/45">{label}</label>
       {children}
     </div>
+  );
+}
+
+function PasswordField({
+  label,
+  value,
+  show,
+  onChange,
+  autoComplete = "current-password",
+}: {
+  label: string;
+  value: string;
+  show: boolean;
+  onChange: (value: string) => void;
+  autoComplete?: string;
+}) {
+  return (
+    <Field label={label}>
+      <input
+        type={show ? "text" : "password"}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        autoComplete={autoComplete}
+        className={inputCls}
+      />
+    </Field>
   );
 }
