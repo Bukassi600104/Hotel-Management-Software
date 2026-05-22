@@ -126,7 +126,7 @@ function MobileNav({ onNavigate }: { onNavigate: () => void }) {
       </div>
 
       <nav className="flex-1 overflow-y-auto p-4">
-        {siteConfig.nav.map((item, index) => (
+        {[...siteConfig.nav, ...siteConfig.guestNav].map((item, index) => (
           <motion.div
             key={item.label}
             initial={{ opacity: 0, x: 20 }}

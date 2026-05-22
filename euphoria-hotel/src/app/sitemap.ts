@@ -13,6 +13,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/about",
     "/conference",
     "/menu",
+    "/guest-guide",
+    "/laundry",
     "/contact",
   ].map((path) => ({
     url: `${base}${path}`,

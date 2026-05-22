@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
-import { Phone } from "lucide-react";
+import { BookOpenText, Phone, Shirt, Utensils } from "lucide-react";
 
 import { HomeHero } from "@/components/public/home-hero";
 import { HomeBookingBar } from "@/components/public/home-booking-bar";
@@ -13,6 +13,7 @@ import { facilities, secondaryAmenities } from "@/lib/data/facilities";
 import { siteConfig } from "@/lib/site";
 import { getCmsPage } from "@/lib/cms/content";
 import { slideContent, textContent, type CmsPage } from "@/lib/cms/defaults";
+import { ServiceLinkCards } from "@/components/public/guest-service-blocks";
 
 export default async function HomePage() {
   const cms = await getCmsPage("home");
@@ -24,6 +25,7 @@ export default async function HomePage() {
       <HomeRoomsGrid rooms={rooms} />
       <HomeTestimonials />
       <HomeFacilitiesGrid facilities={facilities} />
+      <GuestServicesSection />
       <AmenitiesSection />
       <CTABanner cms={cms} />
       <ContactCards />
@@ -116,6 +118,44 @@ function AboutSection({ cms }: { cms: CmsPage }) {
 }
 
 /* ─── Amenities ─── */
+function GuestServicesSection() {
+  return (
+    <section className="bg-[var(--color-white-warm)] px-6 py-[60px] md:px-15 md:py-[100px]">
+      <div className="mx-auto max-w-[1300px]">
+        <div className="mb-12 max-w-2xl">
+          <p className="label-tag mb-4">Guest services</p>
+          <h2 className="heading-lg">Useful during your stay</h2>
+          <p className="mt-5 text-sm leading-relaxed text-[var(--color-text-light)] md:text-base">
+            Quick access to the hotel guide, restaurant and bar menu, and guest laundry tariff.
+          </p>
+        </div>
+        <ServiceLinkCards
+          links={[
+            {
+              title: "Guest Guide",
+              body: "Front Desk, restaurant, bar, pool, gym, security, and breakfast information.",
+              href: "/guest-guide",
+              icon: BookOpenText,
+            },
+            {
+              title: "Restaurant & Bar",
+              body: "Food, breakfast, drinks, cocktails, wine, and bar service.",
+              href: "/menu",
+              icon: Utensils,
+            },
+            {
+              title: "Laundry Service",
+              body: "Washing and ironing tariff for in-house guests.",
+              href: "/laundry",
+              icon: Shirt,
+            },
+          ]}
+        />
+      </div>
+    </section>
+  );
+}
+
 function AmenitiesSection() {
   return (
     <section className="px-6 py-[60px] md:px-15 md:py-[100px] bg-[var(--color-cream)]">

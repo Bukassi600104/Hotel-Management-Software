@@ -23,7 +23,14 @@ export type CmsPage = {
   published_at?: string | null;
 };
 
-export type CmsPageSlug = "home" | "about" | "conference" | "menu" | "contact";
+export type CmsPageSlug =
+  | "home"
+  | "about"
+  | "conference"
+  | "menu"
+  | "guest-guide"
+  | "laundry"
+  | "contact";
 
 export type CmsFooterSettings = {
   description: string;
@@ -39,6 +46,8 @@ export const editablePages: Array<{ slug: CmsPageSlug; label: string; href: stri
   { slug: "about", label: "About Page", href: "/about" },
   { slug: "conference", label: "Conference Page", href: "/conference" },
   { slug: "menu", label: "Menu Page", href: "/menu" },
+  { slug: "guest-guide", label: "Guest Guide", href: "/guest-guide" },
+  { slug: "laundry", label: "Laundry Service", href: "/laundry" },
   { slug: "contact", label: "Contact Page", href: "/contact" },
 ];
 
@@ -54,8 +63,300 @@ export const cmsMediaLibrary = [
   "/hotel-assets/conference-gallery1.jpg",
   "/hotel-assets/conference-gallery2.jpg",
   "/hotel-assets/restaurant-dsc6939.jpg",
+  "/hotel-assets/facility-restaurant.png",
+  "/hotel-assets/rooftop-dsc4286.jpg",
+  "/hotel-assets/gym-dsc5399.jpg",
   "/hotel-assets/facility-pool.png",
 ];
+
+const complimentaryBreakfast = `Monday | Bread, omelette or egg sauce, tea
+Tuesday | Moi moi, oat or custard
+Wednesday | Noodles, egg, tea, bread, omelette
+Thursday | Akara, pap or custard, bread, omelette, tea
+Friday | Spaghetti, boiled egg, pancake, tea
+Saturday | Boiled potatoes or yam, egg sauce, bread, sunny-side egg, tea
+Sunday | Toast bread, tea, bread, omelette`;
+
+const foodMenu = `## Protein, Fried, Peppered & Pepper Soup
+Goat Meat - 8,400
+Peppered Bush Meat - 10,500
+Croaker Fish Pleasure Pepper - 10,500
+Croaker Fish Delighter Pepper - 12,600
+Croaker Fish Euphoria Pepper - 15,750
+Chicken or Turkey Pepper - 9,450
+Cow Tail Pepper - 10,500
+Cow Leg - 8,400
+Prawn Pepper - 12,600
+Catfish Pleasure Pepper - 16,800
+Catfish Delighter Pepper - 18,900
+Catfish Euphoria Pepper - 21,000
+Snail - 10,500
+Beef - 8,400
+Isi Ewu or Ugba - 15,750
+Assorted Goat - 7,350
+Bush Meat - 10,500
+Owere Fish Pepper Soup - 10,000
+
+## Starter Soups
+Sweet Corn Soup - 4,725
+Sweet and Sour Soup - 4,725
+Chicken in Cream Soup - 4,725
+Vegetarian Soup - 4,725
+Mushroom Soup - 4,725
+Served with bread roll
+
+## Pasta & Noodles
+Spaghetti Bolognese - 10,500
+Creamy Chicken Pasta - 11,550
+Seafood Pasta - 12,600
+Singapore Noodles - 13,650
+Noodles and Egg - 5,250
+Noodles - 1,575
+
+## Rice Special
+Jollof Rice or White Rice - 2,625
+Chinese Rice or Basmati White Rice - 3,675
+Fried Rice - 3,150
+Coconut Rice or Caribbean Rice - 3,675
+Seafood Pineapple Fried Rice - 16,800
+Choice of protein: chicken, turkey or fish - 11,550
+
+## Chef Special
+Euphoria Platter Special - 21,000
+Bomco's Chinese Special - 21,000
+Euphoria Peri-Peri - 26,250
+
+## Salad
+Coleslaw - 1,575
+Fruit Salad - 2,625
+Veggies Salad - 4,725
+Chicken Caesar Salad - 10,500
+Chef Salad - 11,550
+
+## Porridge Meal
+Yam or Unripe Plantain - 3,175
+Beans - 3,150
+
+## Finger Foods
+Club Sandwich and French Fries - 15,750
+Spring Roll - 5,775
+Chicken Samosa - 6,825
+Beef Samosa - 5,775
+Shrimp Samosa - 7,875
+Plantain Chips - 2,100
+Yam Chips - 3,150
+French Fries - 3,150
+Beef Burger and Chips - 8,925
+Chicken Burger and Chips - 13,125
+Tuna Sandwich and Chips - 11,025
+
+## National Soup
+Seafood Okra - 10,500
+Bitter Leaf Soup - 2,625
+Ogbono Soup - 3,675
+Fisherman Soup - 10,500
+White Soup - 5,250
+Banga Soup - 5,250
+Afang or Edikaikong Soup - 3,675
+Okra Soup - 2,625
+Oha Soup or Bitter Soup - 2,625
+Efo Riro or Egusi Soup - 3,675
+
+## Swallow
+Oat Meal, Pando or Plantain Swallow - 2,100
+Amala, Garri, Wheat or Semo - 2,100
+Pounded Yam - 3,150
+
+## Barbecue
+Croaker Fish Delighter BBQ - 16,800
+Croaker Fish Euphoria BBQ - 18,900
+Catfish Pleasure BBQ - 16,800
+Catfish Delighter BBQ - 18,900
+Catfish Euphoria BBQ - 21,000
+Chicken and Chips - 12,600
+Turkey and Chips - 12,600
+
+## Grilled & Platters
+T-Bone Steak - 15,750
+Served with basmati rice or chips
+Lamb Chops - 15,750
+Served with basmati rice or chips
+Grilled Tiger Prawns - 15,750
+Served with basmati rice or chips
+Ripe Plantain Platter - 10,500`;
+
+const breakfastMenu = `## Continental Breakfast
+Fresh Bread or Toast - 1,575
+French Toast - 3,675
+
+## National Breakfast
+Fried or Boiled Yam - 3,675
+Plantain or Potatoes - 2,625
+
+## Buffet Price
+Per Adult - 18,900
+Children Below 10 Years - 10,500
+
+## Breakfast Staples
+Custard - 1,050
+Oat - 1,260
+Pap - 1,050
+Tin Milk - 2,100
+
+## Choice of Egg
+Cheese Omelette - 3,675
+Tomato or Spanish Omelette - 2,100
+Poached Egg - 1,575
+Scrambled Egg or Egg Sauce - 2,625
+Boiled Egg or Sunny Side Egg - 1,575
+Sardine Omelette - 3,150
+Sausage - 1,575
+Baked Beans Portion - 1,575
+Bacon - 1,575
+Glass of Fresh Juice - 3,150
+Tea, Coffee or Chocolate - 1,575`;
+
+const drinksMenu = `## Soft Drinks & Juice
+Water - 1,000
+Fayrouz - 1,475
+Coke, Fanta, Sprite or Pepsi - 1,475
+Tonic Water - 1,050
+Malt - 2,100
+Chivita - 4,200
+Chi Exotic - 4,200
+Apple Exotic - 4,200
+Pineapple Juice - 4,200
+Cranberry Juice - 10,000
+
+## Red Wine
+Escudo Rojo - 31,500
+Carlo Rossi - 21,000
+De Vin Red or Sweet - 23,100
+Cuvee Special - 21,100
+Two Oceans - 21,000
+Four Cousins - 21,000
+4th Street - 21,000
+Saint Anna - 21,000
+Saint Celine - 21,000
+Nederburg - 31,500
+Millium - 26,250
+
+## Champagne & Sparkling Wine
+Don Perignon - 525,000
+Moet & Chandon Rose - 157,500
+Moet & Chandon Brut - 126,000
+Veuve Clicquot Rose - 136,500
+Veuve Clicquot Brut - 105,000
+Andre Rose - 26,250
+Andre Brut - 21,000
+Rich Lady - 21,000
+Martini Brut or Rose - 31,500
+Metus Rose - 21,000
+Belaire Rare Rose - 105,000
+
+## Whiskies & Cognac
+Blue Label - 420,000
+Black Label - 57,750
+Red Label - 36,750
+Glenfiddich 21 Years - 315,000
+Glenfiddich 18 Years - 126,000
+Glenfiddich 15 Years - 105,000
+Singleton 12 Years - 94,500
+Jameson Black - 57,750
+Jameson Green - 42,000
+Jack Daniel's - 57,750
+Monkey Shoulder - 42,000
+Hennessy XO - 525,000
+Hennessy VSOP - 136,500
+Hennessy VS - 85,000
+Remy Martin XO - 420,000
+Remy Martin 1738 - 115,500
+Remy Martin VSOP - 126,000
+
+## Tequila, Vodka & Gin
+Casamigos - 262,500
+Jose Cuervo - 73,500
+Olmeca Silver - 52,500
+Olmeca Gold - 47,250
+Sierra - 36,750
+Bacardi Silver - 36,750
+Shots - 3,150
+Absolut - 36,750
+Skyy - 21,000
+Magic Moment - 15,750
+Smirnoff X1 Big - 15,750
+Smirnoff X1 Small - 3,675
+Gordon's - 11,025
+Gordon's Small - 3,150
+
+## Mocktails
+Morish - 4,200
+Coconut syrup, pineapple juice, passion fruit puree
+Rosemary Berry - 4,200
+Rosemary syrup, lemon juice, Sprite, strawberry syrup
+Chapman - 5,250
+Sprite, orange juice, Fanta, Angostura bitters, grenadine syrup
+Mango Mule - 5,250
+Mango puree, mango juice, ginger juice, lemon juice
+Vanilla Milkshake - 5,250
+Strawberry Milkshake - 5,250
+Chocolate Milkshake - 5,250
+Banana Smoothie - 5,250
+Pineapple Smoothie - 5,250
+Apple Smoothie - 5,250
+
+## Cocktails
+Long Island Iced Tea - 5,250
+Sex on the Beach - 5,250
+Pina Colada - 5,250
+Mojito - 5,250
+Strawberry Daiquiri - 5,250
+Mai Tai - 5,250
+Negroni - 5,250
+Blue Lagoon - 5,250
+Margarita - 5,250
+
+## Beer, Yoghurt & Energy Drinks
+Heineken - 3,150
+Budweiser - 2,625
+Stout - 3,150
+Legend - 2,100
+Goldberg - 2,625
+Trophy - 2,100
+Big Smirnoff Ice - 2,625
+Small Smirnoff Ice - 1,575
+Desperado - 2,625
+Life - 2,100
+Tiger - 2,100
+Flying Fish - 2,625
+Gulder - 2,625
+Origin Beer - 2,625
+Red Bull Small - 2,625
+Power Horse - 2,100
+Hollandia Yoghurt - 4,200
+Farm Fresh Yoghurt - 6,300`;
+
+const laundryTariff = `Shirt | 700 | 500
+Trouser | 700 | 500
+Men's Native | 2,000 | 1,000
+Boxers | 300 | 200
+Singlet | 300 | 400
+Face Towel | 300 | 400
+T-Shirt | 500 | 500
+Polo Shirt | 500 | 300
+Gown | 1,000 | 300
+Skirt | 500 | 2,000
+Blouse | 500 | 700
+Agbada Set | 3,000 | 1,000
+Safari Suit | 1,000 | 500
+Ladies Native Complete | 2,000 | 1,000
+Jean Trouser | 1,000 | 700
+Skirt/Blouse Silk | 2,500 | 300
+Sweater | 2,000 | 300
+Socks/Napkin | 500 | 1,000
+Night Gown | 500 | 500
+Bed Sheet | 2,000 | 1,000
+Pant/Bra | 1,500 | 500`;
 
 export const defaultCmsPages: Record<CmsPageSlug, CmsPage> = {
   home: {
@@ -158,10 +459,74 @@ export const defaultCmsPages: Record<CmsPageSlug, CmsPage> = {
     content: {
       introBody:
         "Our restaurant runs all day, breakfast through to a late kitchen that finishes at 11pm. Room service available 24 hours via the dedicated line. Prices are inclusive of VAT.",
+      foodMenu,
+      breakfastMenu,
+      drinksMenu,
+      foodImage: "/hotel-assets/restaurant-dsc6939.jpg",
+      breakfastImage: "/hotel-assets/restaurant-dsc6923.jpg",
+      drinksImage: "/hotel-assets/rooftop-dsc4286.jpg",
       ctaTitle: "Reserve a table.",
       ctaBody: "Booked tables are released 14 days ahead. Call ahead for parties of six or more.",
       ctaButtonText: "Get in touch",
       ctaButtonHref: "/contact",
+    },
+  },
+  "guest-guide": {
+    slug: "guest-guide",
+    title: "Guest Guide",
+    status: "published",
+    hero_eyebrow: "Guest services",
+    hero_title: "Everything you need during your stay.",
+    hero_description:
+      "A clean guide to hotel service extensions, breakfast schedules, dining, laundry, wellness, and guest assistance.",
+    hero_image: "/hotel-assets/hotel-aerial.jpg",
+    seo_title: "Guest Guide",
+    seo_description:
+      "Hotel guest guide for Hilton Euphoria Hotel services, breakfast schedule, extensions, restaurant, bar, gym, pool, and security.",
+    content: {
+      introTitle: "Welcome to Hilton Euphoria Hotel.",
+      introBody:
+        "Hilton Euphoria Hotel offers a seamless blend of luxury and practical guest support. Use this guide to reach the right service desk, plan breakfast, and find the hotel facilities available during your stay.",
+      serviceNumbers: `Front Desk | 1000 / 2000
+Restaurant | 4004
+Rooftop Bar | 4050
+Executive Bar | 4007
+Pool | 4060
+Grill | 1087
+Gym | 4008
+Security Gate | 7000 / 2000`,
+      breakfastTitle: "Complimentary breakfast",
+      breakfastSchedule: complimentaryBreakfast,
+      breakfastNote:
+        "Complimentary breakfast is served in the restaurant. Room service breakfast attracts an additional service charge.",
+      ctaTitle: "Need help from your room?",
+      ctaBody:
+        "Call Front Desk on 1000 or 2000 for service requests, directions, reservations, and guest assistance.",
+    },
+  },
+  laundry: {
+    slug: "laundry",
+    title: "Laundry Service",
+    status: "published",
+    hero_eyebrow: "Guest laundry",
+    hero_title: "Fresh laundry, neatly handled.",
+    hero_description:
+      "View washing and ironing tariffs for guest laundry service, with quick access to Front Desk support.",
+    hero_image: "/hotel-assets/room-deluxe-suite.png",
+    seo_title: "Laundry Service",
+    seo_description:
+      "Laundry service tariff for Hilton Euphoria Hotel guests, including washing and ironing prices.",
+    content: {
+      introTitle: "Laundry service for in-house guests.",
+      introBody:
+        "Send laundry requests through Front Desk and our housekeeping team will guide pickup, delivery, and expected return time.",
+      intercom: "1000 / 2000",
+      laundryImage: "/hotel-assets/room-287.webp",
+      serviceNote:
+        "Prices are listed in Nigerian naira. Please confirm special fabrics and urgent requests with Front Desk before pickup.",
+      laundryTariff,
+      ctaTitle: "Questions about your laundry?",
+      ctaBody: "Front Desk will confirm pickup, expected delivery time, and care notes for delicate items.",
     },
   },
   contact: {

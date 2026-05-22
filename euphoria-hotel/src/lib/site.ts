@@ -38,6 +38,10 @@ export const siteConfig = {
     { label: "Contact Us", href: "/contact" },
     { label: "My Booking", href: "/booking/manage" },
   ],
+  guestNav: [
+    { label: "Guest Guide", href: "/guest-guide" },
+    { label: "Laundry Service", href: "/laundry" },
+  ],
   hours: {
     checkIn: "3:00 PM",
     checkOut: "12:00 PM",

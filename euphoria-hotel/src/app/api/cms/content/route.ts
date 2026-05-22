@@ -122,6 +122,8 @@ export async function PATCH(request: NextRequest) {
   revalidatePath("/about");
   revalidatePath("/conference");
   revalidatePath("/menu");
+  revalidatePath("/guest-guide");
+  revalidatePath("/laundry");
   revalidatePath("/contact");
   revalidatePath("/cms");
   return NextResponse.json({ success: true, footer: parsed.data.footer });
