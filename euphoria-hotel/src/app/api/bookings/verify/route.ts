@@ -81,7 +81,7 @@ export async function GET(req: NextRequest) {
     const checkInLong = formatDateLong(booking.check_in_date);
     const checkOutLong = formatDateLong(booking.check_out_date);
     const totalFormatted = formatNaira(booking.total_amount);
-    const adminEmail = process.env.RESEND_FROM_EMAIL ?? siteConfig.contact.email;
+    const adminEmail = process.env.ADMIN_EMAIL ?? siteConfig.contact.email;
 
     await Promise.allSettled([
       sendEmail({

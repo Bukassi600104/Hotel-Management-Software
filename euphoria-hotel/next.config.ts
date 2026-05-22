@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       { protocol: "https", hostname: "hiltoneuphoriahotel.com" },
-      { protocol: "https", hostname: "kdjmxckeieenpmpmymft.supabase.co" },
+      { protocol: "https", hostname: "ojqbglwuwdxevqbeknoj.supabase.co" },
     ],
   },
   async headers() {

@@ -11,6 +11,7 @@ export async function SiteFooter() {
     { label: "About Us", href: "/about" },
     { label: "Conference Room", href: "/conference" },
     { label: "Hotel Menu", href: "/menu" },
+    { label: "Drink Menu", href: "/drinks" },
     { label: "Guest Guide", href: "/guest-guide" },
     { label: "Laundry Service", href: "/laundry" },
     { label: "Contact Us", href: "/contact" },

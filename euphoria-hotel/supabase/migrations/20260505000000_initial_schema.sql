@@ -114,7 +114,7 @@ create table if not exists audit_log (
   admin_user_id uuid references admin_users(id),
   action        text not null,
   entity_type   text,
-  entity_id     uuid,
+  entity_id     text,
   details       jsonb,
   created_at    timestamptz default now()
 );

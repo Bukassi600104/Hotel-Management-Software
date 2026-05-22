@@ -148,7 +148,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     // Send cancellation email to guest
     const roomName = (booking.rooms as { name: string } | null)?.name ?? "your room";
-    const adminEmail = process.env.RESEND_FROM_EMAIL ?? siteConfig.contact.email;
+    const adminEmail = process.env.ADMIN_EMAIL ?? siteConfig.contact.email;
     await sendEmail({
       to: booking.guest_email,
       subject: `Your booking ${booking.booking_reference} has been cancelled`,

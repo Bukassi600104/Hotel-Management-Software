@@ -40,6 +40,7 @@ export const siteConfig = {
   ],
   guestNav: [
     { label: "Guest Guide", href: "/guest-guide" },
+    { label: "Drink Menu", href: "/drinks" },
     { label: "Laundry Service", href: "/laundry" },
   ],
   hours: {

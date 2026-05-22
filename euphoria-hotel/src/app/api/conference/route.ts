@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const adminEmail = process.env.RESEND_FROM_EMAIL ?? siteConfig.contact.email;
+  const adminEmail = process.env.ADMIN_EMAIL ?? siteConfig.contact.email;
   const now = new Date().toLocaleString("en-NG", { dateStyle: "medium", timeStyle: "short" });
 
   await sendEmail({
