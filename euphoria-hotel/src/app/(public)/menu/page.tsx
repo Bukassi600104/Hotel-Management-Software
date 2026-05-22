@@ -27,6 +27,53 @@ export const metadata: Metadata = {
     "Food, breakfast, drinks, wine, cocktails, and bar service at Hilton Euphoria Hotel.",
 };
 
+const foodImages: Record<string, string> = {
+  "Protein, Fried, Peppered & Pepper Soup": "/hotel-assets/menu/protein-fried-pepper.jpg",
+  "Starter Soups": "/hotel-assets/menu/starter-soups.jpg",
+  "Continental Sauce": "/hotel-assets/menu/continental-sauce.jpg",
+  "Pasta & Noodles": "/hotel-assets/menu/pasta-noodles.jpg",
+  "Rice Special": "/hotel-assets/menu/rice-special.jpg",
+  "Chef Special": "/hotel-assets/menu/chef-special.jpg",
+  Salad: "/hotel-assets/menu/salad.jpg",
+  "Porridge Meal": "/hotel-assets/menu/porridge-meal.jpg",
+  "Finger Foods": "/hotel-assets/menu/finger-foods.jpg",
+  "National Soup": "/hotel-assets/menu/national-soup.jpg",
+  Swallow: "/hotel-assets/menu/swallow.jpg",
+  "Grilled & Platters": "/hotel-assets/menu/grilled-platters.jpg",
+  Barbecue: "/hotel-assets/menu/barbecue.jpg",
+};
+
+const breakfastImages: Record<string, string> = {
+  "Continental Breakfast": "/hotel-assets/menu/continental-breakfast.jpg",
+  "National Breakfast": "/hotel-assets/menu/national-breakfast.jpg",
+  "Buffet Price": "/hotel-assets/menu/buffet.jpg",
+  "Breakfast Staples": "/hotel-assets/menu/breakfast-staples.jpg",
+  "Choice of Egg": "/hotel-assets/menu/choice-of-egg.jpg",
+};
+
+const drinkImages: Record<string, string> = {
+  "Soft Drinks & Juice": "/hotel-assets/menu/soft-drinks-juice.jpg",
+  "Red Wine": "/hotel-assets/menu/red-wine.jpg",
+  "Champagne & Sparkling Wine": "/hotel-assets/menu/champagne-sparkling-wine.jpg",
+  Whiskies: "/hotel-assets/menu/whiskies.jpg",
+  Cognac: "/hotel-assets/menu/cognac.jpg",
+  Tequila: "/hotel-assets/menu/tequila.jpg",
+  "Vodka, Gin": "/hotel-assets/menu/vodka-gin.jpg",
+  "Vodka & Gin": "/hotel-assets/menu/vodka-gin.jpg",
+  "Vodka/Gin": "/hotel-assets/menu/vodka-gin.jpg",
+  "Rum & Bitters": "/hotel-assets/menu/rum-bitters.jpg",
+  "Liqueur/Creams": "/hotel-assets/menu/liqueur-creams.jpg",
+  Bitters: "/hotel-assets/menu/bitters.jpg",
+  "Energy Drinks": "/hotel-assets/menu/energy-drinks.jpg",
+  "Non-Alcoholic Wine": "/hotel-assets/menu/non-alcoholic-wine.jpg",
+  Mocktails: "/hotel-assets/menu/mocktail.jpg",
+  Mocktail: "/hotel-assets/menu/mocktail.jpg",
+  Cocktails: "/hotel-assets/menu/cocktail.jpg",
+  Cocktail: "/hotel-assets/menu/cocktail.jpg",
+  Yoghurt: "/hotel-assets/menu/yoghurt.jpg",
+  Beer: "/hotel-assets/menu/beer.jpg",
+};
+
 export default async function MenuPage() {
   const cms = await getCmsPage("menu");
   return (
@@ -64,6 +111,7 @@ export default async function MenuPage() {
         title="Food Menu"
         body="A broad hotel kitchen menu covering Nigerian classics, continental staples, grills, soups, rice dishes, finger foods, and chef specials."
         sections={parseCatalogText(textContent(cms, "foodMenu"))}
+        cardImages={foodImages}
         image={textContent(cms, "foodImage", "/hotel-assets/restaurant-dsc6939.jpg")}
         imageAlt="Hilton Euphoria restaurant meal presentation"
       />
@@ -73,6 +121,7 @@ export default async function MenuPage() {
         title="Breakfast Menu"
         body="Paid breakfast options for guests and walk-in dining, separate from complimentary room breakfast entitlements."
         sections={parseCatalogText(textContent(cms, "breakfastMenu"))}
+        cardImages={breakfastImages}
         image={textContent(cms, "breakfastImage", "/hotel-assets/restaurant-dsc6923.jpg")}
         imageAlt="Breakfast service at Hilton Euphoria Hotel"
         muted
@@ -83,6 +132,7 @@ export default async function MenuPage() {
         title="Drink Menu"
         body="Soft drinks, juice, wines, spirits, mocktails, cocktails, beer, yoghurt, and energy drinks for the restaurant, bar, and rooftop service."
         sections={parseCatalogText(textContent(cms, "drinksMenu"))}
+        cardImages={drinkImages}
         image={textContent(cms, "drinksImage", "/hotel-assets/rooftop-dsc4286.jpg")}
         imageAlt="Rooftop bar and drinks service at Hilton Euphoria Hotel"
       />
@@ -168,6 +218,7 @@ function MenuSection({
   title,
   body,
   sections,
+  cardImages,
   image,
   imageAlt,
   muted,
@@ -176,6 +227,7 @@ function MenuSection({
   title: string;
   body: string;
   sections: ReturnType<typeof parseCatalogText>;
+  cardImages: Record<string, string>;
   image: string;
   imageAlt: string;
   muted?: boolean;
@@ -204,7 +256,7 @@ function MenuSection({
             </div>
           </div>
         </div>
-        <CatalogGrid sections={sections} />
+        <CatalogGrid sections={sections} images={cardImages} />
       </div>
     </section>
   );

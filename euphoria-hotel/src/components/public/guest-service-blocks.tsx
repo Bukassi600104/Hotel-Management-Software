@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
 import { ArrowUpRight } from "lucide-react";
 
@@ -114,11 +115,29 @@ export function ServiceLinkCards({
   );
 }
 
-export function CatalogGrid({ sections }: { sections: CatalogSection[] }) {
+export function CatalogGrid({
+  sections,
+  images = {},
+}: {
+  sections: CatalogSection[];
+  images?: Record<string, string>;
+}) {
   return (
     <div className="grid gap-5 lg:grid-cols-2">
       {sections.map((section) => (
         <article key={section.title} className="border border-[#e8dfd1] bg-[#fffdf8] p-6">
+          {images[section.title] && (
+            <div className="-mx-6 -mt-6 mb-6 aspect-[16/10] overflow-hidden bg-[var(--color-cream)]">
+              <Image
+                src={images[section.title]}
+                alt={`${section.title} at Hilton Euphoria Hotel`}
+                width={700}
+                height={438}
+                sizes="(min-width: 1024px) 40vw, 100vw"
+                className="h-full w-full object-cover"
+              />
+            </div>
+          )}
           <h3 className="font-heading text-2xl text-[var(--color-dark)]">{section.title}</h3>
           <div className="mt-5 space-y-4">
             {section.items.map((item, index) => (

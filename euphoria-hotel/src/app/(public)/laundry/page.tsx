@@ -39,23 +39,13 @@ export default async function LaundryPage() {
               {textContent(cms, "introBody")}
             </p>
 
-            <div className="relative mt-8 min-h-[300px] overflow-hidden border border-[#e8dfd1] bg-[#fffdf8] shadow-[0_28px_90px_-60px_rgba(23,24,26,0.5)]">
-              <Image
-                src={textContent(cms, "laundryImage", "/hotel-assets/room-287.webp")}
-                alt="Guest room laundry service at Hilton Euphoria Hotel"
-                fill
-                sizes="(min-width: 1024px) 32vw, 100vw"
-                className="object-cover"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-5 text-white">
-                <div className="flex items-center gap-3">
-                  <span className="grid size-10 place-items-center border border-[var(--color-gold-light)] text-[var(--color-gold-light)]">
-                    <Shirt className="size-4" strokeWidth={1.6} />
-                  </span>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em]">Laundry care</p>
-                </div>
-              </div>
-            </div>
+            <LaundryGallery
+              images={[
+                textContent(cms, "laundryImage", "/hotel-assets/menu/laundry.jpg"),
+                textContent(cms, "laundryImageTwo", "/hotel-assets/menu/laundry-care.jpg"),
+                textContent(cms, "laundryImageThree", "/hotel-assets/menu/laundry-room.jpg"),
+              ]}
+            />
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
               <InfoCard icon={Phone} label="Intercom" value={textContent(cms, "intercom", "1000 / 2000")} />
@@ -116,6 +106,43 @@ export default async function LaundryPage() {
         </div>
       </section>
     </>
+  );
+}
+
+function LaundryGallery({ images }: { images: string[] }) {
+  return (
+    <div className="mt-8 grid gap-3">
+      <div className="relative min-h-[250px] overflow-hidden border border-[#e8dfd1] bg-[#fffdf8] shadow-[0_28px_90px_-60px_rgba(23,24,26,0.5)]">
+        <Image
+          src={images[0]}
+          alt="Laundry basket service at Hilton Euphoria Hotel"
+          fill
+          sizes="(min-width: 1024px) 32vw, 100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-5 text-white">
+          <div className="flex items-center gap-3">
+            <span className="grid size-10 place-items-center border border-[var(--color-gold-light)] text-[var(--color-gold-light)]">
+              <Shirt className="size-4" strokeWidth={1.6} />
+            </span>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em]">Laundry care</p>
+          </div>
+        </div>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {images.slice(1).map((src, index) => (
+          <div key={src} className="relative min-h-[150px] overflow-hidden border border-[#e8dfd1] bg-[#fffdf8]">
+            <Image
+              src={src}
+              alt={`Laundry service support ${index + 1} at Hilton Euphoria Hotel`}
+              fill
+              sizes="(min-width: 1024px) 16vw, 50vw"
+              className="object-cover"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 

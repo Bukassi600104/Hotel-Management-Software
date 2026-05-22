@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Dumbbell, Headphones, MapPin, Phone, Shield, Shirt, Utensils, Waves, Wine } from "lucide-react";
 
 import { PageHero } from "@/components/public/page-hero";
@@ -63,12 +64,27 @@ export default async function GuestGuidePage() {
 
       <section className="bg-[var(--color-cream)] px-6 py-20 lg:px-15">
         <div className="mx-auto max-w-[1300px]">
-          <div className="mb-10 max-w-3xl">
-            <p className="label-tag mb-4">Breakfast</p>
-            <h2 className="heading-lg">{textContent(cms, "breakfastTitle", "Complimentary breakfast")}</h2>
-            <p className="mt-5 text-sm leading-relaxed text-[var(--color-text-light)] md:text-base">
-              {textContent(cms, "breakfastNote")}
-            </p>
+          <div className="mb-10 grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
+            <div>
+              <p className="label-tag mb-4">Breakfast</p>
+              <h2 className="heading-lg">{textContent(cms, "breakfastTitle", "Complimentary breakfast")}</h2>
+              <p className="mt-5 text-sm leading-relaxed text-[var(--color-text-light)] md:text-base">
+                {textContent(cms, "breakfastNote")}
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {["/hotel-assets/menu/complimentary-breakfast.jpg", "/hotel-assets/menu/continental-breakfast.jpg"].map((src, index) => (
+                <div key={src} className="relative min-h-[220px] overflow-hidden border border-[#e8dfd1] bg-[#fffdf8]">
+                  <Image
+                    src={src}
+                    alt={`Complimentary breakfast service ${index + 1} at Hilton Euphoria Hotel`}
+                    fill
+                    sizes="(min-width: 1024px) 25vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

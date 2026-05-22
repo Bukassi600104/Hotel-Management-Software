@@ -254,7 +254,7 @@ Martini Brut or Rose - 31,500
 Metus Rose - 21,000
 Belaire Rare Rose - 105,000
 
-## Whiskies & Cognac
+## Whiskies
 Blue Label - 420,000
 Black Label - 57,750
 Red Label - 36,750
@@ -266,6 +266,8 @@ Jameson Black - 57,750
 Jameson Green - 42,000
 Jack Daniel's - 57,750
 Monkey Shoulder - 42,000
+
+## Cognac
 Hennessy XO - 525,000
 Hennessy VSOP - 136,500
 Hennessy VS - 85,000
@@ -273,14 +275,15 @@ Remy Martin XO - 420,000
 Remy Martin 1738 - 115,500
 Remy Martin VSOP - 126,000
 
-## Tequila, Vodka & Gin
+## Tequila
 Casamigos - 262,500
 Jose Cuervo - 73,500
 Olmeca Silver - 52,500
 Olmeca Gold - 47,250
 Sierra - 36,750
-Bacardi Silver - 36,750
 Shots - 3,150
+
+## Vodka/Gin
 Absolut - 36,750
 Skyy - 21,000
 Magic Moment - 15,750
@@ -288,6 +291,29 @@ Smirnoff X1 Big - 15,750
 Smirnoff X1 Small - 3,675
 Gordon's - 11,025
 Gordon's Small - 3,150
+
+## Rum & Bitters
+Bacardi Silver - 36,750
+Jagermeister 70cl - 31,500
+Campari Big - 42,000
+Campari Mid - 22,050
+
+## Liqueur/Creams
+American Honey/Africa Honey Stings - 42,000
+Baileys Irish Cream - 31,500
+Maloney Creams - 31,500
+Amarula Cream - 26,250
+Best Cream - 31,500
+Best Cream Small - 4,200
+
+## Bitters
+Big Action - 6,300
+Action - 2,625
+Odogwu - 2,100
+Ace Bitters - 1,575
+Origin - 2,625
+Big Origin - 8,400
+Long Jack - 1,050
 
 ## Mocktails
 Morish - 4,200
@@ -316,7 +342,27 @@ Negroni - 5,250
 Blue Lagoon - 5,250
 Margarita - 5,250
 
-## Beer, Yoghurt & Energy Drinks
+## Energy Drinks
+Red Bull Small - 2,625
+Power Horse - 2,100
+Blue Bullet - 2,100
+Black Bullet - 2,625
+Climax - 1,575
+Fearless - 1,575
+Predator - 1,575
+
+## Non-Alcoholic Wine
+Chamdor - 10,500
+Angel - 7,350
+Eva - 7,350
+Pure Heaven - 10,500
+
+## Yoghurt
+Hollandia Yoghurt - 4,200
+Farm Fresh Yoghurt - 6,300
+Refresh Yoghurt - 5,775
+
+## Beer
 Heineken - 3,150
 Budweiser - 2,625
 Stout - 3,150
@@ -331,10 +377,10 @@ Tiger - 2,100
 Flying Fish - 2,625
 Gulder - 2,625
 Origin Beer - 2,625
-Red Bull Small - 2,625
-Power Horse - 2,100
-Hollandia Yoghurt - 4,200
-Farm Fresh Yoghurt - 6,300`;
+Hero - 2,100
+Star Radler - 2,625
+Castle Lite - 2,625
+Budweiser Royal - 3,150`;
 
 const laundryTariff = `Shirt | 700 | 500
 Trouser | 700 | 500
@@ -462,9 +508,9 @@ export const defaultCmsPages: Record<CmsPageSlug, CmsPage> = {
       foodMenu,
       breakfastMenu,
       drinksMenu,
-      foodImage: "/hotel-assets/restaurant-dsc6939.jpg",
-      breakfastImage: "/hotel-assets/restaurant-dsc6923.jpg",
-      drinksImage: "/hotel-assets/rooftop-dsc4286.jpg",
+      foodImage: "/hotel-assets/menu/protein-fried-pepper.jpg",
+      breakfastImage: "/hotel-assets/menu/complimentary-breakfast.jpg",
+      drinksImage: "/hotel-assets/menu/mocktail.jpg",
       ctaTitle: "Reserve a table.",
       ctaBody: "Booked tables are released 14 days ahead. Call ahead for parties of six or more.",
       ctaButtonText: "Get in touch",
@@ -521,7 +567,9 @@ Security Gate | 7000 / 2000`,
       introBody:
         "Send laundry requests through Front Desk and our housekeeping team will guide pickup, delivery, and expected return time.",
       intercom: "1000 / 2000",
-      laundryImage: "/hotel-assets/room-287.webp",
+      laundryImage: "/hotel-assets/menu/laundry.jpg",
+      laundryImageTwo: "/hotel-assets/menu/laundry-care.jpg",
+      laundryImageThree: "/hotel-assets/menu/laundry-room.jpg",
       serviceNote:
         "Prices are listed in Nigerian naira. Please confirm special fabrics and urgent requests with Front Desk before pickup.",
       laundryTariff,
