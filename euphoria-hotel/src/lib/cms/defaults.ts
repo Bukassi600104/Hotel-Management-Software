@@ -605,10 +605,9 @@ export const defaultFooterSettings: CmsFooterSettings = {
   frontDeskPhone: "+234 808 081 4342",
   email: "booking@hiltoneuphoriahotel.com",
   socials: [
-    { label: "TikTok", href: "https://tiktok.com" },
-    { label: "Twitter", href: "https://twitter.com" },
-    { label: "YouTube", href: "https://youtube.com" },
-    { label: "Instagram", href: "https://instagram.com" },
+    { label: "Hilton Euphoria Instagram", href: "https://www.instagram.com/hiltoneuphoriahotel/" },
+    { label: "Klub Euphoria Instagram", href: "https://www.instagram.com/klubeuphoria/" },
+    { label: "Hilton Euphoria Hotel Facebook", href: "https://www.facebook.com/HiltonEuphoriaHotel" },
   ],
 };
 

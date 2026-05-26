@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { BrandLogo } from "@/components/public/brand-logo";
+import { FacebookIcon, InstagramIcon } from "@/components/public/social-icons";
 import { getCmsFooter } from "@/lib/cms/content";
 
 export async function SiteFooter() {
@@ -78,18 +79,22 @@ export async function SiteFooter() {
           <span>
             Copyright {new Date().getFullYear()} Hilton Euphoria Hotel. All rights reserved.
           </span>
-          <div className="flex flex-wrap gap-5">
-            {footer.socials.map((s) => (
+          <div className="flex flex-wrap gap-3">
+            {footer.socials.map((s) => {
+              const Icon = s.href.includes("facebook.com") ? FacebookIcon : InstagramIcon;
+              return (
               <a
                 key={s.label}
                 href={s.href}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[12px] font-medium tracking-[1px] hover:text-[var(--color-gold)] transition-colors"
+                aria-label={s.label}
+                className="inline-flex size-9 items-center justify-center rounded-full border border-white/12 text-white/58 transition-colors hover:border-[var(--color-gold)] hover:text-[var(--color-gold)]"
               >
-                {s.label}
+                <Icon className="size-4" />
               </a>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

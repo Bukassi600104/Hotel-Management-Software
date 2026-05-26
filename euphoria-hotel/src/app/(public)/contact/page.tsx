@@ -7,9 +7,6 @@ import { Reveal } from "@/components/motion/reveal";
 import {
   FacebookIcon,
   InstagramIcon,
-  TiktokIcon,
-  TwitterIcon,
-  YoutubeIcon,
 } from "@/components/public/social-icons";
 import { siteConfig } from "@/lib/site";
 import { getCmsPage } from "@/lib/cms/content";
@@ -24,9 +21,6 @@ export const metadata: Metadata = {
 const socialMap = {
   facebook: FacebookIcon,
   instagram: InstagramIcon,
-  tiktok: TiktokIcon,
-  twitter: TwitterIcon,
-  youtube: YoutubeIcon,
 } as const;
 
 export default async function ContactPage() {

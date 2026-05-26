@@ -24,10 +24,9 @@ export const siteConfig = {
     whatsapp: "2348060260260",
   },
   socials: [
-    { label: "TikTok", href: "https://tiktok.com", icon: "tiktok" },
-    { label: "Twitter", href: "https://twitter.com", icon: "twitter" },
-    { label: "YouTube", href: "https://youtube.com", icon: "youtube" },
-    { label: "Instagram", href: "https://instagram.com", icon: "instagram" },
+    { label: "Hilton Euphoria Instagram", href: "https://www.instagram.com/hiltoneuphoriahotel/", icon: "instagram" },
+    { label: "Klub Euphoria Instagram", href: "https://www.instagram.com/klubeuphoria/", icon: "instagram" },
+    { label: "Hilton Euphoria Hotel Facebook", href: "https://www.facebook.com/HiltonEuphoriaHotel", icon: "facebook" },
   ],
   nav: [
     { label: "Home", href: "/" },

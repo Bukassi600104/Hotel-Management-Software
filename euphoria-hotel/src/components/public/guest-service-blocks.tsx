@@ -122,42 +122,52 @@ export function CatalogGrid({
   sections: CatalogSection[];
   images?: Record<string, string>;
 }) {
+  const usedImages = new Set<string>();
+
   return (
-    <div className="grid gap-5 lg:grid-cols-2">
-      {sections.map((section) => (
-        <article key={section.title} className="border border-[#e8dfd1] bg-[#fffdf8] p-6">
-          {images[section.title] && (
-            <div className="-mx-6 -mt-6 mb-6 aspect-[16/10] overflow-hidden bg-[var(--color-cream)]">
+    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      {sections.map((section) => {
+        const image = images[section.title];
+        const showImage = Boolean(image && !usedImages.has(image));
+        if (image) usedImages.add(image);
+
+        return (
+        <article key={section.title} className="overflow-hidden border border-[#e8dfd1] bg-[#fffdf8] shadow-[0_20px_60px_-52px_rgba(23,24,26,0.5)]">
+          {showImage && image && (
+            <div className="aspect-[5/3] overflow-hidden bg-[var(--color-cream)]">
               <Image
-                src={images[section.title]}
+                src={image}
                 alt={`${section.title} at Hilton Euphoria Hotel`}
-                width={700}
-                height={438}
-                sizes="(min-width: 1024px) 40vw, 100vw"
-                className="h-full w-full object-cover"
+                width={520}
+                height={312}
+                sizes="(min-width: 1280px) 28vw, (min-width: 768px) 45vw, 100vw"
+                className="h-full w-full object-cover transition-transform duration-500 hover:scale-[1.03]"
               />
             </div>
           )}
-          <h3 className="font-heading text-2xl text-[var(--color-dark)]">{section.title}</h3>
-          <div className="mt-5 space-y-4">
+          <div className="p-5">
+          <h3 className="font-heading text-xl leading-tight text-[var(--color-dark)]">{section.title}</h3>
+          <div className="mt-4 space-y-3">
             {section.items.map((item, index) => (
               <div key={`${item.name}-${index}`} className="border-b border-[#ede5da] pb-3 last:border-b-0 last:pb-0">
                 <div className="flex items-start justify-between gap-4">
-                  <p className="text-sm font-semibold uppercase tracking-[0.08em] text-[var(--color-dark)]">
+                  <p className="text-[12px] font-semibold uppercase leading-5 tracking-[0.06em] text-[var(--color-dark)]">
                     {item.name}
                   </p>
                   {item.price && (
-                    <p className="shrink-0 font-heading text-xl tabular-nums text-[var(--color-gold-dark)]">
+                    <p className="shrink-0 rounded-full bg-[var(--color-cream)] px-2.5 py-1 text-[12px] font-semibold tabular-nums text-[var(--color-gold-dark)]">
                       N{item.price}
                     </p>
                   )}
                 </div>
-                {item.note && <p className="mt-1 text-sm leading-relaxed text-[var(--color-text-light)]">{item.note}</p>}
+                {item.note && <p className="mt-1 text-[12px] leading-5 text-[var(--color-text-light)]">{item.note}</p>}
               </div>
             ))}
           </div>
+          </div>
         </article>
-      ))}
+      );
+      })}
     </div>
   );
 }

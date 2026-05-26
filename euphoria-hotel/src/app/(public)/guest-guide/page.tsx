@@ -1,6 +1,18 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Dumbbell, Headphones, MapPin, Phone, Shield, Shirt, Utensils, Waves, Wine } from "lucide-react";
+import {
+  BellRing,
+  Dumbbell,
+  Flame,
+  Headphones,
+  Martini,
+  MapPin,
+  ShieldCheck,
+  Shirt,
+  Utensils,
+  Waves,
+  Wine,
+} from "lucide-react";
 
 import { PageHero } from "@/components/public/page-hero";
 import {
@@ -16,7 +28,16 @@ export const metadata: Metadata = {
     "Hilton Euphoria Hotel guest guide with service extensions, breakfast schedule, restaurant, bar, pool, gym, and security information.",
 };
 
-const serviceIcons = [Headphones, Utensils, Wine, Wine, Waves, Utensils, Dumbbell, Shield];
+const serviceIconMap = {
+  "front desk": Headphones,
+  restaurant: Utensils,
+  "rooftop bar": Martini,
+  "executive bar": Wine,
+  pool: Waves,
+  grill: Flame,
+  gym: Dumbbell,
+  "security gate": ShieldCheck,
+} as const;
 
 export default async function GuestGuidePage() {
   const cms = await getCmsPage("guest-guide");
@@ -43,16 +64,23 @@ export default async function GuestGuidePage() {
             </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2">
             {services.map((service, index) => {
-              const Icon = serviceIcons[index] ?? Phone;
+              const key = service.label.toLowerCase() as keyof typeof serviceIconMap;
+              const Icon = serviceIconMap[key] ?? BellRing;
               return (
-                <article key={`${service.label}-${index}`} className="border border-[#e8dfd1] bg-[#fffdf8] p-6">
-                  <div className="grid size-12 place-items-center border border-[var(--color-gold)] text-[var(--color-gold-dark)]">
-                    <Icon className="size-5" strokeWidth={1.6} />
+                <article
+                  key={`${service.label}-${index}`}
+                  className="group relative overflow-hidden border border-[#e8dfd1] bg-[#fffdf8] p-5 shadow-[0_20px_70px_-56px_rgba(23,24,26,0.55)] transition-all hover:-translate-y-0.5 hover:border-[var(--color-gold)]"
+                >
+                  <div className="absolute right-4 top-4 font-heading text-5xl leading-none text-[var(--color-cream)]">
+                    {String(index + 1).padStart(2, "0")}
                   </div>
-                  <h3 className="mt-5 font-heading text-2xl text-[var(--color-dark)]">{service.label}</h3>
-                  <p className="mt-2 text-2xl font-light tracking-tight text-[var(--color-gold-dark)]">
+                  <div className="relative grid size-11 place-items-center rounded-full bg-[var(--color-dark)] text-[var(--color-gold-light)]">
+                    <Icon className="size-5" strokeWidth={1.7} />
+                  </div>
+                  <h3 className="relative mt-5 text-sm font-semibold uppercase tracking-[0.14em] text-[var(--color-dark)]">{service.label}</h3>
+                  <p className="relative mt-2 font-heading text-2xl tracking-tight text-[var(--color-gold-dark)]">
                     {service.details}
                   </p>
                 </article>
@@ -87,13 +115,19 @@ export default async function GuestGuidePage() {
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {breakfast.map((day) => (
-              <article key={day.label} className="border border-[#e8dfd1] bg-[#fffdf8] p-5">
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {breakfast.map((day, index) => (
+              <article key={day.label} className="border border-[#e8dfd1] bg-[#fffdf8] p-5 shadow-[0_18px_55px_-50px_rgba(23,24,26,0.45)]">
+                <div className="mb-4 flex items-center justify-between">
+                  <span className="grid size-9 place-items-center rounded-full bg-[var(--color-cream)] text-[var(--color-gold-dark)]">
+                    <Utensils className="size-4" strokeWidth={1.6} />
+                  </span>
+                  <span className="text-[11px] tabular-nums text-[var(--color-text-light)]">{String(index + 1).padStart(2, "0")}</span>
+                </div>
                 <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-gold-dark)]">
                   {day.label}
                 </p>
-                <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-light)]">{day.details}</p>
+                <p className="mt-3 text-[13px] leading-6 text-[var(--color-text-light)]">{day.details}</p>
               </article>
             ))}
           </div>

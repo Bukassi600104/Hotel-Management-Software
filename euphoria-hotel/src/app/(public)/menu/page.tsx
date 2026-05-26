@@ -88,8 +88,8 @@ export default async function MenuPage() {
 
       <section className="relative py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
-          <Reveal variant="fade-up" className="mb-10 max-w-3xl">
-            <p className="text-pretty text-muted-foreground">
+          <Reveal variant="fade-up" className="mb-8 max-w-3xl">
+            <p className="text-pretty text-sm leading-7 text-[var(--color-text-light)] md:text-base">
               {textContent(
                 cms,
                 "introBody",
@@ -105,6 +105,13 @@ export default async function MenuPage() {
           </div>
         </div>
       </section>
+
+      <MenuDivider
+        icon={Utensils}
+        label="Dining"
+        title="Restaurant kitchen"
+        body="Food and breakfast are grouped together so guests can scan meals separately from the bar list."
+      />
 
       <MenuSection
         eyebrow="Restaurant"
@@ -125,6 +132,14 @@ export default async function MenuPage() {
         image={textContent(cms, "breakfastImage", "/hotel-assets/restaurant-dsc6923.jpg")}
         imageAlt="Breakfast service at Hilton Euphoria Hotel"
         muted
+      />
+
+      <MenuDivider
+        icon={Wine}
+        label="Bar"
+        title="Drinks & bottle service"
+        body="The bar list sits in its own section for wines, spirits, mocktails, cocktails, yoghurt, beer, and soft drinks."
+        dark
       />
 
       <MenuSection
@@ -201,15 +216,46 @@ function MenuFeature({
   value: string;
 }) {
   return (
-    <div className="border border-[#e8dfd1] bg-[#fffdf8] p-6">
-      <div className="grid size-12 place-items-center border border-[var(--color-gold)] text-[var(--color-gold-dark)]">
+    <div className="border border-[#e8dfd1] bg-[#fffdf8] p-5 shadow-[0_18px_55px_-50px_rgba(23,24,26,0.45)]">
+      <div className="grid size-10 place-items-center border border-[var(--color-gold)] text-[var(--color-gold-dark)]">
         <Icon className="size-5" strokeWidth={1.6} />
       </div>
-      <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--color-gold-dark)]">
+      <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--color-gold-dark)]">
         {label}
       </p>
-      <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-light)]">{value}</p>
+      <p className="mt-2 text-[13px] leading-6 text-[var(--color-text-light)]">{value}</p>
     </div>
+  );
+}
+
+function MenuDivider({
+  icon: Icon,
+  label,
+  title,
+  body,
+  dark,
+}: {
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  label: string;
+  title: string;
+  body: string;
+  dark?: boolean;
+}) {
+  return (
+    <section className={`${dark ? "bg-[var(--color-charcoal)] text-white" : "bg-[var(--color-dark)] text-white"} px-6 py-12 lg:px-15`}>
+      <div className="mx-auto flex max-w-[1300px] flex-col gap-5 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-4">
+          <span className="grid size-12 place-items-center border border-[var(--color-gold)] text-[var(--color-gold-light)]">
+            <Icon className="size-5" strokeWidth={1.6} />
+          </span>
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.32em] text-[var(--color-gold-light)]">{label}</p>
+            <h2 className="mt-1 font-heading text-3xl leading-tight md:text-4xl">{title}</h2>
+          </div>
+        </div>
+        <p className="max-w-xl text-sm leading-7 text-white/68">{body}</p>
+      </div>
+    </section>
   );
 }
 
@@ -235,18 +281,18 @@ function MenuSection({
   return (
     <section className={`px-6 py-20 lg:px-15 ${muted ? "bg-[var(--color-cream)]" : "bg-[var(--color-white-warm)]"}`}>
       <div className="mx-auto max-w-[1300px]">
-        <div className="mb-10 grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+        <div className="mb-8 grid gap-6 lg:grid-cols-[1fr_0.8fr] lg:items-end">
           <div>
             <p className="label-tag mb-4">{eyebrow}</p>
             <h2 className="heading-lg">{title}</h2>
-            <p className="mt-5 text-sm leading-relaxed text-[var(--color-text-light)] md:text-base">{body}</p>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--color-text-light)]">{body}</p>
           </div>
-          <div className="relative min-h-[260px] overflow-hidden border border-[#e8dfd1] bg-[#fffdf8] shadow-[0_28px_90px_-60px_rgba(23,24,26,0.5)] lg:min-h-[340px]">
+          <div className="relative min-h-[180px] overflow-hidden border border-[#e8dfd1] bg-[#fffdf8] shadow-[0_28px_90px_-60px_rgba(23,24,26,0.5)] lg:min-h-[220px]">
             <Image
               src={image}
               alt={imageAlt}
               fill
-              sizes="(min-width: 1024px) 45vw, 100vw"
+              sizes="(min-width: 1024px) 34vw, 100vw"
               className="object-cover"
             />
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-5 text-white">
