@@ -1,8 +1,27 @@
+import type { Metadata } from "next";
+
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { AdminSidebar } from "@/components/admin/sidebar";
+import { AdminShell } from "@/components/admin/admin-shell";
+import { hasSupabasePublicEnv } from "@/lib/supabase/config";
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  if (!hasSupabasePublicEnv()) {
+    return (
+      <AdminShell adminName="Hotel Manager" adminRole="super_admin" unreadCount={0}>
+        {children}
+      </AdminShell>
+    );
+  }
+
   const serverClient = await createClient();
   const {
     data: { user },
@@ -25,20 +44,18 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   // Authenticated but not in admin_users (or deactivated) — sign out and
   // send back to login. Middleware catches this on the next request.
   if (!adminUser || !adminUser.is_active) {
-    const { createClient: createBrowserClient } = await import("@/lib/supabase/client");
     // Can't call browser methods from a server component — return children
     // and let the client-side session expiry / middleware handle it.
     return <>{children}</>;
   }
 
   return (
-    <div className="flex min-h-screen bg-[#111316] text-white">
-      <AdminSidebar
-        adminName={adminUser.full_name ?? user.email ?? "Admin"}
-        adminRole={adminUser.role ?? "staff"}
-        unreadCount={unreadCount ?? 0}
-      />
-      <main className="flex-1 overflow-auto pt-14 lg:pt-0">{children}</main>
-    </div>
+    <AdminShell
+      adminName={adminUser.full_name ?? user.email ?? "Admin"}
+      adminRole={adminUser.role ?? "staff"}
+      unreadCount={unreadCount ?? 0}
+    >
+      {children}
+    </AdminShell>
   );
 }

@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { requireActiveAdmin } from "@/lib/admin/auth";
 import { sendEmail } from "@/lib/email/send";
 import { formatDateLong } from "@/lib/format";
 import { siteConfig } from "@/lib/site";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
+import { findDemoBookingById } from "@/lib/demo/store";
 import BookingCancellation from "@emails/BookingCancellation";
 import * as React from "react";
 
@@ -15,13 +17,17 @@ const updateSchema = z.object({
 });
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   const { id } = await params;
+
+  if (!hasSupabaseAdminEnv()) {
+    const booking = findDemoBookingById(id);
+    if (!booking) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json(booking);
+  }
+
+  const auth = await requireActiveAdmin();
+  if (auth.error) return auth.error;
+
   const admin = createAdminClient();
   const { data, error } = await admin
     .from("bookings")
@@ -34,13 +40,43 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   const { id } = await params;
+
+  if (!hasSupabaseAdminEnv()) {
+    const booking = findDemoBookingById(id);
+    if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid body" }, { status: 400 });
+    }
+
+    const parsed = updateSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Validation failed" }, { status: 400 });
+    }
+
+    const { action, cancellationReason, internalNotes } = parsed.data;
+    if (action === "check_in" && booking.status === "confirmed") {
+      booking.status = "checked_in";
+    } else if (action === "check_out" && booking.status === "checked_in") {
+      booking.status = "checked_out";
+    } else if (action === "cancel") {
+      booking.status = "cancelled";
+      booking.cancellation_reason = cancellationReason ?? null;
+      booking.cancelled_at = new Date().toISOString();
+    } else if (action === "update_notes") {
+      booking.internal_notes = internalNotes ?? null;
+    }
+
+    return NextResponse.json({ success: true, demo: true });
+  }
+
+  const auth = await requireActiveAdmin();
+  if (auth.error) return auth.error;
+  const { user } = auth;
 
   let body: unknown;
   try {
@@ -112,7 +148,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     // Send cancellation email to guest
     const roomName = (booking.rooms as { name: string } | null)?.name ?? "your room";
-    const adminEmail = process.env.RESEND_FROM_EMAIL ?? siteConfig.contact.email;
+    const adminEmail = process.env.ADMIN_EMAIL ?? siteConfig.contact.email;
     await sendEmail({
       to: booking.guest_email,
       subject: `Your booking ${booking.booking_reference} has been cancelled`,

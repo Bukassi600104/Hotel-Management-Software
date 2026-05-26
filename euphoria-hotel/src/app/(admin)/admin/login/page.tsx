@@ -4,8 +4,17 @@ import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Loader2, Eye, EyeOff } from "lucide-react";
+import { BrandLogo } from "@/components/public/brand-logo";
 
 export default function AdminLoginPage() {
+  return (
+    <React.Suspense fallback={null}>
+      <AdminLoginForm />
+    </React.Suspense>
+  );
+}
+
+function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next") ?? "/admin";
@@ -32,7 +41,7 @@ export default function AdminLoginPage() {
     if (authError) {
       setLoading(false);
       if (authError.message.toLowerCase().includes("invalid")) {
-        setError("Wrong email or password — please try again.");
+        setError("Wrong email or password - please try again.");
       } else {
         setError("Something went wrong. Please try again.");
       }
@@ -57,50 +66,53 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0f1012] px-4">
-      <div className="w-full max-w-sm">
-        {/* Logo */}
-        <div className="mb-10 text-center">
+    <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,rgba(201,169,97,0.22),transparent_34%),linear-gradient(180deg,#fffdf8_0%,#f5eddf_100%)] px-4 py-10">
+      <div className="w-full max-w-md rounded-2xl border border-[#eadfca] bg-white/92 p-7 shadow-[0_28px_90px_rgba(39,29,12,0.12)] backdrop-blur">
+        <div className="mb-8 text-center">
+          <div className="mx-auto mb-5 flex justify-center">
+            <BrandLogo height={58} />
+          </div>
           <p className="text-[11px] uppercase tracking-[0.4em] text-[#c9a961]">
             Hilton Euphoria Hotel
           </p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-white">Admin Panel</h1>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-[#151515]">Admin sign in</h1>
+          <p className="mt-2 text-sm text-[#746b5c]">Access the hotel management workspace.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {error}
             </div>
           )}
 
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-white/60">Email address</label>
+            <label className="mb-1.5 block text-xs font-medium uppercase tracking-[0.14em] text-[#7b725f]">Email address</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/25 focus:border-[#c9a961]/50 focus:outline-none focus:ring-1 focus:ring-[#c9a961]/30"
+              className="w-full rounded-lg border border-[#eadfca] bg-[#fffdf8] px-4 py-3 text-sm text-[#151515] placeholder:text-[#9f9686] focus:border-[#c9a961]/60 focus:outline-none focus:ring-1 focus:ring-[#c9a961]/30"
               placeholder="you@hotel.com"
             />
           </div>
 
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-white/60">Password</label>
+            <label className="mb-1.5 block text-xs font-medium uppercase tracking-[0.14em] text-[#7b725f]">Password</label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 pr-10 text-sm text-white placeholder:text-white/25 focus:border-[#c9a961]/50 focus:outline-none focus:ring-1 focus:ring-[#c9a961]/30"
+                className="w-full rounded-lg border border-[#eadfca] bg-[#fffdf8] px-4 py-3 pr-10 text-sm text-[#151515] placeholder:text-[#9f9686] focus:border-[#c9a961]/60 focus:outline-none focus:ring-1 focus:ring-[#c9a961]/30"
                 placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7b725f] hover:text-[#151515]"
               >
                 {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
               </button>
@@ -110,7 +122,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#c9a961] text-xs font-semibold uppercase tracking-[0.18em] text-[#17181a] transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="mt-2 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#c9a961] text-xs font-semibold uppercase tracking-[0.18em] text-[#17181a] shadow-[0_16px_35px_rgba(201,169,97,0.28)] transition-opacity hover:opacity-90 disabled:opacity-60"
           >
             {loading ? <Loader2 className="size-4 animate-spin" /> : "Sign in"}
           </button>
@@ -118,7 +130,7 @@ export default function AdminLoginPage() {
 
         <button
           onClick={handleForgotPassword}
-          className="mt-4 w-full text-center text-xs text-white/40 hover:text-white/70"
+          className="mt-4 w-full text-center text-xs text-[#746b5c] hover:text-[#151515]"
         >
           Forgot password?
         </button>

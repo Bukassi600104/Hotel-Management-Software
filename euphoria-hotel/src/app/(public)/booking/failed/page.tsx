@@ -6,7 +6,13 @@ import { AlertCircle, ArrowLeft, Phone } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 import { siteConfig } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Booking incomplete" };
+export const metadata: Metadata = {
+  title: "Booking incomplete",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 type SearchParams = Promise<{ reason?: string }>;
 
@@ -55,7 +61,9 @@ export default async function BookingFailedPage({
           src="/hotel-assets/welcome-slide.jpg"
           alt=""
           fill
-          priority
+          preload
+          fetchPriority="high"
+          quality={75}
           sizes="100vw"
           className="object-cover opacity-25"
         />

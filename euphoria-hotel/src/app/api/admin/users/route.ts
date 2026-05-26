@@ -1,7 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
+import { requireActiveAdmin } from "@/lib/admin/auth";
+
+const demoUsers = [
+  {
+    id: "00000000-0000-4000-8000-000000000001",
+    email: "manager@hiltoneuphoriahotel.com",
+    full_name: "Hotel Manager",
+    role: "super_admin",
+    is_active: true,
+    last_active_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000002",
+    email: "frontdesk@hiltoneuphoriahotel.com",
+    full_name: "Front Desk",
+    role: "staff",
+    is_active: true,
+    last_active_at: null,
+    created_at: new Date().toISOString(),
+  },
+];
 
 const inviteSchema = z.object({
   email: z.string().email(),
@@ -15,27 +37,11 @@ const updateSchema = z.object({
   isActive: z.boolean().optional(),
 });
 
-async function requireSuperAdmin() {
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return null;
-
-  const admin = createAdminClient();
-  const { data } = await admin
-    .from("admin_users")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (data?.role !== "super_admin") return null;
-  return user;
-}
-
 export async function GET() {
-  const user = await requireSuperAdmin();
-  if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!hasSupabaseAdminEnv()) return NextResponse.json(demoUsers);
+
+  const auth = await requireActiveAdmin(["super_admin"]);
+  if (auth.error) return auth.error;
 
   const admin = createAdminClient();
   const { data, error } = await admin
@@ -48,8 +54,12 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const user = await requireSuperAdmin();
-  if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json({ success: true, demo: true });
+  }
+
+  const auth = await requireActiveAdmin(["super_admin"]);
+  if (auth.error) return auth.error;
 
   let body: unknown;
   try {
@@ -88,8 +98,13 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  const user = await requireSuperAdmin();
-  if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json({ success: true, demo: true });
+  }
+
+  const auth = await requireActiveAdmin(["super_admin"]);
+  if (auth.error) return auth.error;
+  const { user } = auth;
 
   let body: unknown;
   try {

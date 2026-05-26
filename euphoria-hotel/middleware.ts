@@ -1,16 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { hasSupabasePublicEnv } from "@/lib/supabase/config";
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Only guard admin routes
-  if (!pathname.startsWith("/admin")) {
+  // Only guard admin and CMS routes
+  if (!pathname.startsWith("/admin") && !pathname.startsWith("/cms")) {
     return NextResponse.next();
   }
 
   // Login page is always publicly accessible — never redirect here
   if (pathname.startsWith("/admin/login")) {
+    return NextResponse.next();
+  }
+
+  if (!hasSupabasePublicEnv()) {
     return NextResponse.next();
   }
 
@@ -57,5 +62,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/cms/:path*"],
 };

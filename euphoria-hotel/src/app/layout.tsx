@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
+
 import { Toaster } from "@/components/ui/sonner";
+import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://hiltoneuphoriahotel.com"),
+  metadataBase: new URL(siteConfig.url),
+  applicationName: siteConfig.name,
+  category: "Hotel",
   title: {
-    default: "Hilton Euphoria Hotel · Lagos' Premier Five-Star Deluxe Hotel",
-    template: "%s · Hilton Euphoria Hotel",
+    default: "Hilton Euphoria Hotel | Luxury Hotel in Egbeda, Lagos",
+    template: `%s | ${siteConfig.name}`,
   },
-  description:
-    "Welcome to Lagos' premier five-star deluxe hotel. Experience the perfect blend of elegance and comfort at Hilton Euphoria Hotel.",
+  description: siteConfig.description,
   keywords: [
     "Hilton Euphoria Hotel",
     "Lagos hotel",
@@ -19,19 +22,41 @@ export const metadata: Metadata = {
     "Gowon Estate hotel",
     "conference room Lagos",
   ],
+  alternates: {
+    canonical: siteConfig.url,
+  },
   openGraph: {
     type: "website",
     locale: "en_NG",
-    url: "https://hiltoneuphoriahotel.com",
-    siteName: "Hilton Euphoria Hotel",
-    title: "Hilton Euphoria Hotel · Lagos' Premier Five-Star Deluxe Hotel",
-    description:
-      "Welcome to Lagos' premier five-star deluxe hotel. Experience the perfect blend of elegance and comfort.",
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    title: "Hilton Euphoria Hotel | Luxury Hotel in Egbeda, Lagos",
+    description: siteConfig.description,
+    images: [
+      {
+        url: "/hotel-assets/hotel-aerial.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Aerial night view of Hilton Euphoria Hotel in Lagos",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hilton Euphoria Hotel",
-    description: "Lagos' premier five-star deluxe hotel.",
+    title: "Hilton Euphoria Hotel | Luxury Hotel in Egbeda, Lagos",
+    description: siteConfig.description,
+    images: ["/hotel-assets/hotel-aerial.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
   icons: { icon: "/favicon.ico" },
 };

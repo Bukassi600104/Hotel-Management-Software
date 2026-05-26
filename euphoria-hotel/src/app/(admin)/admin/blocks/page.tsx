@@ -1,16 +1,18 @@
 import { Suspense } from "react";
 import { BlocksClient } from "@/components/admin/blocks-client";
+import { AdminPageShell } from "@/components/admin/page-shell";
 
 export const dynamic = "force-dynamic";
 
 export default function AdminBlocksPage() {
   return (
-    <div className="p-6 lg:p-8">
-      <h1 className="text-2xl font-semibold tracking-tight text-white">Block Dates</h1>
-      <p className="mt-1 text-sm text-white/40">Close a room for specific dates — maintenance, private events, owner use.</p>
+    <AdminPageShell
+      title="Block Dates"
+      description="Close rooms for maintenance, private events, owner use, or any temporary availability hold."
+    >
       <Suspense>
         <BlocksClient />
       </Suspense>
-    </div>
+    </AdminPageShell>
   );
 }

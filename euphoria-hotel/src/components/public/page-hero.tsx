@@ -41,7 +41,9 @@ export function PageHero({
         src={image}
         alt=""
         fill
-        priority
+        preload
+        fetchPriority="high"
+        quality={75}
         sizes="100vw"
         className="object-cover animate-ken-burns"
       />

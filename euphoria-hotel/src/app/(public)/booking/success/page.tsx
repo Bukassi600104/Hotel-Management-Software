@@ -7,9 +7,17 @@ import { notFound } from "next/navigation";
 import { Reveal } from "@/components/motion/reveal";
 import { siteConfig } from "@/lib/site";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
+import { findDemoBooking } from "@/lib/demo/store";
 import { formatDateLong } from "@/lib/format";
 
-export const metadata: Metadata = { title: "Booking confirmed" };
+export const metadata: Metadata = {
+  title: "Booking confirmed",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 type SearchParams = Promise<{ ref?: string }>;
 
@@ -20,6 +28,14 @@ export default async function BookingSuccessPage({
 }) {
   const { ref } = await searchParams;
   if (!ref) notFound();
+
+  if (!hasSupabaseAdminEnv()) {
+    const booking = findDemoBooking(ref);
+    if (!booking || !["confirmed", "checked_in", "checked_out"].includes(booking.status)) {
+      notFound();
+    }
+    return <SuccessContent booking={booking} roomName={booking.rooms?.name ?? "Your room"} />;
+  }
 
   const admin = createAdminClient();
   const { data: booking } = await admin
@@ -35,6 +51,23 @@ export default async function BookingSuccessPage({
 
   const roomName =
     (booking.rooms as { name: string } | null)?.name ?? "Your room";
+
+  return <SuccessContent booking={booking} roomName={roomName} />;
+}
+
+function SuccessContent({
+  booking,
+  roomName,
+}: {
+  booking: {
+    booking_reference: string;
+    guest_name: string;
+    check_in_date: string;
+    check_out_date: string;
+    total_nights: number;
+  };
+  roomName: string;
+}) {
   const firstName = booking.guest_name.split(" ")[0];
 
   return (
@@ -44,7 +77,9 @@ export default async function BookingSuccessPage({
           src="/hotel-assets/hotel-aerial.jpg"
           alt=""
           fill
-          priority
+          preload
+          fetchPriority="high"
+          quality={75}
           sizes="100vw"
           className="object-cover opacity-30"
         />

@@ -3,6 +3,7 @@ import { z } from "zod";
 import * as React from "react";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
 import { sendEmail } from "@/lib/email/send";
 import { siteConfig } from "@/lib/site";
 import ContactInquiryAlert from "@emails/ContactInquiryAlert";
@@ -36,23 +37,25 @@ export async function POST(request: NextRequest) {
 
   const { name, email, phone, topic, message } = parsed.data;
 
-  const admin = createAdminClient();
-  const { error } = await admin.from("contact_inquiries").insert({
-    name,
-    email,
-    phone: phone || null,
-    topic,
-    message,
-    source: "contact",
-    is_read: false,
-  });
+  if (hasSupabaseAdminEnv()) {
+    const admin = createAdminClient();
+    const { error } = await admin.from("contact_inquiries").insert({
+      name,
+      email,
+      phone: phone || null,
+      topic,
+      message,
+      source: "contact",
+      is_read: false,
+    });
 
-  if (error) {
-    console.error("contact insert error:", error);
-    return NextResponse.json({ error: "Failed to save inquiry" }, { status: 500 });
+    if (error) {
+      console.error("contact insert error:", error);
+      return NextResponse.json({ error: "Failed to save inquiry" }, { status: 500 });
+    }
   }
 
-  const adminEmail = process.env.RESEND_FROM_EMAIL ?? siteConfig.contact.email;
+  const adminEmail = process.env.ADMIN_EMAIL ?? siteConfig.contact.email;
   const now = new Date().toLocaleString("en-NG", { dateStyle: "medium", timeStyle: "short" });
 
   await sendEmail({
@@ -69,5 +72,5 @@ export async function POST(request: NextRequest) {
     }),
   }).catch((err) => console.error("[contact email]", err));
 
-  return NextResponse.json({ success: true });
+  return NextResponse.json({ success: true, demo: !hasSupabaseAdminEnv() });
 }

@@ -1,15 +1,20 @@
 import Link from "next/link";
 
-import { siteConfig } from "@/lib/site";
 import { BrandLogo } from "@/components/public/brand-logo";
+import { FacebookIcon, InstagramIcon } from "@/components/public/social-icons";
+import { getCmsFooter } from "@/lib/cms/content";
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const footer = await getCmsFooter();
   const quickLinks = [
     { label: "Home", href: "/" },
     { label: "Rooms", href: "/rooms" },
     { label: "About Us", href: "/about" },
     { label: "Conference Room", href: "/conference" },
     { label: "Hotel Menu", href: "/menu" },
+    { label: "Drink Menu", href: "/drinks" },
+    { label: "Guest Guide", href: "/guest-guide" },
+    { label: "Laundry Service", href: "/laundry" },
     { label: "Contact Us", href: "/contact" },
   ];
 
@@ -22,8 +27,7 @@ export function SiteFooter() {
               <BrandLogo height={50} invert />
             </div>
             <p className="text-sm leading-[1.7] max-w-xs text-white/70">
-              Experience the perfect blend of elegance and comfort at Hilton
-              Euphoria Hotel, Lagos&apos; premier five-star destination.
+              {footer.description}
             </p>
           </div>
 
@@ -44,33 +48,29 @@ export function SiteFooter() {
           <FooterCol title="Contact">
             <div className="flex flex-col gap-3 text-sm">
               <a
-                href={`tel:${siteConfig.contact.phones[0].number.replace(/\s/g, "")}`}
+                href={`tel:${footer.reservationPhone.replace(/\s/g, "")}`}
                 className="hover:text-[var(--color-gold)] transition-colors"
               >
-                {siteConfig.contact.phones[0].number}
+                {footer.reservationPhone}
               </a>
               <a
-                href={`tel:${siteConfig.contact.phones[1].number.replace(/\s/g, "")}`}
+                href={`tel:${footer.frontDeskPhone.replace(/\s/g, "")}`}
                 className="hover:text-[var(--color-gold)] transition-colors"
               >
-                {siteConfig.contact.phones[1].number}
+                {footer.frontDeskPhone}
               </a>
               <a
-                href={`mailto:${siteConfig.contact.email}`}
+                href={`mailto:${footer.email}`}
                 className="hover:text-[var(--color-gold)] transition-colors"
               >
-                {siteConfig.contact.email}
+                {footer.email}
               </a>
             </div>
           </FooterCol>
 
           <FooterCol title="Address">
             <p className="text-sm leading-[1.7]">
-              Plot 18, 21/22 Road,
-              <br />
-              Gowon Estate, Egbeda,
-              <br />
-              Lagos State, Nigeria
+              {footer.address}
             </p>
           </FooterCol>
         </div>
@@ -79,18 +79,22 @@ export function SiteFooter() {
           <span>
             Copyright {new Date().getFullYear()} Hilton Euphoria Hotel. All rights reserved.
           </span>
-          <div className="flex flex-wrap gap-5">
-            {siteConfig.socials.map((s) => (
+          <div className="flex flex-wrap gap-3">
+            {footer.socials.map((s) => {
+              const Icon = s.href.includes("facebook.com") ? FacebookIcon : InstagramIcon;
+              return (
               <a
                 key={s.label}
                 href={s.href}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[12px] font-medium tracking-[1px] hover:text-[var(--color-gold)] transition-colors"
+                aria-label={s.label}
+                className="inline-flex size-9 items-center justify-center rounded-full border border-white/12 text-white/58 transition-colors hover:border-[var(--color-gold)] hover:text-[var(--color-gold)]"
               >
-                {s.label}
+                <Icon className="size-4" />
               </a>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

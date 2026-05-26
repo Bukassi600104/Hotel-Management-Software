@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Phone } from "lucide-react";
+import type { Metadata } from "next";
+import * as React from "react";
+import { BookOpenText, Phone, Shirt, Utensils } from "lucide-react";
 
 import { HomeHero } from "@/components/public/home-hero";
 import { HomeBookingBar } from "@/components/public/home-booking-bar";
@@ -10,27 +12,42 @@ import { HomeFacilitiesGrid } from "@/components/public/home-facilities-grid";
 import { rooms } from "@/lib/data/rooms";
 import { facilities, secondaryAmenities } from "@/lib/data/facilities";
 import { siteConfig } from "@/lib/site";
+import { getCmsPage } from "@/lib/cms/content";
+import { slideContent, textContent, type CmsPage } from "@/lib/cms/defaults";
+import { ServiceLinkCards } from "@/components/public/guest-service-blocks";
+import { buildPageMetadata, findPublicSeo } from "@/lib/seo";
 
-export default function HomePage() {
+const seo = findPublicSeo("/")!;
+
+export const metadata: Metadata = buildPageMetadata({
+  path: seo.path,
+  title: seo.title,
+  description: seo.description,
+  image: seo.image,
+});
+
+export default async function HomePage() {
+  const cms = await getCmsPage("home");
   return (
     <>
-      <HomeHero />
+      <HomeHero slides={slideContent(cms)} />
       <HomeBookingBar />
-      <AboutSection />
+      <AboutSection cms={cms} />
       <HomeRoomsGrid rooms={rooms} />
       <HomeTestimonials />
       <HomeFacilitiesGrid facilities={facilities} />
+      <GuestServicesSection />
       <AmenitiesSection />
-      <CTABanner />
+      <CTABanner cms={cms} />
       <ContactCards />
     </>
   );
 }
 
 /* ─── About ─── */
-function AboutSection() {
-  const about1 = "/hotel-assets/about.webp";
-  const about2 = "/hotel-assets/room-287.webp";
+function AboutSection({ cms }: { cms: CmsPage }) {
+  const about1 = textContent(cms, "aboutImageOne", "/hotel-assets/about.webp");
+  const about2 = textContent(cms, "aboutImageTwo", "/hotel-assets/room-287.webp");
 
   return (
     <section
@@ -44,6 +61,7 @@ function AboutSection() {
               src={about1}
               alt="Hotel interior"
               fill
+              quality={70}
               sizes="(min-width: 1024px) 40vw, 85vw"
               className="object-cover"
             />
@@ -54,6 +72,7 @@ function AboutSection() {
               src={about2}
               alt="Hotel room"
               fill
+              quality={70}
               sizes="(min-width: 1024px) 25vw, 50vw"
               className="object-cover"
             />
@@ -70,22 +89,27 @@ function AboutSection() {
         </div>
 
         <div className="pb-10">
-          <p className="label-tag mb-4">About Our Hotel</p>
+          <p className="label-tag mb-4">{textContent(cms, "aboutLabel", "About Our Hotel")}</p>
           <h2 className="heading-lg mb-6">
-            The Hilton
-            <br />
-            Euphoria Hotel
+            {textContent(cms, "aboutTitle", "The Hilton\nEuphoria Hotel")
+              .split("\n")
+              .map((line, index) => (
+                <React.Fragment key={line}>
+                  {index > 0 && <br />}
+                  {line}
+                </React.Fragment>
+              ))}
           </h2>
           <div className="w-[60px] h-[2px] bg-[var(--color-gold)] mb-8" />
           <h3 className="font-heading text-[22px] italic font-normal text-[var(--color-dark)] mb-5">
-            Unparalleled Comfort and Extraordinary Hospitality
+            {textContent(cms, "aboutSubtitle", "Unparalleled Comfort and Extraordinary Hospitality")}
           </h3>
           <p className="body-text mb-8">
-            Welcome to Lagos&apos; premier five-star deluxe hotel. Experience
-            the perfect blend of elegance and comfort at Hilton Euphoria Hotel,
-            where every detail is designed to exceed your expectations. Immerse
-            yourself in the refined ambiance, with thoughtfully crafted spaces
-            that invite relaxation.
+            {textContent(
+              cms,
+              "aboutBody",
+              "Welcome to Lagos' premier five-star deluxe hotel. Experience the perfect blend of elegance and comfort at Hilton Euphoria Hotel, where every detail is designed to exceed your expectations."
+            )}
           </p>
           <div className="flex items-center gap-5 py-5 border-t border-[#eee]">
             <Phone className="size-6 text-[var(--color-gold)]" strokeWidth={1.5} />
@@ -105,6 +129,44 @@ function AboutSection() {
 }
 
 /* ─── Amenities ─── */
+function GuestServicesSection() {
+  return (
+    <section className="bg-[var(--color-white-warm)] px-6 py-[60px] md:px-15 md:py-[100px]">
+      <div className="mx-auto max-w-[1300px]">
+        <div className="mb-12 max-w-2xl">
+          <p className="label-tag mb-4">Guest services</p>
+          <h2 className="heading-lg">Useful during your stay</h2>
+          <p className="mt-5 text-sm leading-relaxed text-[var(--color-text-light)] md:text-base">
+            Quick access to the hotel guide, restaurant and bar menu, and guest laundry tariff.
+          </p>
+        </div>
+        <ServiceLinkCards
+          links={[
+            {
+              title: "Guest Guide",
+              body: "Front Desk, restaurant, bar, pool, gym, security, and breakfast information.",
+              href: "/guest-guide",
+              icon: BookOpenText,
+            },
+            {
+              title: "Restaurant & Bar",
+              body: "Food, breakfast, drinks, cocktails, wine, and bar service.",
+              href: "/menu",
+              icon: Utensils,
+            },
+            {
+              title: "Laundry Service",
+              body: "Washing and ironing tariff for in-house guests.",
+              href: "/laundry",
+              icon: Shirt,
+            },
+          ]}
+        />
+      </div>
+    </section>
+  );
+}
+
 function AmenitiesSection() {
   return (
     <section className="px-6 py-[60px] md:px-15 md:py-[100px] bg-[var(--color-cream)]">
@@ -138,28 +200,29 @@ function AmenitiesSection() {
 }
 
 /* ─── CTA Banner ─── */
-function CTABanner() {
-  const rooftop = "/hotel-assets/facility-rooftop.png";
+function CTABanner({ cms }: { cms: CmsPage }) {
+  const rooftop = textContent(cms, "ctaImage", "/hotel-assets/facility-rooftop.png");
   return (
     <section className="relative h-[400px] flex items-center justify-center overflow-hidden">
       <Image
         src={rooftop}
         alt=""
         fill
+        quality={70}
         sizes="100vw"
         className="object-cover"
       />
       <div className="absolute inset-0 bg-[rgba(23,24,26,0.7)]" />
       <div className="relative text-center text-white px-6">
-        <p className="label-tag mb-4">Book Your Stay</p>
+        <p className="label-tag mb-4">{textContent(cms, "ctaLabel", "Book Your Stay")}</p>
         <h2 className="font-heading font-light mb-8 text-balance" style={{ fontSize: "clamp(32px, 4.5vw, 56px)" }}>
-          Experience Luxury Redefined
+          {textContent(cms, "ctaTitle", "Experience Luxury Redefined")}
         </h2>
         <Link
-          href="/rooms"
+          href={textContent(cms, "ctaButtonHref", "/rooms")}
           className="inline-block px-12 py-4 bg-[var(--color-gold)] text-white text-[11px] font-semibold tracking-[4px] uppercase transition-transform duration-300 hover:-translate-y-0.5"
         >
-          Make a Reservation
+          {textContent(cms, "ctaButtonText", "Make a Reservation")}
         </Link>
       </div>
     </section>

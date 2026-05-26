@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Mail, Phone, Trash2, Check, ExternalLink } from "lucide-react";
 import { formatDateShort } from "@/lib/format";
+import { adminGhostButtonClass, adminPanelClass } from "@/components/admin/page-shell";
 
 type Inquiry = {
   id: string;
@@ -23,7 +24,7 @@ export function InquiriesClient() {
   const [selected, setSelected] = React.useState<Inquiry | null>(null);
   const [unreadOnly, setUnreadOnly] = React.useState(false);
 
-  async function load() {
+  const load = React.useCallback(async () => {
     setLoading(true);
     const params = new URLSearchParams();
     if (unreadOnly) params.set("unread", "true");
@@ -31,9 +32,9 @@ export function InquiriesClient() {
     setInquiries(data.inquiries ?? []);
     setTotal(data.total ?? 0);
     setLoading(false);
-  }
+  }, [unreadOnly]);
 
-  React.useEffect(() => { load(); }, [unreadOnly]);
+  React.useEffect(() => { load(); }, [load]);
 
   async function markRead(id: string) {
     await fetch(`/api/admin/inquiries?id=${id}`, { method: "PATCH" });
@@ -59,16 +60,16 @@ export function InquiriesClient() {
       : "bg-sky-500/15 text-sky-300";
 
   return (
-    <div className="mt-5 flex gap-6 h-[calc(100vh-160px)]">
+    <div className="grid min-h-[calc(100vh-220px)] gap-5 lg:grid-cols-[360px_minmax(0,1fr)]">
       {/* List */}
-      <div className="w-full max-w-sm shrink-0 overflow-y-auto rounded-xl border border-white/8">
+      <div className={`${adminPanelClass} max-h-[calc(100vh-220px)] overflow-y-auto`}>
         {/* Filter */}
-        <div className="sticky top-0 border-b border-white/8 bg-[#111316] px-4 py-3 flex items-center justify-between">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-white/8 bg-[#111316]/95 px-4 py-3 backdrop-blur">
           <span className="text-xs text-white/40">{total} total</span>
           <button
             onClick={() => setUnreadOnly(!unreadOnly)}
             className={`rounded-lg px-2.5 py-1 text-xs transition-colors ${
-              unreadOnly ? "bg-[#c9a961] text-[#17181a] font-semibold" : "border border-white/10 text-white/50"
+              unreadOnly ? "bg-[#c9a961] text-[#17181a] font-semibold" : "border border-white/10 bg-white/[0.025] text-white/50"
             }`}
           >
             Unread only
@@ -120,7 +121,7 @@ export function InquiriesClient() {
 
       {/* Detail panel */}
       {selected ? (
-        <div className="flex-1 overflow-y-auto rounded-xl border border-white/8 bg-white/3 p-6">
+        <div className={`${adminPanelClass} overflow-y-auto p-6`}>
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
@@ -138,7 +139,7 @@ export function InquiriesClient() {
               {!selected.is_read && (
                 <button
                   onClick={() => markRead(selected.id)}
-                  className="flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-xs text-white/50 hover:border-white/20"
+                  className={adminGhostButtonClass}
                 >
                   <Check className="size-3.5" />
                   Mark read
@@ -146,7 +147,7 @@ export function InquiriesClient() {
               )}
               <button
                 onClick={() => deleteInquiry(selected.id)}
-                className="rounded-lg border border-red-500/20 p-1.5 text-red-400/50 hover:border-red-500/40 hover:text-red-400"
+                className="rounded-xl border border-red-500/20 bg-red-500/5 p-2 text-red-400/60 hover:border-red-500/40 hover:text-red-400"
               >
                 <Trash2 className="size-4" />
               </button>
@@ -157,7 +158,7 @@ export function InquiriesClient() {
             {selected.email && (
               <a
                 href={`mailto:${selected.email}`}
-                className="flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-sm text-white/60 hover:border-white/20 hover:text-white/80"
+                className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.025] px-3 py-2 text-sm text-white/60 hover:border-white/20 hover:text-white/80"
               >
                 <Mail className="size-3.5" />
                 {selected.email}
@@ -167,7 +168,7 @@ export function InquiriesClient() {
             {selected.phone && (
               <a
                 href={`tel:${selected.phone}`}
-                className="flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-sm text-white/60 hover:border-white/20 hover:text-white/80"
+                className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.025] px-3 py-2 text-sm text-white/60 hover:border-white/20 hover:text-white/80"
               >
                 <Phone className="size-3.5" />
                 {selected.phone}
@@ -177,13 +178,13 @@ export function InquiriesClient() {
 
           <div className="mt-5">
             <p className="mb-2 text-[10px] uppercase tracking-[0.3em] text-white/30">Message</p>
-            <div className="whitespace-pre-wrap rounded-xl border border-white/8 bg-white/3 p-4 text-sm leading-relaxed text-white/75">
+            <div className="whitespace-pre-wrap rounded-2xl border border-white/8 bg-white/[0.035] p-4 text-sm leading-relaxed text-white/75">
               {selected.message}
             </div>
           </div>
         </div>
       ) : (
-        <div className="flex flex-1 items-center justify-center rounded-xl border border-white/8 border-dashed">
+        <div className={`${adminPanelClass} flex items-center justify-center border-dashed p-8`}>
           <p className="text-sm text-white/25">Select an inquiry to read it</p>
         </div>
       )}

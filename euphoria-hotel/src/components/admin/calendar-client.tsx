@@ -3,6 +3,7 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BookingDrawer } from "@/components/admin/booking-drawer";
+import { adminGhostButtonClass, adminPanelClass } from "@/components/admin/page-shell";
 
 type CalBooking = {
   id: string;
@@ -73,38 +74,22 @@ export function CalendarClient() {
     return `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
   }
 
-  function bookingsForRoomDay(roomId: string, d: number) {
-    const day = dayStr(d);
-    return bookings.filter(
-      (b) => b.rooms === undefined || true // we filter by checking dates
-    ).filter(() => true); // placeholder — filtered below
-  }
-
-  function getBookingsForRoom(roomId: string) {
-    return bookings.filter((b) => {
-      // We need room_id on the booking; since we join rooms(name) we don't have room_id directly
-      // The API returns bookings with rooms as an object, not room_id
-      // For the calendar we need a different query — simplified view here
-      return true;
-    });
-  }
-
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
   return (
     <>
       {/* Month nav */}
-      <div className="mt-5 flex items-center gap-4">
-        <button onClick={prevMonth} className="rounded-lg border border-white/10 p-2 hover:border-white/20 text-white/60">
+      <div className={`${adminPanelClass} flex flex-wrap items-center gap-3 p-4`}>
+        <button onClick={prevMonth} className="rounded-xl border border-white/10 bg-white/[0.025] p-2.5 text-white/60 hover:border-white/20">
           <ChevronLeft className="size-4" />
         </button>
         <h2 className="min-w-40 text-center text-sm font-semibold text-white">{monthLabel}</h2>
-        <button onClick={nextMonth} className="rounded-lg border border-white/10 p-2 hover:border-white/20 text-white/60">
+        <button onClick={nextMonth} className="rounded-xl border border-white/10 bg-white/[0.025] p-2.5 text-white/60 hover:border-white/20">
           <ChevronRight className="size-4" />
         </button>
         <button
           onClick={() => { setYear(now.getFullYear()); setMonth(now.getMonth()); }}
-          className="ml-2 rounded-lg border border-white/10 px-3 py-2 text-xs text-white/50 hover:border-white/20"
+          className={adminGhostButtonClass}
         >
           Today
         </button>
@@ -115,11 +100,11 @@ export function CalendarClient() {
           <div className="size-6 animate-spin rounded-full border-2 border-white/20 border-t-[#c9a961]" />
         </div>
       ) : (
-        <div className="mt-5 overflow-x-auto rounded-xl border border-white/8">
+        <div className={`${adminPanelClass} mt-5 overflow-x-auto`}>
           <table className="min-w-max text-xs">
-            <thead className="border-b border-white/8 bg-white/3">
+            <thead className="border-b border-white/8 bg-[#0d0e10]/55">
               <tr>
-                <th className="sticky left-0 z-10 w-36 bg-white/3 px-4 py-3 text-left text-[10px] uppercase tracking-wider text-white/35">
+                <th className="sticky left-0 z-10 w-40 bg-[#141518] px-4 py-3 text-left text-[10px] uppercase tracking-wider text-white/35">
                   Room
                 </th>
                 {days.map((d) => {
@@ -147,7 +132,7 @@ export function CalendarClient() {
 
                 return (
                   <tr key={room.id} className="hover:bg-white/2">
-                    <td className="sticky left-0 z-10 bg-[#111316] px-4 py-2 font-medium text-white/65 hover:bg-[#161820]">
+                    <td className="sticky left-0 z-10 bg-[#101113] px-4 py-3 font-medium text-white/65 hover:bg-[#161820]">
                       {room.name}
                     </td>
                     {days.map((d) => {
@@ -161,8 +146,6 @@ export function CalendarClient() {
 
                       if (booking) {
                         const isFirst = booking.check_in_date === day;
-                        const isLast = booking.check_out_date ===
-                          new Date(new Date(day).getTime() + 86400000).toISOString().split("T")[0];
                         const isConfirmed = booking.status === "confirmed" || booking.status === "checked_in";
                         return (
                           <td

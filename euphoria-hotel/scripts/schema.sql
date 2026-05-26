@@ -40,6 +40,7 @@ create table if not exists rooms (
 create table if not exists bookings (
   id                  uuid primary key default gen_random_uuid(),
   booking_reference   text unique not null,
+  booking_type        text not null default 'online',
   room_id             uuid references rooms(id) not null,
   guest_name          text not null,
   guest_email         text not null,
@@ -155,7 +156,7 @@ create trigger rooms_updated_at
 
 -- ============================================================
 -- SEED: 9 room types
--- Prices stored in kobo (1 Naira = 100 kobo)
+-- Prices stored in Nigerian Naira. Paystack conversion to kobo happens in code.
 -- ============================================================
 insert into rooms (
   name, slug, short_name, description, short_description,
@@ -166,7 +167,7 @@ insert into rooms (
   'Mini Standard','mini-standard','Mini Standard',
   'A compact, thoughtfully designed room perfect for solo travellers or couples on a short stay. Every centimetre is used with purpose.',
   'Compact comfort for short stays.',
-  3000000, 2, '1 Full Bed', 22,
+  30000, 2, '1 Full Bed', 22,
   '/hotel-assets/room-mini-standard.png',
   ARRAY['/hotel-assets/room-mini-standard.png','/hotel-assets/room-standard.png','/hotel-assets/room-deluxe.jpg'],
   ARRAY['High-Speed Wi-Fi','Air Conditioning','Smart TV','Daily Housekeeping','Work Desk'],
@@ -176,7 +177,7 @@ insert into rooms (
   'Standard','standard','Standard',
   'A well-appointed room with generous space for relaxing after a long day. Ideal for business or leisure.',
   'Generous space, every comfort covered.',
-  4000000, 2, '1 Full Bed', 26,
+  40000, 2, '1 Full Bed', 26,
   '/hotel-assets/room-standard.png',
   ARRAY['/hotel-assets/room-standard.png','/hotel-assets/room-mini-standard.png','/hotel-assets/room-deluxe.jpg'],
   ARRAY['High-Speed Wi-Fi','Air Conditioning','Smart TV','Daily Housekeeping','Work Desk','Wardrobe'],
@@ -186,7 +187,7 @@ insert into rooms (
   'Deluxe','deluxe','Deluxe',
   'Elevated comfort with premium finishes. A king bed, refined bathroom, and curated amenities for guests who expect more.',
   'Elevated comfort, premium finishes.',
-  5000000, 2, '1 King Bed', 32,
+  50000, 2, '1 King Bed', 32,
   '/hotel-assets/room-deluxe.jpg',
   ARRAY['/hotel-assets/room-deluxe.jpg','/hotel-assets/room-standard.png','/hotel-assets/room-executive.png'],
   ARRAY['High-Speed Wi-Fi','Air Conditioning','Smart TV','Daily Housekeeping','Work Desk','King Bed','Rain Shower','Mini Bar','Espresso Machine'],
@@ -196,7 +197,7 @@ insert into rooms (
   'Super Deluxe','super-deluxe','Super Deluxe',
   'One step above Deluxe — a wider room, deeper soaking amenities, and extra space to breathe.',
   'More space, deeper comfort.',
-  5500000, 2, '1 King Bed', 36,
+  55000, 2, '1 King Bed', 36,
   '/hotel-assets/room-super-deluxe.jpg',
   ARRAY['/hotel-assets/room-super-deluxe.jpg','/hotel-assets/room-deluxe.jpg','/hotel-assets/room-executive.png'],
   ARRAY['High-Speed Wi-Fi','Air Conditioning','Smart TV','Daily Housekeeping','Work Desk','King Bed','Rain Shower','Mini Bar','Espresso Machine','Bathrobe & Slippers'],
@@ -206,7 +207,7 @@ insert into rooms (
   'Executive','executive','Executive',
   'Designed for the discerning business traveller. A king bed, workstation, and premium amenities built for productivity and rest.',
   'Built for the discerning business traveller.',
-  6000000, 2, '1 King Bed', 40,
+  60000, 2, '1 King Bed', 40,
   '/hotel-assets/room-executive.png',
   ARRAY['/hotel-assets/room-executive.png','/hotel-assets/room-super-deluxe.jpg','/hotel-assets/room-executive-suite.jpg'],
   ARRAY['High-Speed Wi-Fi','Air Conditioning','Smart TV','Daily Housekeeping','King Bed','Rain Shower','Mini Bar','Espresso Machine','Bathrobe & Slippers','Executive Work Desk'],
@@ -216,7 +217,7 @@ insert into rooms (
   'Super Executive','super-executive','Super Executive',
   'The pinnacle of our executive category. More floor space, enhanced amenities, and the quiet of a premium floor.',
   'Maximum executive comfort.',
-  6500000, 2, '1 King Bed', 44,
+  65000, 2, '1 King Bed', 44,
   '/hotel-assets/room-super-executive.jpg',
   ARRAY['/hotel-assets/room-super-executive.jpg','/hotel-assets/room-executive.png','/hotel-assets/room-deluxe-suite.png'],
   ARRAY['High-Speed Wi-Fi','Air Conditioning','Smart TV','Daily Housekeeping','King Bed','Rain Shower','Mini Bar','Espresso Machine','Bathrobe & Slippers','Executive Work Desk','Evening Turndown'],
@@ -226,7 +227,7 @@ insert into rooms (
   'Deluxe Suite','deluxe-suite','Deluxe Suite',
   'A suite with a separate lounge area and bedroom. Thoughtfully furnished for guests who need room to live, not just sleep.',
   'Suite living with a separate lounge.',
-  8000000, 2, '1 King Bed', 56,
+  80000, 2, '1 King Bed', 56,
   '/hotel-assets/room-deluxe-suite.png',
   ARRAY['/hotel-assets/room-deluxe-suite.png','/hotel-assets/room-super-executive.jpg','/hotel-assets/room-executive-suite.jpg'],
   ARRAY['High-Speed Wi-Fi','Air Conditioning','Smart TV','Daily Housekeeping','King Bed','Rain Shower','Mini Bar','Espresso Machine','Bathrobe & Slippers','Separate Lounge','Soaking Tub'],
@@ -236,7 +237,7 @@ insert into rooms (
   'Executive Suite','executive-suite','Executive Suite',
   'Two rooms, one vision of luxury. A full suite with lounge and premium executive finishes throughout.',
   'Full suite luxury.',
-  9000000, 2, '1 King Bed', 64,
+  90000, 2, '1 King Bed', 64,
   '/hotel-assets/room-executive-suite.jpg',
   ARRAY['/hotel-assets/room-executive-suite.jpg','/hotel-assets/room-deluxe-suite.png','/hotel-assets/room-presidential.jpg'],
   ARRAY['High-Speed Wi-Fi','Air Conditioning','Smart TV','Daily Housekeeping','King Bed','Rain Shower','Mini Bar','Espresso Machine','Bathrobe & Slippers','Separate Lounge','Soaking Tub','Dining Area'],
@@ -246,7 +247,7 @@ insert into rooms (
   'Presidential Suite','presidential-suite','Presidential Suite',
   'The highest expression of hospitality at Hilton Euphoria. Two king bedrooms, a private dining room, and butler service on request.',
   'Our finest accommodation.',
-  17000000, 5, '2 King Beds', 110,
+  170000, 5, '2 King Beds', 110,
   '/hotel-assets/room-presidential.jpg',
   ARRAY['/hotel-assets/room-presidential.jpg','/hotel-assets/room-executive-suite.jpg','/hotel-assets/room-deluxe-suite.png'],
   ARRAY['High-Speed Wi-Fi','Air Conditioning','Smart TV','Daily Housekeeping','2 King Beds','Rain Shower','Mini Bar','Espresso Machine','Bathrobe & Slippers','Separate Lounge','Soaking Tub','Private Dining Room','Butler on Request'],
@@ -255,4 +256,4 @@ insert into rooms (
 on conflict (slug) do nothing;
 
 -- verify
-select name, price_per_night / 100 as price_naira, badge from rooms order by display_order;
+select name, price_per_night as price_naira, badge from rooms order by display_order;

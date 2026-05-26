@@ -14,6 +14,10 @@ import { buildPricingBreakdown } from "@/lib/utils/pricing";
 export const metadata: Metadata = {
   title: "Confirm your booking",
   description: "Review your stay and complete the reservation.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 type SearchParams = Promise<{
@@ -61,7 +65,9 @@ export default async function BookingConfirmPage({
           src={room.thumbnail}
           alt=""
           fill
-          priority
+          preload
+          fetchPriority="high"
+          quality={75}
           sizes="100vw"
           className="object-cover opacity-35"
         />
@@ -83,7 +89,7 @@ export default async function BookingConfirmPage({
         </div>
       </section>
 
-      <div className="mx-auto -mt-12 max-w-7xl px-4 sm:px-6 lg:px-10">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_22rem] lg:gap-10 xl:gap-14">
           <BookingForm
             room={room}
@@ -91,8 +97,7 @@ export default async function BookingConfirmPage({
             checkout={sp.checkout}
             nights={nights}
             adults={adults}
-            children={children}
-            total={pricing.total}
+            childCount={children}
           />
 
           {/* Summary sidebar */}
@@ -106,6 +111,7 @@ export default async function BookingConfirmPage({
                   src={room.thumbnail}
                   alt={room.name}
                   fill
+                  quality={70}
                   sizes="(min-width: 1024px) 22rem, 100vw"
                   className="object-cover"
                 />

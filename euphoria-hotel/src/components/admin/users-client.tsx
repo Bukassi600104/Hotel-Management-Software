@@ -3,6 +3,7 @@
 import * as React from "react";
 import { UserPlus, Power, PowerOff } from "lucide-react";
 import { formatDateShort } from "@/lib/format";
+import { adminButtonClass, adminGhostButtonClass, adminInputClass, adminPanelClass } from "@/components/admin/page-shell";
 
 type AdminUser = {
   id: string;
@@ -62,12 +63,12 @@ export function UsersClient() {
   const ROLES = ["super_admin", "manager", "staff"];
 
   return (
-    <div className="mt-6">
-      <div className="flex items-center justify-between mb-5">
+    <div>
+      <div className={`${adminPanelClass} mb-5 flex items-center justify-between p-4`}>
         <p className="text-sm text-white/40">{users.length} admin account{users.length !== 1 ? "s" : ""}</p>
         <button
           onClick={() => setShowInvite(true)}
-          className="flex items-center gap-2 rounded-lg bg-[#c9a961] px-4 py-2 text-xs font-semibold text-[#17181a] hover:opacity-90"
+          className={adminButtonClass}
         >
           <UserPlus className="size-4" />
           Invite staff member
@@ -76,7 +77,7 @@ export function UsersClient() {
 
       {/* Invite form */}
       {showInvite && (
-        <div className="mb-6 rounded-xl border border-white/10 bg-white/3 p-5">
+        <div className={`${adminPanelClass} mb-6 p-5`}>
           <h3 className="mb-4 text-sm font-semibold text-white/80">Invite a new staff member</h3>
           <form onSubmit={handleInvite} className="space-y-3">
             {inviteError && (
@@ -92,7 +93,7 @@ export function UsersClient() {
                   value={invite.fullName}
                   onChange={(e) => setInvite({ ...invite, fullName: e.target.value })}
                   required
-                  className="w-full rounded-lg border border-white/10 bg-[#0f1012] px-3 py-2 text-sm text-white focus:border-[#c9a961]/40 focus:outline-none"
+                  className={adminInputClass}
                 />
               </div>
               <div>
@@ -102,7 +103,7 @@ export function UsersClient() {
                   value={invite.email}
                   onChange={(e) => setInvite({ ...invite, email: e.target.value })}
                   required
-                  className="w-full rounded-lg border border-white/10 bg-[#0f1012] px-3 py-2 text-sm text-white focus:border-[#c9a961]/40 focus:outline-none"
+                  className={adminInputClass}
                 />
               </div>
             </div>
@@ -111,7 +112,7 @@ export function UsersClient() {
               <select
                 value={invite.role}
                 onChange={(e) => setInvite({ ...invite, role: e.target.value })}
-                className="w-full rounded-lg border border-white/10 bg-[#0f1012] px-3 py-2.5 text-sm text-white focus:border-[#c9a961]/40 focus:outline-none"
+                className={adminInputClass}
               >
                 {ROLES.map((r) => (
                   <option key={r} value={r}>{r.replace("_", " ")}</option>
@@ -122,14 +123,14 @@ export function UsersClient() {
               <button
                 type="submit"
                 disabled={inviting}
-                className="rounded-lg bg-[#c9a961] px-5 py-2 text-xs font-semibold text-[#17181a] hover:opacity-90 disabled:opacity-50"
+                className={adminButtonClass}
               >
                 {inviting ? "Sending invite…" : "Send invite email"}
               </button>
               <button
                 type="button"
                 onClick={() => setShowInvite(false)}
-                className="rounded-lg border border-white/10 px-4 py-2 text-xs text-white/50 hover:border-white/20"
+                className={adminGhostButtonClass}
               >
                 Cancel
               </button>
@@ -144,9 +145,9 @@ export function UsersClient() {
           <div className="size-5 animate-spin rounded-full border-2 border-white/20 border-t-[#c9a961]" />
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-white/8">
+        <div className={`${adminPanelClass} overflow-hidden`}>
           <table className="min-w-full text-sm">
-            <thead className="border-b border-white/8 bg-white/3">
+            <thead className="border-b border-white/8 bg-[#0d0e10]/55">
               <tr>
                 {["Name", "Email", "Role", "Last active", "Status", "Actions"].map((h) => (
                   <th key={h} className="px-4 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-white/35">

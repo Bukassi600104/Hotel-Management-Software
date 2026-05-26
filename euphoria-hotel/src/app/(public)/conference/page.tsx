@@ -17,15 +17,18 @@ import { PageHero } from "@/components/public/page-hero";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/reveal";
 import { ConferenceInquiryForm } from "@/components/public/conference-inquiry-form";
 import { siteConfig } from "@/lib/site";
+import { getCmsPage } from "@/lib/cms/content";
+import { textContent } from "@/lib/cms/defaults";
+import { buildPageMetadata, findPublicSeo } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Conference Room",
-  description:
-    "Boardroom-grade venues, configured to your agenda — soundproofed, lit on dimmers, and supported by a dedicated coordinator.",
-};
+const seo = findPublicSeo("/conference")!;
 
-const heroImage =
-  "/hotel-assets/facility-conference.png";
+export const metadata: Metadata = buildPageMetadata({
+  path: seo.path,
+  title: seo.title,
+  description: seo.description,
+  image: seo.image,
+});
 
 const features = [
   {
@@ -74,14 +77,15 @@ const gallery = [
   "/hotel-assets/conference-gallery.jpg",
 ];
 
-export default function ConferencePage() {
+export default async function ConferencePage() {
+  const cms = await getCmsPage("conference");
   return (
     <>
       <PageHero
-        eyebrow="Conference & events"
-        title="Modern, elegant, kept quiet."
+        eyebrow={cms.hero_eyebrow}
+        title={cms.hero_title}
         description="A purpose-built venue for executive gatherings — sound-treated, lit on dimmers, and supported by a dedicated coordinator from arrival to wrap."
-        image={heroImage}
+        image={cms.hero_image}
         crumbs={[{ label: "Conference" }]}
       />
 
@@ -91,10 +95,10 @@ export default function ConferencePage() {
           <Reveal variant="fade-up" className="max-w-2xl">
             <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] text-[var(--color-gold-dark)]">
               <span className="block h-px w-10 bg-[var(--color-gold)]" />
-              What you get
+              {textContent(cms, "introEyebrow", "What you get")}
             </span>
             <h2 className="mt-3 font-heading text-4xl leading-[1.05] tracking-tight text-balance sm:text-5xl">
-              Built around the way meetings actually run.
+              {textContent(cms, "introTitle", "Built around the way meetings actually run.")}
             </h2>
           </Reveal>
 
@@ -128,7 +132,7 @@ export default function ConferencePage() {
           <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-16">
             <Reveal variant="fade-up" className="space-y-6">
               <h2 className="font-heading text-4xl leading-[1.05] tracking-tight text-balance sm:text-5xl">
-                Four ways to set the room.
+                {textContent(cms, "layoutTitle", "Four ways to set the room.")}
               </h2>
               <p className="text-muted-foreground">
                 Tell us how you would like the day to go and we will configure
@@ -166,6 +170,7 @@ export default function ConferencePage() {
                     src={src}
                     alt=""
                     fill
+                    quality={70}
                     sizes="(min-width: 1024px) 24rem, 50vw"
                     className="object-cover transition-transform duration-700 hover:scale-105"
                   />

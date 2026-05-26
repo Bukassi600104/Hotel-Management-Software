@@ -44,7 +44,9 @@ export function RoomGallery({ images, alt }: Props) {
                   src={src}
                   alt={`${alt} — image ${i + 1}`}
                   fill
-                  priority={i === 0}
+                  preload={i === 0}
+                  fetchPriority={i === 0 ? "high" : "auto"}
+                  quality={75}
                   sizes="(min-width: 1024px) 60vw, 100vw"
                   className="object-cover"
                 />
@@ -107,6 +109,7 @@ export function RoomGallery({ images, alt }: Props) {
               src={src}
               alt=""
               fill
+              quality={50}
               sizes="120px"
               className="object-cover"
             />
@@ -137,6 +140,7 @@ export function RoomGallery({ images, alt }: Props) {
               src={images[lightbox]}
               alt={`${alt} — image ${lightbox + 1}`}
               fill
+              quality={85}
               sizes="90vw"
               className="object-contain"
             />

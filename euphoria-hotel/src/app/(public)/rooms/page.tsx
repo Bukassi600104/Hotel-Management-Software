@@ -5,13 +5,17 @@ import { AvailabilityChecker } from "@/components/public/availability-checker";
 import { RoomCard } from "@/components/public/room-card";
 import { StaggerGroup, StaggerItem, Reveal } from "@/components/motion/reveal";
 import { getAllRooms, getAvailableRooms } from "@/lib/queries/rooms";
-import { isValidDateString, calculateNights } from "@/lib/utils/dates";
+import { isValidDateString, calculateNights } from "@/lib/utils/dates";
+import { buildPageMetadata, findPublicSeo } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Rooms & Suites",
-  description:
-    "Nine considered rooms — from a Mini Standard to our flagship Presidential Apartment. Choose the stay that fits the trip.",
-};
+const seo = findPublicSeo("/rooms")!;
+
+export const metadata: Metadata = buildPageMetadata({
+  path: seo.path,
+  title: seo.title,
+  description: seo.description,
+  image: seo.image,
+});
 
 const heroImage = "/hotel-assets/room-deluxe-suite.png";
 

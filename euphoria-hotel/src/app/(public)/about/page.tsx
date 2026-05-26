@@ -14,15 +14,18 @@ import { FacilityCard } from "@/components/public/facility-card";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/reveal";
 import { CountUp } from "@/components/motion/count-up";
 import { facilities } from "@/lib/data/facilities";
+import { getCmsPage } from "@/lib/cms/content";
+import { textContent } from "@/lib/cms/defaults";
+import { buildPageMetadata, findPublicSeo } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "About Us",
-  description:
-    "Quietly placed in Gowon Estate, Egbeda, Euphoria has spent a decade refining a single idea — that hospitality, done patiently, is still the most generous thing a building can offer.",
-};
+const seo = findPublicSeo("/about")!;
 
-const heroImage =
-  "/hotel-assets/about.webp";
+export const metadata: Metadata = buildPageMetadata({
+  path: seo.path,
+  title: seo.title,
+  description: seo.description,
+  image: seo.image,
+});
 
 const values = [
   {
@@ -47,14 +50,15 @@ const values = [
   },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const cms = await getCmsPage("about");
   return (
     <>
       <PageHero
-        eyebrow="Our story"
-        title="A decade of quiet hospitality."
-        description="Euphoria opened in 2014 with a small team and a single idea: that a hotel should feel like a generous host, not a transactional one."
-        image={heroImage}
+        eyebrow={cms.hero_eyebrow}
+        title={cms.hero_title}
+        description={cms.hero_description}
+        image={cms.hero_image}
         crumbs={[{ label: "About" }]}
       />
 
@@ -63,40 +67,44 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
           <div className="grid gap-14 lg:grid-cols-2 lg:items-center lg:gap-20">
             <Reveal variant="scale" className="relative">
-              <div className="grid grid-cols-5 grid-rows-6 gap-3 [&>*]:rounded-3xl [&>*]:overflow-hidden">
-                <div className="col-span-3 row-span-4 relative">
+              <div className="grid h-[32rem] sm:h-[36rem] lg:h-[40rem] grid-cols-5 grid-rows-6 gap-3 [&>*]:rounded-3xl [&>*]:overflow-hidden [&>*]:relative">
+                <div className="col-span-3 row-span-4">
                   <Image
                     src="/hotel-assets/about.webp"
                     alt="A guest suite"
                     fill
-                    sizes="(min-width: 1024px) 32rem, 60vw"
+                    quality={70}
+                    sizes="(min-width: 1024px) 34vw, (min-width: 640px) 60vw, 100vw"
                     className="object-cover"
                   />
                 </div>
-                <div className="col-span-2 row-span-3 col-start-4 row-start-1 relative">
+                <div className="col-span-2 row-span-3 col-start-4 row-start-1">
                   <Image
                     src="/hotel-assets/restaurant-dsc6939.jpg"
                     alt="The restaurant"
                     fill
-                    sizes="(min-width: 1024px) 16rem, 30vw"
+                    quality={70}
+                    sizes="(min-width: 1024px) 18vw, (min-width: 640px) 40vw, 50vw"
                     className="object-cover"
                   />
                 </div>
-                <div className="col-span-2 row-span-3 col-start-4 row-start-4 relative">
+                <div className="col-span-2 row-span-3 col-start-4 row-start-4">
                   <Image
                     src="/hotel-assets/facility-pool.png"
                     alt="The pool"
                     fill
-                    sizes="(min-width: 1024px) 16rem, 30vw"
+                    quality={70}
+                    sizes="(min-width: 1024px) 18vw, (min-width: 640px) 40vw, 50vw"
                     className="object-cover"
                   />
                 </div>
-                <div className="col-span-3 row-span-2 col-start-1 row-start-5 relative">
+                <div className="col-span-3 row-span-2 col-start-1 row-start-5">
                   <Image
                     src="/hotel-assets/facility-rooftop.png"
                     alt="The rooftop lounge"
                     fill
-                    sizes="(min-width: 1024px) 26rem, 50vw"
+                    quality={70}
+                    sizes="(min-width: 1024px) 34vw, (min-width: 640px) 60vw, 100vw"
                     className="object-cover"
                   />
                 </div>
@@ -106,10 +114,10 @@ export default function AboutPage() {
             <Reveal variant="fade-up" className="space-y-6">
               <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] text-[var(--color-gold-dark)]">
                 <span className="block h-px w-10 bg-[var(--color-gold)]" />
-                Our story
+                {textContent(cms, "storyEyebrow", "Our story")}
               </span>
               <h2 className="font-heading text-4xl leading-[1.05] tracking-tight text-balance sm:text-5xl">
-                Built slowly, on a quiet street.
+                {textContent(cms, "storyTitle", "Built slowly, on a quiet street.")}
               </h2>
               <div className="space-y-4 text-base leading-relaxed text-foreground/85 sm:text-lg">
                 <p>
@@ -213,12 +221,14 @@ export default function AboutPage() {
         <div className="relative mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.4fr_1fr] lg:items-center lg:px-10">
           <Reveal variant="fade-up" className="space-y-5">
             <h2 className="font-heading text-4xl leading-[1.05] tracking-tight text-balance sm:text-5xl lg:text-6xl">
-              Come and see for yourself.
+              {textContent(cms, "ctaTitle", "Come and see for yourself.")}
             </h2>
             <p className="max-w-xl text-white/70 text-pretty">
-              Book a room, drop in for breakfast, or hold your next gathering
-              in our conference room. We are quietly here, on a quiet street,
-              with the lights on.
+              {textContent(
+                cms,
+                "ctaBody",
+                "Book a room, drop in for breakfast, or hold your next gathering in our conference room."
+              )}
             </p>
           </Reveal>
           <Reveal

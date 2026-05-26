@@ -1,13 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
+import { listDemoBookings } from "@/lib/demo/store";
+import { requireActiveAdmin } from "@/lib/admin/auth";
 
 export async function GET(req: NextRequest) {
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!hasSupabaseAdminEnv()) {
+    const { searchParams } = req.nextUrl;
+    const status = searchParams.get("status");
+    const search = searchParams.get("search")?.toLowerCase();
+    const from = searchParams.get("from");
+    const to = searchParams.get("to");
+    const bookings = listDemoBookings().filter((booking) => {
+      if (status && status !== "all" && booking.status !== status) return false;
+      if (from && booking.check_in_date < from) return false;
+      if (to && booking.check_in_date > to) return false;
+      if (search) {
+        return (
+          booking.guest_name.toLowerCase().includes(search) ||
+          booking.booking_reference.toLowerCase().includes(search)
+        );
+      }
+      return true;
+    });
+    return NextResponse.json({ bookings, total: bookings.length });
+  }
+
+  const auth = await requireActiveAdmin();
+  if (auth.error) return auth.error;
 
   const { searchParams } = req.nextUrl;
   const status = searchParams.get("status");

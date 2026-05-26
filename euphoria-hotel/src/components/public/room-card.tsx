@@ -69,7 +69,9 @@ export function RoomCard({ room, className, priority }: Props) {
               src={room.thumbnail}
               alt={room.name}
               fill
-              priority={priority}
+              preload={priority}
+              fetchPriority={priority ? "high" : "auto"}
+              quality={75}
               sizes="(min-width: 1280px) 28rem, (min-width: 768px) 40vw, 90vw"
               className="object-cover"
             />

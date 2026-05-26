@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
+import { rooms } from "@/lib/data/rooms";
+import { requireActiveAdmin } from "@/lib/admin/auth";
 
 const createRoomSchema = z.object({
   name: z.string().min(2),
@@ -18,11 +20,31 @@ const createRoomSchema = z.object({
 });
 
 export async function GET() {
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json(
+      rooms.map((room) => ({
+        id: room.slug,
+        name: room.name,
+        slug: room.slug,
+        short_name: room.shortName,
+        description: room.description,
+        short_description: room.tagline,
+        price_per_night: room.pricePerNight,
+        max_guests: room.maxGuests,
+        bed_type: room.bedType,
+        room_size_sqm: room.roomSizeSqm,
+        thumbnail_url: room.thumbnail,
+        gallery_urls: room.gallery,
+        amenities: room.amenities,
+        badge: room.badge ?? null,
+        is_active: true,
+        display_order: room.displayOrder,
+      }))
+    );
+  }
+
+  const auth = await requireActiveAdmin();
+  if (auth.error) return auth.error;
 
   const admin = createAdminClient();
   const { data, error } = await admin
@@ -35,11 +57,15 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json(
+      { error: "Room catalogue storage is not configured. Connect the production database to persist new rooms." },
+      { status: 503 }
+    );
+  }
+
+  const auth = await requireActiveAdmin(["super_admin", "manager"]);
+  if (auth.error) return auth.error;
 
   let body: unknown;
   try {

@@ -64,6 +64,7 @@ export function FacilityCard({ facility, index = 0, className }: Props) {
             src={facility.hero}
             alt={facility.name}
             fill
+            quality={70}
             sizes="(min-width: 1280px) 28rem, (min-width: 768px) 40vw, 90vw"
             className="object-cover"
           />
@@ -91,7 +92,14 @@ export function FacilityCard({ facility, index = 0, className }: Props) {
               key={i}
               className="relative size-10 overflow-hidden rounded-lg ring-1 ring-white/30"
             >
-              <Image src={src} alt="" fill sizes="40px" className="object-cover" />
+              <Image
+                src={src}
+                alt=""
+                fill
+                quality={50}
+                sizes="40px"
+                className="object-cover"
+              />
             </div>
           ))}
         </motion.div>

@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hilton Euphoria Hotel Admin & Booking System Manual</title>
+  <style>
+    @page { size: A4; margin: 15mm 13mm; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #f7f3eb;
+      color: #17181a;
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 11.2px;
+      line-height: 1.55;
+    }
+    h1, h2, h3 { margin: 0; color: #141414; line-height: 1.15; }
+    h1 { font-family: Georgia, "Times New Roman", serif; font-size: 34px; font-weight: 500; }
+    h2 { font-family: Georgia, "Times New Roman", serif; font-size: 25px; font-weight: 500; margin-bottom: 8px; }
+    h3 { font-size: 13px; margin-bottom: 6px; }
+    p { margin: 0 0 8px; }
+    ul, ol { margin: 6px 0 0 18px; padding: 0; }
+    li { margin: 3px 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; background: #fff; }
+    th, td { border: 1px solid #eadfca; padding: 7px 8px; vertical-align: top; }
+    th { background: #fbf6eb; color: #6e5520; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
+    .cover {
+      min-height: 255mm;
+      padding: 26mm 16mm;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.92), rgba(247,243,235,.96)),
+        url("screenshots/01-homepage.png") center/cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      page-break-after: always;
+    }
+    .brand-row { display: flex; align-items: center; gap: 14px; }
+    .logo-box { width: 66px; height: 66px; border-radius: 16px; background: #c9a961; display: grid; place-items: center; overflow: hidden; }
+    .logo-box img { width: 58px; height: auto; }
+    .eyebrow { color: #9a7629; font-size: 10px; text-transform: uppercase; letter-spacing: .32em; font-weight: 700; }
+    .subtitle { margin-top: 12px; max-width: 520px; color: #5f5748; font-size: 14px; line-height: 1.7; }
+    .meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 26px; }
+    .meta-card, .panel, .screenshot, .note, .warning, .flow, .checklist {
+      border: 1px solid #eadfca;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 16px 45px rgba(33,25,12,.06);
+    }
+    .meta-card { padding: 14px; }
+    .meta-card strong { display: block; font-size: 12px; }
+    .meta-card span { color: #756d5e; font-size: 10px; }
+    .page { page-break-after: always; padding: 0; }
+    .page:last-child { page-break-after: auto; }
+    .section-head { margin-bottom: 12px; padding-bottom: 9px; border-bottom: 1px solid #eadfca; }
+    .section-head p { color: #6f6757; max-width: 680px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .panel { padding: 12px; margin: 10px 0; }
+    .note { padding: 10px 12px; background: #fbf6eb; color: #5f5748; }
+    .warning { padding: 10px 12px; background: #fff7ed; border-color: #f1c27d; color: #6b4a13; }
+    .screenshot { margin: 10px 0 14px; padding: 8px; break-inside: avoid; }
+    .screenshot img { width: 100%; display: block; border-radius: 10px; border: 1px solid #eadfca; }
+    .caption { margin-top: 7px; color: #6f6757; font-size: 10px; }
+    .callouts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 8px; }
+    .callout { display: flex; gap: 7px; align-items: flex-start; color: #5f5748; font-size: 10.2px; }
+    .num { flex: 0 0 18px; height: 18px; border-radius: 50%; background: #c9a961; color: #17181a; display: inline-grid; place-items: center; font-weight: 800; font-size: 10px; }
+    .flow { padding: 13px; margin: 10px 0; }
+    .flow-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; align-items: stretch; }
+    .flow-step { padding: 10px; border-radius: 12px; background: #fbf6eb; border: 1px solid #eadfca; text-align: center; font-size: 10px; }
+    .arrow { color: #9a7629; font-weight: 700; }
+    .toc { columns: 2; column-gap: 28px; }
+    .toc li { break-inside: avoid; margin-bottom: 6px; }
+    .badge { display: inline-block; border-radius: 999px; background: #c9a96122; color: #8b6b24; border: 1px solid #c9a96155; padding: 3px 8px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+    .small { font-size: 10px; color: #756d5e; }
+    .keep { break-inside: avoid; }
+  </style>
+</head>
+<body>
+  <section class="cover">
+    <div>
+      <div class="brand-row">
+        <div class="logo-box"><img src="../../public/hotel-assets/logo.png" alt="Hilton Euphoria Hotel logo" /></div>
+        <div>
+          <div class="eyebrow">Hilton Euphoria Hotel</div>
+          <p class="small">Website, booking engine, CMS and hotel admin dashboard</p>
+        </div>
+      </div>
+      <div style="margin-top: 42mm;">
+        <div class="eyebrow">Manager Operations Guide</div>
+        <h1>Hilton Euphoria Hotel<br />Admin & Booking System Manual</h1>
+        <p class="subtitle">
+          A practical operating manual for managers and authorized staff who need to manage website content,
+          guest bookings, room availability, inquiries, admin users and hotel settings from the new system.
+        </p>
+        <div class="meta-grid">
+          <div class="meta-card"><strong>System URL</strong><span>https://euphoria-hotel.vercel.app</span></div>
+          <div class="meta-card"><strong>Audience</strong><span>Hotel manager, front desk lead, admin users</span></div>
+          <div class="meta-card"><strong>Version</strong><span>Prepared 26 May 2026</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="small">Use this guide during handover, staff training and daily hotel operations.</p>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Contents</div>
+      <h2>How To Use This Manual</h2>
+      <p>This document is screenshot-led. Each section explains the purpose of the screen, the manager's decision points, what each action changes, and what to check before saving or confirming anything.</p>
+    </div>
+    <ol class="toc">
+      <li>System overview and access</li>
+      <li>Guest website journey</li>
+      <li>Bookings, reservations and checkout</li>
+      <li>Admin login and dashboard overview</li>
+      <li>Booking management and booking detail drawer</li>
+      <li>Calendar and availability controls</li>
+      <li>Room management</li>
+      <li>Inquiries and follow-up workflow</li>
+      <li>Admin users and permissions</li>
+      <li>Hotel settings and password management</li>
+      <li>Website CMS content editing</li>
+      <li>Troubleshooting playbook</li>
+      <li>Daily, weekly and monthly checklist</li>
+    </ol>
+    <div class="note" style="margin-top: 18px;">
+      <strong>Privacy note:</strong> screenshots use operational screens and a clearly labeled sample booking where booking details are needed. Do not share exported admin screenshots publicly unless guest names, emails, phone numbers and booking references have been removed.
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">System Overview</div>
+      <h2>What The Platform Controls</h2>
+      <p>The system has three manager-facing areas: the public website, the booking/admin dashboard, and the CMS content dashboard. The booking dashboard controls hotel operations; the CMS controls editable website content.</p>
+    </div>
+    <div class="flow">
+      <h3>Guest booking flow</h3>
+      <div class="flow-row">
+        <div class="flow-step">Guest visits website</div>
+        <div class="flow-step">Selects room and dates</div>
+        <div class="flow-step">Booking record is created</div>
+        <div class="flow-step">Payment preview or Paystack handoff</div>
+        <div class="flow-step">Admin manages booking</div>
+      </div>
+    </div>
+    <div class="flow">
+      <h3>Availability logic</h3>
+      <div class="flow-row">
+        <div class="flow-step">Active rooms</div>
+        <div class="flow-step">Confirmed or pending bookings</div>
+        <div class="flow-step">Blocked dates</div>
+        <div class="flow-step">Availability API</div>
+        <div class="flow-step">Guest sees bookable dates</div>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="panel"><h3>Public website</h3><p>Shows hotel information, rooms, facilities, menu, guest guide, laundry, conference and contact content.</p></div>
+      <div class="panel"><h3>Booking admin</h3><p>Controls bookings, room availability, calendar, blocks, inquiries, users and hotel settings.</p></div>
+      <div class="panel"><h3>CMS</h3><p>Allows approved content edits without changing layout or booking logic.</p></div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Public Website</div>
+      <h2>Homepage And Main Navigation</h2>
+      <p>The homepage is the first customer-facing screen. Managers should check that contact details, room links, facility sections and major call-to-action buttons are correct.</p>
+    </div>
+    <div class="screenshot"><img src="screenshots/01-homepage.png" alt="Homepage screenshot" /><div class="caption">Public homepage on the deployed website.</div></div>
+    <div class="callouts">
+      <div class="callout"><span class="num">1</span><span>Use the main navigation to confirm public pages are reachable.</span></div>
+      <div class="callout"><span class="num">2</span><span>Room and booking buttons should take guests into the booking journey.</span></div>
+      <div class="callout"><span class="num">3</span><span>Hero images and homepage text are edited from the CMS, not from the booking admin.</span></div>
+      <div class="callout"><span class="num">4</span><span>Footer contact details and social links should match hotel-approved information.</span></div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Rooms</div>
+      <h2>Rooms Listing And Room Detail Pages</h2>
+      <p>The rooms section is where guests compare rooms before booking. Pricing, capacity and active/inactive room status come from the room records used by the booking engine.</p>
+    </div>
+    <div class="grid-2">
+      <div class="keep">
+        <div class="screenshot"><img src="screenshots/02-rooms-listing.png" alt="Rooms listing screenshot" /><div class="caption">Rooms listing page.</div></div>
+      </div>
+      <div class="keep">
+        <div class="screenshot"><img src="screenshots/03-room-detail.png" alt="Room detail screenshot" /><div class="caption">Room detail page for a selected room.</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Manager checks</h3>
+      <ul>
+        <li>Room names, prices and descriptions should match the hotel's approved tariff.</li>
+        <li>Inactive rooms should not be treated as bookable.</li>
+        <li>Room images should represent the exact room category where possible.</li>
+        <li>Guests should be able to move from room detail to reservation without errors.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Booking Journey</div>
+      <h2>Reservation Form, Payment Preview And Guest Self-Service</h2>
+      <p>The booking journey collects guest details, verifies room/date availability, creates the booking record and moves the guest into checkout or reservation confirmation.</p>
+    </div>
+    <div class="screenshot"><img src="screenshots/04-room-reservation-form.png" alt="Reservation form screenshot" /><div class="caption">Guest reservation form with selected room and dates.</div></div>
+    <div class="callouts">
+      <div class="callout"><span class="num">1</span><span>Check-in and check-out dates must be valid and available.</span></div>
+      <div class="callout"><span class="num">2</span><span>Guest contact details are used for confirmation and follow-up.</span></div>
+      <div class="callout"><span class="num">3</span><span>Special notes should be reviewed by the front desk before arrival.</span></div>
+      <div class="callout"><span class="num">4</span><span>After submission, the booking appears in the admin dashboard.</span></div>
+    </div>
+    <div class="grid-2">
+      <div class="screenshot"><img src="screenshots/06-checkout-preview.png" alt="Checkout preview screenshot" /><div class="caption">Payment preview page pending live gateway credentials.</div></div>
+      <div class="screenshot"><img src="screenshots/05-booking-manage.png" alt="Manage booking screenshot" /><div class="caption">Guest self-service booking lookup page.</div></div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Booking Confirmation</div>
+      <h2>Success Page And Guest Outcome</h2>
+      <p>Once a booking is confirmed, the success page gives the guest a reference number and summary. Managers should use the booking reference to locate the booking quickly in the admin dashboard.</p>
+    </div>
+    <div class="screenshot"><img src="screenshots/19-booking-success.png" alt="Booking success screenshot" /><div class="caption">Booking success page for the training sample booking.</div></div>
+    <div class="note"><strong>Important:</strong> until the live Paystack keys are connected, the payment step is a preview. When Paystack is active, managers should confirm payment status and reference from the booking detail drawer.</div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Access</div>
+      <h2>Admin Login</h2>
+      <p>Only authorized users should access the admin or CMS areas. After handover, the hotel should immediately update the manager password and keep credentials private.</p>
+    </div>
+    <div class="screenshot"><img src="screenshots/07-admin-login.png" alt="Admin login screenshot" /><div class="caption">Admin sign-in screen with the hotel logo.</div></div>
+    <div class="warning"><strong>Password rule:</strong> use at least 12 characters with uppercase, lowercase, a number and a symbol. Do not reuse a personal password.</div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Admin Dashboard</div>
+      <h2>Daily Operations Overview</h2>
+      <p>The dashboard summarizes revenue, booking counts, today's arrivals/departures, recent bookings, schedule items and quick actions.</p>
+    </div>
+    <div class="screenshot"><img src="screenshots/08-admin-dashboard.png" alt="Admin dashboard screenshot" /><div class="caption">Booking/admin dashboard overview.</div></div>
+    <div class="callouts">
+      <div class="callout"><span class="num">1</span><span>Use the search bar to find a booking by guest name or booking reference.</span></div>
+      <div class="callout"><span class="num">2</span><span>Quick actions link to common front desk workflows.</span></div>
+      <div class="callout"><span class="num">3</span><span>Recent bookings should be reviewed daily for payment and arrival readiness.</span></div>
+      <div class="callout"><span class="num">4</span><span>The right panel highlights calendar and task summary information.</span></div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Bookings</div>
+      <h2>Booking List And Filters</h2>
+      <p>The bookings page is the operational list for guest reservations. Use it to search, filter by status, export CSV, and open booking details.</p>
+    </div>
+    <div class="screenshot"><img src="screenshots/09-admin-bookings.png" alt="Admin bookings list screenshot" /><div class="caption">Bookings table with the training sample booking.</div></div>
+    <div class="callouts">
+      <div class="callout"><span class="num">1</span><span>Search supports guest names and booking references.</span></div>
+      <div class="callout"><span class="num">2</span><span>Status filters help managers focus on pending, confirmed, checked-in or cancelled records.</span></div>
+      <div class="callout"><span class="num">3</span><span>Click a booking row to open the booking detail drawer.</span></div>
+      <div class="callout"><span class="num">4</span><span>Use Export CSV for offline reconciliation and reporting.</span></div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Bookings</div>
+      <h2>Booking Detail Drawer</h2>
+      <p>The detail drawer shows the operational truth for a booking: guest contact, room, dates, status, payment information, notes and available admin actions.</p>
+    </div>
+    <div class="screenshot"><img src="screenshots/10-admin-booking-detail.png" alt="Booking detail drawer screenshot" /><div class="caption">Booking detail drawer opened from the bookings table.</div></div>
+    <div class="panel">
+      <h3>Status meaning</h3>
+      <table>
+        <tr><th>Status</th><th>Meaning</th><th>Manager action</th></tr>
+        <tr><td>Pending</td><td>Booking was created but payment/confirmation is not complete.</td><td>Follow up or allow expiry based on policy.</td></tr>
+        <tr><td>Confirmed</td><td>Room should be treated as unavailable for those dates.</td><td>Prepare arrival and check guest notes.</td></tr>
+        <tr><td>Checked in</td><td>Guest has arrived.</td><td>Use for occupancy and front desk tracking.</td></tr>
+        <tr><td>Checked out</td><td>Stay has ended.</td><td>Use for reporting and reconciliation.</td></tr>
+        <tr><td>Cancelled</td><td>Booking is no longer active.</td><td>Confirm cancellation policy and notes.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Calendar</div>
+      <h2>Calendar And Availability</h2>
+      <p>The calendar helps managers understand occupancy by date and room. It should be checked before accepting offline bookings or group reservations.</p>
+    </div>
+    <div class="screenshot"><img src="screenshots/11-admin-calendar.png" alt="Admin calendar screenshot" /><div class="caption">Calendar page for room occupancy visibility.</div></div>
+    <div class="flow">
+      <h3>Availability decision</h3>
+      <div class="flow-row">
+        <div class="flow-step">Room active?</div>
+        <div class="flow-step">No booking conflict?</div>
+        <div class="flow-step">No date block?</div>
+        <div class="flow-step">Guest can reserve</div>
+        <div class="flow-step">Admin monitors</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Block Dates</div>
+      <h2>Closing Dates For Maintenance Or Offline Use</h2>
+      <p>Use block dates when a room should not be sold online even though it exists in the room catalogue. Examples include maintenance, internal reservation, private hold or room inspection.</p>
+    </div>
+    <div class="screenshot"><img src="screenshots/12-admin-blocks.png" alt="Block dates screenshot" /><div class="caption">Block dates page.</div></div>
+    <div class="callouts">
+      <div class="callout"><span class="num">1</span><span>Select the affected room.</span></div>
+      <div class="callout"><span class="num">2</span><span>Select from and to dates.</span></div>
+      <div class="callout"><span class="num">3</span><span>Add a clear reason so future staff understand why the room is closed.</span></div>
+      <div class="callout"><span class="num">4</span><span>Remove the block when the room becomes available again.</span></div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Rooms</div>
+      <h2>Room Management</h2>
+      <p>The rooms page controls room records used by the website and booking engine. Edit room details carefully because public prices and availability depend on this data.</p>
+    </div>
+    <div class="screenshot"><img src="screenshots/13-admin-rooms.png" alt="Admin rooms screenshot" /><div class="caption">Room management page.</div></div>
+    <div class="warning"><strong>Operational caution:</strong> changing a room price affects new bookings going forward. Existing bookings retain their stored pricing unless manually adjusted in the database.</div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Inquiries</div>
+      <h2>Contact And Conference Follow-Up</h2>
+      <p>Inquiries are messages from contact and conference forms. A manager should review unread inquiries daily and assign follow-up where necessary.</p>
+    </div>
+    <div class="screenshot"><img src="screenshots/14-admin-inquiries.png" alt="Admin inquiries screenshot" /><div class="caption">Inquiries inbox.</div></div>
+    <div class="panel">
+      <h3>Recommended process</h3>
+      <ol>
+        <li>Open each unread inquiry.</li>
+        <li>Confirm whether it is general contact, reservation help or conference/event related.</li>
+        <li>Call or email the guest using the provided contact details.</li>
+        <li>Mark as read once the inquiry has been handled.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Users</div>
+      <h2>Admin Users And Roles</h2>
+      <p>Admin users determine who can access the hotel operations dashboard. Keep the user list small and deactivate old staff accounts immediately.</p>
+    </div>
+    <div class="screenshot"><img src="screenshots/15-admin-users.png" alt="Admin users screenshot" /><div class="caption">Admin user management page.</div></div>
+    <table>
+      <tr><th>Role</th><th>Typical access</th><th>Recommended use</th></tr>
+      <tr><td>Super admin</td><td>Full management access.</td><td>Hotel owner, general manager or trusted technical admin.</td></tr>
+      <tr><td>Manager</td><td>Daily operations, bookings, rooms, inquiries and settings as configured.</td><td>Operations manager or front desk supervisor.</td></tr>
+      <tr><td>Staff</td><td>Limited daily workflow access.</td><td>Front desk team members.</td></tr>
+    </table>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Settings</div>
+      <h2>Hotel Settings And Password Change</h2>
+      <p>Settings control the hotel information used on the public site and by booking operations. The password panel allows managers to secure admin access after handover.</p>
+    </div>
+    <div class="screenshot"><img src="screenshots/16-admin-settings.png" alt="Admin settings screenshot" /><div class="caption">Admin settings and password management.</div></div>
+    <div class="callouts">
+      <div class="callout"><span class="num">1</span><span>Update hotel contact lines, address and operational defaults carefully.</span></div>
+      <div class="callout"><span class="num">2</span><span>Use Save changes after editing hotel settings.</span></div>
+      <div class="callout"><span class="num">3</span><span>Change admin password regularly and immediately when a staff member leaves.</span></div>
+      <div class="callout"><span class="num">4</span><span>Use a unique password that has not appeared in a breach.</span></div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Website CMS</div>
+      <h2>Content Dashboard</h2>
+      <p>The CMS is for approved website content changes: text, images, footer information and SEO. It does not replace the booking/admin dashboard.</p>
+    </div>
+    <div class="screenshot"><img src="screenshots/17-cms-dashboard.png" alt="CMS dashboard screenshot" /><div class="caption">Website Content Center.</div></div>
+    <div class="panel">
+      <h3>Manager rule</h3>
+      <p>Use the CMS when a public page needs updated wording, a new hero image, corrected contact information or improved SEO text. Use the booking admin when rooms, bookings, availability or staff access need to change.</p>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Website CMS</div>
+      <h2>Editing A Public Page</h2>
+      <p>Each CMS page editor contains page hero fields, page content fields and SEO fields. Contact page also includes footer and social settings.</p>
+    </div>
+    <div class="screenshot"><img src="screenshots/18-cms-contact-editor.png" alt="CMS contact editor screenshot" /><div class="caption">Contact page CMS editor.</div></div>
+    <div class="callouts">
+      <div class="callout"><span class="num">1</span><span>Save Draft stores edits without making them final.</span></div>
+      <div class="callout"><span class="num">2</span><span>Publish applies the approved content to the live website.</span></div>
+      <div class="callout"><span class="num">3</span><span>Preview opens the public page for review.</span></div>
+      <div class="callout"><span class="num">4</span><span>Media fields use approved hotel image paths from the media library.</span></div>
+    </div>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Troubleshooting</div>
+      <h2>Manager Playbook</h2>
+      <p>Use this table when common operational issues occur.</p>
+    </div>
+    <table>
+      <tr><th>Scenario</th><th>What to check first</th><th>Likely action</th></tr>
+      <tr><td>Guest says they booked but staff cannot find it.</td><td>Search by booking reference, email and guest name. Check pending, confirmed and cancelled filters.</td><td>If no record exists, ask guest for payment/reference proof and contact technical support.</td></tr>
+      <tr><td>Guest says they paid but status is not confirmed.</td><td>Open booking detail and check payment reference/status.</td><td>Until live Paystack is connected, treat payment preview records according to hotel policy.</td></tr>
+      <tr><td>Room should not be bookable.</td><td>Check whether the room is active and whether a block exists for the dates.</td><td>Add a block date or deactivate the room if it should be closed broadly.</td></tr>
+      <tr><td>Room price looks wrong.</td><td>Check the Rooms page and confirm the stored price per night.</td><td>Edit the room price for future bookings and document the change.</td></tr>
+      <tr><td>Admin cannot log in.</td><td>Confirm email, password and active user status.</td><td>Use password reset or have a super admin update access.</td></tr>
+      <tr><td>Contact form inquiry needs follow-up.</td><td>Open Inquiries and read the latest unread messages.</td><td>Reply by phone/email and mark as read after handling.</td></tr>
+      <tr><td>Website text or image is outdated.</td><td>Open CMS, select the related public page and review fields.</td><td>Edit, preview and publish after approval.</td></tr>
+    </table>
+  </section>
+
+  <section class="page">
+    <div class="section-head">
+      <div class="eyebrow">Operating Rhythm</div>
+      <h2>Daily, Weekly And Monthly Checklist</h2>
+      <p>This checklist helps the manager keep the system accurate and reliable.</p>
+    </div>
+    <div class="grid-3">
+      <div class="checklist panel">
+        <h3>Daily</h3>
+        <ul>
+          <li>Review new and pending bookings.</li>
+          <li>Check today's arrivals and departures.</li>
+          <li>Review unread inquiries.</li>
+          <li>Confirm blocked dates for unavailable rooms.</li>
+        </ul>
+      </div>
+      <div class="checklist panel">
+        <h3>Weekly</h3>
+        <ul>
+          <li>Review room prices and active room status.</li>
+          <li>Export bookings for reconciliation.</li>
+          <li>Review admin users and disable old accounts.</li>
+          <li>Check public pages for outdated information.</li>
+        </ul>
+      </div>
+      <div class="checklist panel">
+        <h3>Monthly</h3>
+        <ul>
+          <li>Review revenue and booking reports.</li>
+          <li>Update seasonal room rates if required.</li>
+          <li>Audit password and user access.</li>
+          <li>Confirm SEO titles and descriptions remain accurate.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note" style="margin-top: 14px;">
+      <strong>Final handoff reminder:</strong> after delivery, the hotel manager should change the admin password, confirm Paystack credentials, confirm email sending credentials, and verify that the custom domain points to the final production deployment.
+    </div>
+  </section>
+</body>
+</html>

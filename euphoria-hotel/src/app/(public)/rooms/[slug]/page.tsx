@@ -2,16 +2,18 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Bed, Users, Maximize2, Check, ArrowUpRight, Phone } from "lucide-react";
+import { Bed, Users, Maximize2, Check, ArrowUpRight } from "lucide-react";
 
 import { RoomGallery } from "@/components/public/room-gallery";
 import { RoomCard } from "@/components/public/room-card";
+import { RoomBookingSidebar } from "@/components/public/room-booking-sidebar";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/reveal";
 import { Badge } from "@/components/ui/badge";
+import { JsonLd } from "@/components/seo/json-ld";
 
 import { getAllRooms, getRoomBySlug } from "@/lib/queries/rooms";
 import { siteConfig } from "@/lib/site";
-import { formatNaira } from "@/lib/format";
+import { absoluteUrl, buildBreadcrumbJsonLd, buildRoomJsonLd } from "@/lib/seo";
 
 export async function generateStaticParams() {
   const rooms = await getAllRooms().catch(() => []);
@@ -19,28 +21,60 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata(
-  props: PageProps<"/rooms/[slug]">
+  props: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
   const { slug } = await props.params;
   const room = await getRoomBySlug(slug);
   if (!room) return { title: "Room not found" };
+  const title = `${room.name} Room in Egbeda, Lagos`;
+  const description = `${room.tagline} ${room.description}`;
   return {
-    title: room.name,
-    description: room.tagline,
+    title,
+    description,
+    alternates: {
+      canonical: absoluteUrl(`/rooms/${room.slug}`),
+    },
+    openGraph: {
+      type: "website",
+      url: absoluteUrl(`/rooms/${room.slug}`),
+      title,
+      description,
+      siteName: siteConfig.name,
+      images: [
+        {
+          url: absoluteUrl(room.thumbnail),
+          width: 1200,
+          height: 630,
+          alt: `${room.name} at ${siteConfig.name}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [absoluteUrl(room.thumbnail)],
+    },
   };
 }
 
 export default async function RoomDetailPage(
-  props: PageProps<"/rooms/[slug]">
+  props: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await props.params;
   const [room, allRooms] = await Promise.all([getRoomBySlug(slug), getAllRooms().catch(() => [])]);
   if (!room) notFound();
 
   const related = allRooms.filter((r) => r.slug !== room.slug).slice(0, 3);
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Rooms", path: "/rooms" },
+    { name: room.name, path: `/rooms/${room.slug}` },
+  ]);
 
   return (
     <>
+      <JsonLd data={[buildRoomJsonLd(room), breadcrumbJsonLd]} />
       <article className="relative pb-24">
         {/* Hero / breadcrumb */}
         <div className="relative overflow-hidden bg-[var(--color-charcoal)] pb-18 pt-32 text-white">
@@ -48,7 +82,9 @@ export default async function RoomDetailPage(
             src={room.thumbnail}
             alt=""
             fill
-            priority
+            preload
+            fetchPriority="high"
+            quality={75}
             sizes="100vw"
             className="object-cover opacity-42"
           />
@@ -148,55 +184,14 @@ export default async function RoomDetailPage(
             </div>
 
             {/* Sticky booking sidebar */}
-            <aside className="lg:sticky lg:top-28 lg:self-start">
-              <div className="border border-[#e8dfd1] bg-[#fffdf8] p-6 shadow-[0_30px_80px_-45px_rgba(23,24,26,0.5)]">
-                <div className="flex items-baseline justify-between">
-                  <div>
-                    <div className="text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
-                      From
-                    </div>
-                    <div className="mt-1 font-heading text-5xl tracking-tight text-[var(--color-dark)]">
-                      {formatNaira(room.pricePerNight)}
-                    </div>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    per night
-                  </span>
-                </div>
-
-                <div className="my-5 luxe-divider opacity-50" />
-
-                <div className="space-y-3 text-sm">
-                  <SidebarRow label="Check-in" value={siteConfig.hours.checkIn} />
-                  <SidebarRow label="Check-out" value={siteConfig.hours.checkOut} />
-                  <SidebarRow label="Reception" value={siteConfig.hours.reception} />
-                </div>
-
-                <Link
-                  href={`/booking/confirm?room=${room.slug}`}
-                  className="mt-6 inline-flex w-full h-12 items-center justify-center gap-2 gold-gradient text-xs font-semibold uppercase tracking-[0.18em] text-charcoal shadow-[0_12px_30px_-10px_rgba(201,169,97,0.6)] transition-transform hover:-translate-y-0.5"
-                >
-                  Reserve this room
-                  <ArrowUpRight className="size-4" />
-                </Link>
-
-                <a
-                  href={`tel:${siteConfig.contact.phones[0].number.replace(/\s/g, "")}`}
-                  className="mt-3 inline-flex w-full h-11 items-center justify-center gap-2 border border-[#e8dfd1] bg-background text-xs uppercase tracking-[0.18em] hover:bg-muted/60 transition-colors"
-                >
-                  <Phone className="size-3.5" />
-                  Call to book
-                </a>
-              </div>
-
-              <div className="mt-4 border border-[var(--color-gold)]/30 bg-[var(--color-gold)]/5 p-5 text-sm text-foreground/80">
-                <p className="font-heading text-base">Flexible cancellation</p>
-                <p className="mt-1 text-muted-foreground">
-                  Free to cancel up to 48 hours before check-in. After that,
-                  the first night is non-refundable.
-                </p>
-              </div>
-            </aside>
+            <RoomBookingSidebar
+              roomSlug={room.slug}
+              pricePerNight={room.pricePerNight}
+              checkIn={siteConfig.hours.checkIn}
+              checkOut={siteConfig.hours.checkOut}
+              reception={siteConfig.hours.reception}
+              phoneNumber={siteConfig.contact.phones[0].number}
+            />
           </div>
         </div>
 
@@ -246,11 +241,3 @@ function Spec({
   );
 }
 
-function SidebarRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium tabular-nums">{value}</span>
-    </div>
-  );
-}

@@ -3,10 +3,9 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import type { CmsHeroSlide } from "@/lib/cms/defaults";
 
-type Slide = { img: string; sub: string; title: string };
-
-const slides: Slide[] = [
+const defaultSlides: CmsHeroSlide[] = [
   {
     img: "/hotel-assets/welcome-slide.jpg",
     sub: "Comfort & Elegance",
@@ -24,8 +23,9 @@ const slides: Slide[] = [
   },
 ];
 
-export function HomeHero() {
+export function HomeHero({ slides = defaultSlides }: { slides?: CmsHeroSlide[] }) {
   const [idx, setIdx] = React.useState(0);
+  const safeSlides = slides.length > 0 ? slides : defaultSlides;
 
   React.useEffect(() => {
     if (
@@ -34,18 +34,18 @@ export function HomeHero() {
     )
       return;
     const t = setInterval(
-      () => setIdx((i) => (i + 1) % slides.length),
+      () => setIdx((i) => (i + 1) % safeSlides.length),
       6000
     );
     return () => clearInterval(t);
-  }, []);
+  }, [safeSlides.length]);
 
   return (
     <section
       id="home"
       className="relative h-screen overflow-hidden bg-black"
     >
-      {slides.map((s, i) => (
+      {safeSlides.map((s, i) => (
         <div
           key={i}
           className="absolute inset-0"
@@ -60,7 +60,9 @@ export function HomeHero() {
             src={s.img}
             alt=""
             fill
-            priority={i === 0}
+            preload={i === 0}
+            fetchPriority={i === 0 ? "high" : "auto"}
+            quality={75}
             sizes="100vw"
             className="object-cover"
             style={{ filter: "brightness(0.5)" }}
@@ -89,7 +91,7 @@ export function HomeHero() {
               animation: "fadeUp 0.8s 0.15s ease both",
             }}
           >
-            {slides[idx].title}
+            {safeSlides[idx]?.title ?? defaultSlides[0].title}
           </h1>
         </div>
 
@@ -99,7 +101,7 @@ export function HomeHero() {
             className="text-[12px] font-medium tracking-[5px] uppercase text-[var(--color-gold)]"
             style={{ animation: "fadeUp 0.8s 0.15s ease both" }}
           >
-            {slides[idx].sub}
+            {safeSlides[idx]?.sub ?? defaultSlides[0].sub}
           </p>
         </div>
 
@@ -115,7 +117,7 @@ export function HomeHero() {
 
         {/* Slide indicators */}
         <div className="absolute bottom-10 flex gap-3">
-          {slides.map((_, i) => (
+          {safeSlides.map((_, i) => (
             <button
               key={i}
               onClick={() => setIdx(i)}

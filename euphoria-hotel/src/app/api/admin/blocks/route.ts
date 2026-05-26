@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
+import { requireActiveAdmin } from "@/lib/admin/auth";
 
 const createSchema = z.object({
   roomId: z.string().uuid(),
@@ -11,11 +12,10 @@ const createSchema = z.object({
 });
 
 export async function GET() {
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!hasSupabaseAdminEnv()) return NextResponse.json([]);
+
+  const auth = await requireActiveAdmin();
+  if (auth.error) return auth.error;
 
   const admin = createAdminClient();
   const { data, error } = await admin
@@ -29,11 +29,16 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json(
+      { error: "Connect Supabase to persist blocked dates." },
+      { status: 503 }
+    );
+  }
+
+  const auth = await requireActiveAdmin(["super_admin", "manager"]);
+  if (auth.error) return auth.error;
+  const { user } = auth;
 
   let body: unknown;
   try {
@@ -76,11 +81,11 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!hasSupabaseAdminEnv()) return NextResponse.json({ success: true });
+
+  const auth = await requireActiveAdmin(["super_admin", "manager"]);
+  if (auth.error) return auth.error;
+  const { user } = auth;
 
   const { searchParams } = req.nextUrl;
   const id = searchParams.get("id");

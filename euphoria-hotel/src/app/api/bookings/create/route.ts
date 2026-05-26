@@ -5,6 +5,14 @@ import { generateBookingReference } from '@/lib/utils/booking-reference'
 import { calculateNights, isDateInPast, isStayTooLong, isValidDateString } from '@/lib/utils/dates'
 import { buildPricingBreakdown } from '@/lib/utils/pricing'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { hasSupabaseAdminEnv } from '@/lib/supabase/config'
+import { createDemoBooking } from '@/lib/demo/store'
+import { sendEmail } from '@/lib/email/send'
+import { formatDateLong, formatNaira } from '@/lib/format'
+import { siteConfig } from '@/lib/site'
+import BookingConfirmation from '@emails/BookingConfirmation'
+import AdminBookingAlert from '@emails/AdminBookingAlert'
+import React from 'react'
 
 const schema = z.object({
   roomSlug: z.string().min(1),
@@ -43,6 +51,61 @@ export async function POST(req: NextRequest) {
     }
     if (isStayTooLong(d.checkin, d.checkout)) {
       return NextResponse.json({ error: 'Maximum stay is 30 nights.' }, { status: 400 })
+    }
+
+    if (!hasSupabaseAdminEnv()) {
+      const booking = createDemoBooking({
+        roomSlug: d.roomSlug,
+        bookingType: 'online',
+        checkin: d.checkin,
+        checkout: d.checkout,
+        firstName: d.firstName,
+        lastName: d.lastName,
+        email: d.email,
+        phone: d.phone,
+        numAdults: d.numAdults,
+        numChildren: d.numChildren,
+        arrivalTime: d.arrivalTime,
+        notes: d.notes,
+      })
+      const roomName = booking.rooms?.name ?? 'Your room'
+      const adminEmail = process.env.ADMIN_EMAIL ?? process.env.RESEND_FROM_EMAIL ?? siteConfig.contact.email
+      Promise.allSettled([
+        sendEmail({
+          to: booking.guest_email,
+          subject: `Demo booking confirmed - ${booking.booking_reference}`,
+          react: React.createElement(BookingConfirmation, {
+            guestName: booking.guest_name,
+            bookingReference: booking.booking_reference,
+            roomName,
+            checkInDate: formatDateLong(booking.check_in_date),
+            checkOutDate: formatDateLong(booking.check_out_date),
+            totalNights: booking.total_nights,
+            totalAmountNaira: formatNaira(booking.total_amount),
+            checkInTime: siteConfig.hours.checkIn,
+          }),
+        }),
+        sendEmail({
+          to: adminEmail,
+          subject: `Demo booking - ${booking.booking_reference} - ${booking.guest_name}`,
+          react: React.createElement(AdminBookingAlert, {
+            guestName: booking.guest_name,
+            guestEmail: booking.guest_email,
+            guestPhone: booking.guest_phone,
+            bookingReference: booking.booking_reference,
+            roomName,
+            checkInDate: formatDateLong(booking.check_in_date),
+            checkOutDate: formatDateLong(booking.check_out_date),
+            totalNights: booking.total_nights,
+            totalAmountNaira: formatNaira(booking.total_amount),
+            bookingId: booking.id,
+          }),
+        }),
+      ]).catch((err) => console.error('[demo booking email]', err))
+      return NextResponse.json({
+        paymentUrl: `/booking/checkout?ref=${booking.booking_reference}&demo=1`,
+        demo: true,
+      })
     }
 
     const admin = createAdminClient()
@@ -125,6 +188,56 @@ export async function POST(req: NextRequest) {
 
     if (insertError || !booking) {
       return NextResponse.json({ error: 'Could not create booking. Please try again.' }, { status: 500 })
+    }
+
+    if (!process.env.PAYSTACK_SECRET_KEY) {
+      await admin
+        .from('bookings')
+        .update({
+          status: 'confirmed',
+          booking_type: 'online',
+          paid_at: new Date().toISOString(),
+          paystack_reference: `DEMO-${Date.now()}`,
+        })
+        .eq('id', booking.id)
+
+      Promise.allSettled([
+        sendEmail({
+          to: d.email,
+          subject: `Demo booking confirmed - ${bookingRef}`,
+          react: React.createElement(BookingConfirmation, {
+            guestName,
+            bookingReference: bookingRef,
+            roomName: room.name,
+            checkInDate: formatDateLong(d.checkin),
+            checkOutDate: formatDateLong(d.checkout),
+            totalNights: nights,
+            totalAmountNaira: formatNaira(pricing.total),
+            checkInTime: siteConfig.hours.checkIn,
+          }),
+        }),
+        sendEmail({
+          to: process.env.ADMIN_EMAIL ?? process.env.RESEND_FROM_EMAIL ?? siteConfig.contact.email,
+          subject: `Demo booking - ${bookingRef} - ${guestName}`,
+          react: React.createElement(AdminBookingAlert, {
+            guestName,
+            guestEmail: d.email,
+            guestPhone: d.phone,
+            bookingReference: bookingRef,
+            roomName: room.name,
+            checkInDate: formatDateLong(d.checkin),
+            checkOutDate: formatDateLong(d.checkout),
+            totalNights: nights,
+            totalAmountNaira: formatNaira(pricing.total),
+            bookingId: booking.id,
+          }),
+        }),
+      ]).catch((err) => console.error('[supabase demo booking email]', err))
+
+      return NextResponse.json({
+        paymentUrl: `/booking/checkout?ref=${bookingRef}&demo=1`,
+        demo: true,
+      })
     }
 
     // Initialise Paystack transaction

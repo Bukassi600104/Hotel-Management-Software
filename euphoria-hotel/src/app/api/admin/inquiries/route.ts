@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { requireActiveAdmin } from "@/lib/admin/auth";
+import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
 
 export async function GET(req: NextRequest) {
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json({ inquiries: [], total: 0 });
+  }
+
+  const auth = await requireActiveAdmin();
+  if (auth.error) return auth.error;
 
   const { searchParams } = req.nextUrl;
   const page = Number(searchParams.get("page") ?? "1");
@@ -30,11 +32,12 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json({ success: true, demo: true });
+  }
+
+  const auth = await requireActiveAdmin();
+  if (auth.error) return auth.error;
 
   const { searchParams } = req.nextUrl;
   const id = searchParams.get("id");
@@ -48,11 +51,12 @@ export async function PATCH(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const serverClient = await createClient();
-  const {
-    data: { user },
-  } = await serverClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!hasSupabaseAdminEnv()) {
+    return NextResponse.json({ success: true, demo: true });
+  }
+
+  const auth = await requireActiveAdmin(["super_admin", "manager"]);
+  if (auth.error) return auth.error;
 
   const { searchParams } = req.nextUrl;
   const id = searchParams.get("id");

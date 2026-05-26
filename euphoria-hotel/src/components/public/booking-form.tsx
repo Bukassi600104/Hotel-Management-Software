@@ -41,8 +41,7 @@ interface BookingFormProps {
   checkout: string;
   nights: number;
   adults: number;
-  children: number;
-  total: number;
+  childCount: number;
 }
 
 export function BookingForm({
@@ -51,8 +50,7 @@ export function BookingForm({
   checkout,
   nights,
   adults,
-  children,
-  total,
+  childCount,
 }: BookingFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -79,7 +77,7 @@ export function BookingForm({
           checkin,
           checkout,
           numAdults: adults,
-          numChildren: children,
+          numChildren: childCount,
           firstName: values.firstName,
           lastName: values.lastName,
           email: values.email,
@@ -239,7 +237,7 @@ export function BookingForm({
           Booking {room.name} for {nights} night{nights !== 1 ? "s" : ""}.
           Check-in {checkin}, check-out {checkout}.
           {adults} adult{adults !== 1 ? "s" : ""}
-          {children > 0 ? `, ${children} child${children !== 1 ? "ren" : ""}` : ""}.
+          {childCount > 0 ? `, ${childCount} child${childCount !== 1 ? "ren" : ""}` : ""}.
         </p>
 
         <button

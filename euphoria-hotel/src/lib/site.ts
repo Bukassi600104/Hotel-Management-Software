@@ -20,14 +20,13 @@ export const siteConfig = {
       { label: "Concierge", number: "+234 905 973 7707" },
       { label: "Events", number: "+234 809 999 0143" },
     ],
-    email: "booking@hitoneuphoriahotel.com",
+    email: "booking@hiltoneuphoriahotel.com",
     whatsapp: "2348060260260",
   },
   socials: [
-    { label: "TikTok", href: "https://tiktok.com", icon: "tiktok" },
-    { label: "Twitter", href: "https://twitter.com", icon: "twitter" },
-    { label: "YouTube", href: "https://youtube.com", icon: "youtube" },
-    { label: "Instagram", href: "https://instagram.com", icon: "instagram" },
+    { label: "Hilton Euphoria Instagram", href: "https://www.instagram.com/hiltoneuphoriahotel/", icon: "instagram" },
+    { label: "Klub Euphoria Instagram", href: "https://www.instagram.com/klubeuphoria/", icon: "instagram" },
+    { label: "Hilton Euphoria Hotel Facebook", href: "https://www.facebook.com/HiltonEuphoriaHotel", icon: "facebook" },
   ],
   nav: [
     { label: "Home", href: "/" },
@@ -36,6 +35,12 @@ export const siteConfig = {
     { label: "Conference Room", href: "/conference" },
     { label: "Hotel Menu", href: "/menu" },
     { label: "Contact Us", href: "/contact" },
+    { label: "My Booking", href: "/booking/manage" },
+  ],
+  guestNav: [
+    { label: "Guest Guide", href: "/guest-guide" },
+    { label: "Drink Menu", href: "/drinks" },
+    { label: "Laundry Service", href: "/laundry" },
   ],
   hours: {
     checkIn: "3:00 PM",

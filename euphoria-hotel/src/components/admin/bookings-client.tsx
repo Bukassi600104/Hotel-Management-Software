@@ -1,10 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Search, X, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import { formatNaira, formatDateShort } from "@/lib/format";
 import { BookingDrawer } from "@/components/admin/booking-drawer";
+import { adminGhostButtonClass, adminInputClass, adminPanelClass } from "@/components/admin/page-shell";
 
 type Booking = {
   id: string;
@@ -20,6 +21,7 @@ type Booking = {
   vat_amount: number;
   price_per_night: number;
   status: string;
+  booking_type: string | null;
   num_adults: number;
   num_children: number | null;
   arrival_time: string | null;
@@ -47,8 +49,6 @@ const STATUS_COLORS: Record<string, string> = {
 
 export function BookingsClient() {
   const searchParams = useSearchParams();
-  const router = useRouter();
-
   const [bookings, setBookings] = React.useState<Booking[]>([]);
   const [total, setTotal] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
@@ -59,19 +59,35 @@ export function BookingsClient() {
   const [selectedId, setSelectedId] = React.useState<string | null>(searchParams.get("id"));
 
   const limit = 20;
+  const queryString = searchParams.toString();
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(queryString);
+    setSearch(params.get("search") ?? "");
+    setStatus(params.get("status") ?? "all");
+    setPage(Number(params.get("page") ?? "1"));
+    setSelectedId(params.get("id"));
+  }, [queryString]);
 
   const fetchBookings = React.useCallback(async () => {
     setLoading(true);
-    const params = new URLSearchParams();
-    if (search) params.set("search", search);
-    if (status !== "all") params.set("status", status);
-    params.set("page", String(page));
+    try {
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      if (status !== "all") params.set("status", status);
+      params.set("page", String(page));
 
-    const res = await fetch(`/api/admin/bookings?${params.toString()}`);
-    const data = await res.json();
-    setBookings(data.bookings ?? []);
-    setTotal(data.total ?? 0);
-    setLoading(false);
+      const res = await fetch(`/api/admin/bookings?${params.toString()}`);
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(data?.error ?? "Failed to load bookings.");
+      setBookings(data?.bookings ?? []);
+      setTotal(data?.total ?? 0);
+    } catch {
+      setBookings([]);
+      setTotal(0);
+    } finally {
+      setLoading(false);
+    }
   }, [search, status, page]);
 
   React.useEffect(() => {
@@ -107,7 +123,7 @@ export function BookingsClient() {
   return (
     <>
       {/* Filters */}
-      <div className="mt-5 flex flex-wrap items-center gap-3">
+      <div className={`${adminPanelClass} flex flex-wrap items-center gap-3 p-4`}>
         <div className="relative flex-1 min-w-48">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/30" />
           <input
@@ -115,7 +131,7 @@ export function BookingsClient() {
             placeholder="Search guest name or reference…"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="h-9 w-full rounded-lg border border-white/10 bg-white/5 pl-9 pr-3 text-sm text-white placeholder:text-white/25 focus:border-[#c9a961]/50 focus:outline-none"
+            className={`${adminInputClass} h-11 pl-9`}
           />
           {search && (
             <button onClick={() => { setSearch(""); setPage(1); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60">
@@ -131,8 +147,8 @@ export function BookingsClient() {
               onClick={() => { setStatus(s); setPage(1); }}
               className={`h-8 rounded-lg px-3 text-xs capitalize transition-colors ${
                 status === s
-                  ? "bg-[#c9a961] text-[#17181a] font-semibold"
-                  : "border border-white/10 text-white/50 hover:border-white/20 hover:text-white/80"
+              ? "bg-[#c9a961] text-[#17181a] font-semibold"
+                  : "border border-white/10 bg-white/[0.025] text-white/50 hover:border-white/20 hover:text-white/80"
               }`}
             >
               {s.replace("_", " ")}
@@ -142,7 +158,7 @@ export function BookingsClient() {
 
         <button
           onClick={exportCSV}
-          className="ml-auto flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-xs text-white/50 hover:border-white/20 hover:text-white/80"
+          className={`${adminGhostButtonClass} ml-auto`}
         >
           <Download className="size-3.5" />
           Export CSV
@@ -150,7 +166,7 @@ export function BookingsClient() {
       </div>
 
       {/* Table */}
-      <div className="mt-4 overflow-hidden rounded-xl border border-white/8">
+      <div className={`${adminPanelClass} mt-5 overflow-hidden`}>
         {loading ? (
           <div className="flex h-48 items-center justify-center">
             <div className="size-6 animate-spin rounded-full border-2 border-white/20 border-t-[#c9a961]" />
@@ -162,7 +178,7 @@ export function BookingsClient() {
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="border-b border-white/8 bg-white/3">
+              <thead className="border-b border-white/8 bg-[#0d0e10]/55">
                 <tr>
                   {["Reference", "Guest", "Room", "Check-in", "Check-out", "Amount", "Status"].map((h) => (
                     <th key={h} className="px-4 py-3 text-left text-[11px] font-medium uppercase tracking-wider text-white/35">
@@ -178,9 +194,16 @@ export function BookingsClient() {
                     <tr
                       key={b.id}
                       onClick={() => setSelectedId(b.id)}
-                      className="cursor-pointer transition-colors hover:bg-white/3"
+                      className="cursor-pointer transition-colors hover:bg-white/[0.035]"
                     >
-                      <td className="px-4 py-3 font-mono text-xs text-[#c9a961]">{b.booking_reference}</td>
+                      <td className="px-4 py-3">
+                        <p className="font-mono text-xs text-[#c9a961]">{b.booking_reference}</p>
+                        {b.booking_type === "reservation" && (
+                          <span className="mt-0.5 inline-block rounded-full bg-violet-400/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-violet-400">
+                            Pay at check-in
+                          </span>
+                        )}
+                      </td>
                       <td className="px-4 py-3">
                         <p className="font-medium text-white/85">{b.guest_name}</p>
                         <p className="text-xs text-white/35">{b.guest_email}</p>
@@ -211,7 +234,7 @@ export function BookingsClient() {
             <button
               disabled={page <= 1}
               onClick={() => setPage(page - 1)}
-              className="rounded-lg border border-white/10 p-1.5 hover:border-white/20 disabled:opacity-30"
+              className="rounded-xl border border-white/10 bg-white/[0.025] p-2 hover:border-white/20 disabled:opacity-30"
             >
               <ChevronLeft className="size-3.5" />
             </button>
@@ -219,7 +242,7 @@ export function BookingsClient() {
             <button
               disabled={page >= totalPages}
               onClick={() => setPage(page + 1)}
-              className="rounded-lg border border-white/10 p-1.5 hover:border-white/20 disabled:opacity-30"
+              className="rounded-xl border border-white/10 bg-white/[0.025] p-2 hover:border-white/20 disabled:opacity-30"
             >
               <ChevronRight className="size-3.5" />
             </button>
