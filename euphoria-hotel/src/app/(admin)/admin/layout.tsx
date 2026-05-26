@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   if (!hasSupabasePublicEnv()) {
     return (
-      <AdminShell adminName="Demo Manager" adminRole="super_admin" unreadCount={0}>
+      <AdminShell adminName="Hotel Manager" adminRole="super_admin" unreadCount={0}>
         {children}
       </AdminShell>
     );

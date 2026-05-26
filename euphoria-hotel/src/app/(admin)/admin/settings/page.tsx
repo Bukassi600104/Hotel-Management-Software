@@ -361,7 +361,7 @@ ALTER TABLE settings ENABLE ROW LEVEL SECURITY;`}
               <div>
                 <p className="text-sm font-semibold text-white/88">Change admin password</p>
                 <p className="mt-1 text-sm leading-6 text-white/42">
-                  Use this immediately after handover so only the hotel team knows the live admin credentials.
+                  Update this password regularly so only authorized hotel team members can access the admin area.
                 </p>
               </div>
             </div>

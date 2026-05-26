@@ -158,21 +158,21 @@ export function CmsPageEditor({ page, footer }: Props) {
     <div className="px-5 py-8 lg:px-9 lg:py-10">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <Link href="/cms" className="inline-flex items-center gap-2 text-sm text-white/48 hover:text-[#c9a961]">
+          <Link href="/cms" className="inline-flex items-center gap-2 text-sm text-[#756d5e] hover:text-[#8b6b24]">
             <ArrowLeft className="size-4" />
             Back to CMS
           </Link>
-          <p className="mt-5 text-[11px] uppercase tracking-[0.42em] text-[#c9a961]">Safe Page Editor</p>
-          <h1 className="mt-3 font-heading text-4xl tracking-tight text-white lg:text-5xl">{page.title}</h1>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/55">
-            Edit fixed content fields. The website layout and booking system cannot be changed from here.
+          <p className="mt-5 text-[11px] uppercase tracking-[0.42em] text-[#c9a961]">Guided Page Editor</p>
+          <h1 className="mt-3 font-heading text-4xl tracking-tight text-[#151515] lg:text-5xl">{page.title}</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[#6f6757]">
+            Edit approved content fields for this page. Layout and booking operations are managed separately.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link
             href={pageMeta?.href ?? "/"}
             target="_blank"
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-xs font-semibold uppercase tracking-[0.16em] text-white/65 hover:border-[#c9a961]/50 hover:text-[#c9a961]"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-[#eadfca] bg-white px-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#5f5748] hover:border-[#c9a961]/50 hover:text-[#8b6b24]"
           >
             <Eye className="size-4" />
             Preview
@@ -180,7 +180,7 @@ export function CmsPageEditor({ page, footer }: Props) {
           <button
             onClick={() => savePage("draft")}
             disabled={saving !== null}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-xs font-semibold uppercase tracking-[0.16em] text-white/65 hover:border-[#c9a961]/50 hover:text-[#c9a961] disabled:opacity-50"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-[#eadfca] bg-white px-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#5f5748] hover:border-[#c9a961]/50 hover:text-[#8b6b24] disabled:opacity-50"
           >
             {saving === "draft" ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
             Save Draft
@@ -271,19 +271,19 @@ export function CmsPageEditor({ page, footer }: Props) {
         </div>
 
         <aside className="space-y-5">
-          <div className="rounded-lg border border-white/10 bg-white/[0.035] p-5">
-            <p className="text-xs uppercase tracking-[0.24em] text-white/38">Status</p>
+          <div className="rounded-lg border border-[#eadfca] bg-white p-5 shadow-[0_18px_45px_rgba(33,25,12,0.05)]">
+            <p className="text-xs uppercase tracking-[0.24em] text-[#82796a]">Status</p>
             <div className="mt-4 flex items-center justify-between">
               <span className="rounded-full border border-[#c9a961]/25 bg-[#c9a961]/10 px-3 py-1 text-xs capitalize text-[#c9a961]">
                 {draft.status}
               </span>
-              <span className="text-xs text-white/42">
+              <span className="text-xs text-[#756d5e]">
                 {draft.published_at ? new Date(draft.published_at).toLocaleDateString("en-NG") : "Not published"}
               </span>
             </div>
           </div>
 
-          <div className="rounded-lg border border-white/10 bg-white/[0.035] p-5">
+          <div className="rounded-lg border border-[#eadfca] bg-white p-5 shadow-[0_18px_45px_rgba(33,25,12,0.05)]">
             <div className="flex items-center gap-2 text-[#c9a961]">
               <ImageIcon className="size-4" />
               <p className="text-xs font-semibold uppercase tracking-[0.2em]">Media Library</p>
@@ -295,8 +295,8 @@ export function CmsPageEditor({ page, footer }: Props) {
                   type="button"
                   onClick={() => setPageField("hero_image", src)}
                   className={cn(
-                    "group relative aspect-[4/3] overflow-hidden rounded-lg border bg-black",
-                    draft.hero_image === src ? "border-[#c9a961]" : "border-white/10"
+                    "group relative aspect-[4/3] overflow-hidden rounded-lg border bg-[#151515]",
+                    draft.hero_image === src ? "border-[#c9a961]" : "border-[#eadfca]"
                   )}
                   title={src}
                 >
@@ -304,7 +304,7 @@ export function CmsPageEditor({ page, footer }: Props) {
                 </button>
               ))}
             </div>
-            <p className="mt-3 text-xs leading-relaxed text-white/42">
+            <p className="mt-3 text-xs leading-relaxed text-[#756d5e]">
               Click an image to use it as this page hero. Section image fields can use the same paths.
             </p>
           </div>
@@ -316,8 +316,8 @@ export function CmsPageEditor({ page, footer }: Props) {
 
 function Panel({ title, id, children }: { title: string; id?: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="rounded-lg border border-white/10 bg-white/[0.035] p-5">
-      <h2 className="mb-5 text-lg font-semibold text-white">{title}</h2>
+    <section id={id} className="rounded-lg border border-[#eadfca] bg-white p-5 shadow-[0_18px_45px_rgba(33,25,12,0.05)]">
+      <h2 className="mb-5 text-lg font-semibold text-[#151515]">{title}</h2>
       {children}
     </section>
   );
@@ -338,19 +338,19 @@ function Field({
 }) {
   return (
     <label className={cn("block", className)}>
-      <span className="mb-2 block text-xs font-medium uppercase tracking-[0.16em] text-white/42">{label}</span>
+      <span className="mb-2 block text-xs font-medium uppercase tracking-[0.16em] text-[#82796a]">{label}</span>
       {textarea ? (
         <textarea
           value={value}
           onChange={(event) => onChange(event.target.value)}
           rows={4}
-          className="w-full rounded-lg border border-white/10 bg-black/20 px-4 py-3 text-sm leading-relaxed text-white outline-none transition focus:border-[#c9a961]/60"
+          className="w-full rounded-lg border border-[#eadfca] bg-[#fffdf8] px-4 py-3 text-sm leading-relaxed text-[#151515] outline-none transition focus:border-[#c9a961]/70"
         />
       ) : (
         <input
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="h-11 w-full rounded-lg border border-white/10 bg-black/20 px-4 text-sm text-white outline-none transition focus:border-[#c9a961]/60"
+          className="h-11 w-full rounded-lg border border-[#eadfca] bg-[#fffdf8] px-4 text-sm text-[#151515] outline-none transition focus:border-[#c9a961]/70"
         />
       )}
     </label>

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default async function CmsLayout({ children }: { children: React.ReactNode }) {
   if (!hasSupabasePublicEnv() || !hasSupabaseAdminEnv()) {
     return (
-      <CmsShell adminName="Demo Manager" adminRole="super_admin">
+      <CmsShell adminName="Hotel Manager" adminRole="super_admin">
         {children}
       </CmsShell>
     );

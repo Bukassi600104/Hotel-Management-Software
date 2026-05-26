@@ -48,7 +48,7 @@ export default async function AdminDashboardPage() {
     return (
       <DashboardShell
         stats={[
-          { label: "Revenue this month", value: formatNaira(monthRevenue), icon: CircleDollarSign, tone: "gold", delta: "Demo data" },
+          { label: "Revenue this month", value: formatNaira(monthRevenue), icon: CircleDollarSign, tone: "gold", delta: "Local records" },
           { label: "Total bookings", value: String(bookings.length), icon: CalendarDays, tone: "green", delta: "All records" },
           { label: "Checking in today", value: "0", icon: LogIn, tone: "blue", delta: "Ready desk" },
           { label: "Checking out today", value: "0", icon: LogOut, tone: "orange", delta: "No exits" },
@@ -378,7 +378,7 @@ function SchedulePanel({ upcoming }: { upcoming: DashboardBooking[] }) {
               <span className="min-w-0">
                 <span className="block truncate text-sm font-semibold text-white/78">{booking.guest_name}</span>
                 <span className="mt-1 block truncate text-xs text-white/38">
-                  {booking.rooms?.name ?? "Room"} · {new Date(booking.check_in_date).toLocaleDateString("en-NG", { month: "short", day: "numeric" })}
+                  {booking.rooms?.name ?? "Room"} - {new Date(booking.check_in_date).toLocaleDateString("en-NG", { month: "short", day: "numeric" })}
                 </span>
               </span>
             </Link>

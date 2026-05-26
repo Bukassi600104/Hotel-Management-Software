@@ -36,15 +36,15 @@ export default async function CheckoutPage({
         <div className="rounded-2xl border border-white/10 bg-white/6 p-6 shadow-2xl backdrop-blur">
           <div className="inline-flex items-center gap-2 rounded-full border border-[var(--color-gold)]/30 bg-[var(--color-gold)]/10 px-3 py-1 text-[10px] uppercase tracking-[0.28em] text-[var(--color-gold-light)]">
             <LockKeyhole className="size-3" />
-            {demo ? "Demo checkout" : "Secure checkout"}
+            {demo ? "Payment preview" : "Secure checkout"}
           </div>
 
           <h1 className="mt-6 font-heading text-4xl leading-tight sm:text-5xl">
             Complete your payment.
           </h1>
           <p className="mt-3 max-w-2xl text-white/65">
-            This page previews the Paystack handoff your client will see once
-            their live API keys are connected. No card is charged in demo mode.
+            This secure payment step is ready for Paystack activation once live gateway credentials are connected.
+            No card is charged while payment preview mode is active.
           </p>
 
           <div className="mt-8 rounded-2xl border border-white/10 bg-[#0f1114] p-5">
@@ -64,14 +64,14 @@ export default async function CheckoutPage({
               <CheckoutField label="Card number" value="4084 0840 8408 4081" />
               <CheckoutField label="Expiry" value="12 / 30" />
               <CheckoutField label="CVV" value="123" />
-              <CheckoutField label="PIN / OTP" value="Demo verified" />
+              <CheckoutField label="PIN / OTP" value="Preview verified" />
             </div>
 
             <Link
               href={`/booking/success?ref=${booking.booking_reference}`}
               className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-xl gold-gradient text-sm font-semibold uppercase tracking-[0.18em] text-charcoal shadow-[0_18px_40px_-18px_rgba(201,169,97,0.8)]"
             >
-              Complete demo payment
+              Complete preview payment
             </Link>
 
             <p className="mt-3 text-center text-xs text-white/40">

@@ -8,7 +8,7 @@ const demoUsers = [
   {
     id: "00000000-0000-4000-8000-000000000001",
     email: "manager@hiltoneuphoriahotel.com",
-    full_name: "Demo Manager",
+    full_name: "Hotel Manager",
     role: "super_admin",
     is_active: true,
     last_active_at: new Date().toISOString(),

@@ -59,7 +59,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   if (!hasSupabaseAdminEnv()) {
     return NextResponse.json(
-      { error: "Demo mode uses the seeded room catalogue. Connect Supabase to persist new rooms." },
+      { error: "Room catalogue storage is not configured. Connect the production database to persist new rooms." },
       { status: 503 }
     );
   }

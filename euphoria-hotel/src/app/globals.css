@@ -280,6 +280,89 @@
   .scrollbar-hide { scrollbar-width: none; }
 
   .invert-logo { filter: brightness(10); }
+
+  .admin-light .text-white,
+  .admin-light .text-white\/90,
+  .admin-light .text-white\/88,
+  .admin-light .text-white\/85,
+  .admin-light .text-white\/84,
+  .admin-light .text-white\/82,
+  .admin-light .text-white\/80,
+  .admin-light .text-white\/78,
+  .admin-light .text-white\/75,
+  .admin-light .text-white\/72,
+  .admin-light .text-white\/70,
+  .admin-light .text-white\/65,
+  .admin-light .text-white\/60 {
+    color: #151515;
+  }
+
+  .admin-light .text-white\/58,
+  .admin-light .text-white\/55,
+  .admin-light .text-white\/52,
+  .admin-light .text-white\/50,
+  .admin-light .text-white\/48,
+  .admin-light .text-white\/46,
+  .admin-light .text-white\/45,
+  .admin-light .text-white\/42,
+  .admin-light .text-white\/40,
+  .admin-light .text-white\/38,
+  .admin-light .text-white\/35,
+  .admin-light .text-white\/32,
+  .admin-light .text-white\/30,
+  .admin-light .text-white\/28,
+  .admin-light .text-white\/25 {
+    color: #756d5e;
+  }
+
+  .admin-light .border-white\/20,
+  .admin-light .border-white\/18,
+  .admin-light .border-white\/10,
+  .admin-light .border-white\/8,
+  .admin-light .border-white\/6,
+  .admin-light .border-white\/5 {
+    border-color: #eadfca;
+  }
+
+  .admin-light .divide-white\/8 > :not([hidden]) ~ :not([hidden]),
+  .admin-light .divide-white\/6 > :not([hidden]) ~ :not([hidden]),
+  .admin-light .divide-white\/5 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #eadfca;
+  }
+
+  .admin-light .bg-white\/8,
+  .admin-light .bg-white\/5,
+  .admin-light .bg-white\/3,
+  .admin-light .bg-white\/\[0\.055\],
+  .admin-light .bg-white\/\[0\.045\],
+  .admin-light .bg-white\/\[0\.035\],
+  .admin-light .bg-white\/\[0\.03\],
+  .admin-light .bg-white\/\[0\.025\] {
+    background-color: #ffffff;
+  }
+
+  .admin-light .bg-\[\#0d0e10\]\/70,
+  .admin-light .bg-\[\#0d0e10\]\/55,
+  .admin-light .bg-\[\#0d0e10\]\/45,
+  .admin-light .bg-\[\#111316\]\/95,
+  .admin-light .bg-\[\#111316\],
+  .admin-light .bg-\[\#141518\],
+  .admin-light .bg-\[\#101113\],
+  .admin-light .bg-\[\#1a1c20\] {
+    background-color: #fffdf8;
+  }
+
+  .admin-light .hover\:bg-white\/\[0\.035\]:hover,
+  .admin-light .hover\:bg-white\/5:hover,
+  .admin-light .hover\:bg-white\/\[0\.04\]:hover,
+  .admin-light .hover\:bg-white\/\[0\.055\]:hover {
+    background-color: #fbf6eb;
+  }
+
+  .admin-light .placeholder\:text-white\/24::placeholder,
+  .admin-light .placeholder\:text-white\/28::placeholder {
+    color: #9f9686;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

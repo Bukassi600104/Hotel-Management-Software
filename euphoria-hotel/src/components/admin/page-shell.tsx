@@ -15,8 +15,8 @@ export function AdminPageShell({ title, description, action, children, className
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-[10px] uppercase tracking-[0.32em] text-[#c9a961]/68">Hotel dashboard</p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-white md:text-3xl">{title}</h1>
-          {description && <p className="mt-2 max-w-2xl text-sm leading-6 text-white/45">{description}</p>}
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-[#151515] md:text-3xl">{title}</h1>
+          {description && <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6f6757]">{description}</p>}
         </div>
         {action}
       </div>
@@ -26,13 +26,13 @@ export function AdminPageShell({ title, description, action, children, className
 }
 
 export const adminPanelClass =
-  "rounded-[1.35rem] border border-white/8 bg-white/[0.045] shadow-[0_20px_70px_rgba(0,0,0,0.18)] backdrop-blur";
+  "rounded-[1.35rem] border border-[#eadfca] bg-white shadow-[0_20px_70px_rgba(33,25,12,0.06)] backdrop-blur";
 
 export const adminInputClass =
-  "w-full rounded-xl border border-white/10 bg-[#0d0e10]/70 px-3.5 py-2.5 text-sm text-white outline-none transition placeholder:text-white/24 focus:border-[#c9a961]/45 focus:ring-2 focus:ring-[#c9a961]/10";
+  "w-full rounded-xl border border-[#eadfca] bg-[#fffdf8] px-3.5 py-2.5 text-sm text-[#151515] outline-none transition placeholder:text-[#9f9686] focus:border-[#c9a961]/55 focus:ring-2 focus:ring-[#c9a961]/15";
 
 export const adminButtonClass =
   "inline-flex items-center justify-center gap-2 rounded-xl bg-[#c9a961] px-4 py-2.5 text-xs font-semibold text-[#17181a] transition hover:bg-[#d4bc96] disabled:opacity-55";
 
 export const adminGhostButtonClass =
-  "inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.025] px-4 py-2.5 text-xs font-medium text-white/58 transition hover:border-white/18 hover:bg-white/[0.055] hover:text-white/82 disabled:opacity-45";
+  "inline-flex items-center justify-center gap-2 rounded-xl border border-[#eadfca] bg-white px-4 py-2.5 text-xs font-medium text-[#6f6757] transition hover:border-[#c9a961]/45 hover:bg-[#fbf6eb] hover:text-[#151515] disabled:opacity-45";
