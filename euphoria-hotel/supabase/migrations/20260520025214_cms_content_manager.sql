@@ -140,12 +140,13 @@ insert into public.cms_pages (
   'Get in touch',
   'We are quietly here, on a quiet street.',
   'Send a note, call the front desk, or drop in unannounced. The reception is staffed twenty-four hours a day.',
-  '/hotel-assets/about.webp',
+  '/hotel-assets/hotel-aerial.jpg',
   'Contact',
   'Get in touch with Euphoria Hotel for reservations, events, or front desk questions.',
   '{
     "infoEyebrow": "Visit us",
     "infoTitle": "Where to find us.",
+    "heroImageOverride": "/hotel-assets/hotel-aerial.jpg",
     "socialTitle": "Stay in touch"
   }'::jsonb,
   now()

@@ -585,13 +585,14 @@ Security Gate | 7000 / 2000`,
     hero_title: "We are quietly here, on a quiet street.",
     hero_description:
       "Send a note, call the front desk, or drop in unannounced. The reception is staffed twenty-four hours a day.",
-    hero_image: "/hotel-assets/about.webp",
+    hero_image: "/hotel-assets/hotel-aerial.jpg",
     seo_title: "Contact",
     seo_description:
       "Get in touch with Euphoria Hotel for reservations, events, or front desk questions.",
     content: {
       infoEyebrow: "Visit us",
       infoTitle: "Where to find us.",
+      heroImageOverride: "/hotel-assets/hotel-aerial.jpg",
       socialTitle: "Stay in touch",
     },
   },
