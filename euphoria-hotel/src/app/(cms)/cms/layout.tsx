@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -27,7 +28,7 @@ export default async function CmsLayout({ children }: { children: React.ReactNod
     data: { user },
   } = await serverClient.auth.getUser();
 
-  if (!user) return <>{children}</>;
+  if (!user) redirect("/admin/login?next=/cms");
 
   const admin = createAdminClient();
   const { data: adminUser } = await admin
@@ -36,7 +37,13 @@ export default async function CmsLayout({ children }: { children: React.ReactNod
     .eq("id", user.id)
     .single();
 
-  if (!adminUser || !adminUser.is_active) return <>{children}</>;
+  if (
+    !adminUser ||
+    !adminUser.is_active ||
+    (adminUser.role !== "super_admin" && adminUser.role !== "manager")
+  ) {
+    redirect("/admin/login?next=/cms");
+  }
 
   return (
     <CmsShell adminName={adminUser.full_name ?? user.email ?? "Admin"} adminRole={adminUser.role ?? "staff"}>

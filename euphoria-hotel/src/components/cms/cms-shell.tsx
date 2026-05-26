@@ -14,6 +14,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { editablePages } from "@/lib/cms/defaults";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -24,11 +25,11 @@ type Props = {
 
 const links = [
   { label: "Command Center", href: "/cms", icon: LayoutDashboard },
-  { label: "Homepage", href: "/cms/pages/home", icon: Home },
-  { label: "About Page", href: "/cms/pages/about", icon: FileText },
-  { label: "Conference Page", href: "/cms/pages/conference", icon: FileText },
-  { label: "Menu Page", href: "/cms/pages/menu", icon: FileText },
-  { label: "Contact Page", href: "/cms/pages/contact", icon: FileText },
+  ...editablePages.map((page) => ({
+    label: page.label,
+    href: `/cms/pages/${page.slug}`,
+    icon: page.slug === "home" ? Home : FileText,
+  })),
 ];
 
 export function CmsShell({ adminName, adminRole, children }: Props) {
