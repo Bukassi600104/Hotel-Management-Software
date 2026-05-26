@@ -27,6 +27,10 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title: `Reserve ${room.name} | Hilton Euphoria Hotel`,
     description: `Reserve ${room.name} with payment at check-in. No payment required now.`,
+    robots: {
+      index: false,
+      follow: false,
+    },
   };
 }
 

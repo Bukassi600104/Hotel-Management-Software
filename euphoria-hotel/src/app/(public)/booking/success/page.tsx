@@ -11,7 +11,13 @@ import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
 import { findDemoBooking } from "@/lib/demo/store";
 import { formatDateLong } from "@/lib/format";
 
-export const metadata: Metadata = { title: "Booking confirmed" };
+export const metadata: Metadata = {
+  title: "Booking confirmed",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 type SearchParams = Promise<{ ref?: string }>;
 

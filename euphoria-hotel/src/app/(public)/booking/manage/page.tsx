@@ -4,6 +4,10 @@ import { ManageBookingForm } from "@/components/public/manage-booking-form";
 export const metadata: Metadata = {
   title: "Manage Your Booking | Hilton Euphoria Hotel",
   description: "Look up your booking, view your reservation details, or cancel your stay.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function ManageBookingPage() {

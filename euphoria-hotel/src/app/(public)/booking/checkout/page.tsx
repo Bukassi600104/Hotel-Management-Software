@@ -11,6 +11,10 @@ import { hasSupabaseAdminEnv } from "@/lib/supabase/config";
 export const metadata: Metadata = {
   title: "Secure checkout",
   description: "Preview the online payment step for a hotel booking.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 type SearchParams = Promise<{ ref?: string; demo?: string }>;

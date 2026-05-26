@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import * as React from "react";
 import { BookOpenText, Phone, Shirt, Utensils } from "lucide-react";
 
@@ -14,6 +15,16 @@ import { siteConfig } from "@/lib/site";
 import { getCmsPage } from "@/lib/cms/content";
 import { slideContent, textContent, type CmsPage } from "@/lib/cms/defaults";
 import { ServiceLinkCards } from "@/components/public/guest-service-blocks";
+import { buildPageMetadata, findPublicSeo } from "@/lib/seo";
+
+const seo = findPublicSeo("/")!;
+
+export const metadata: Metadata = buildPageMetadata({
+  path: seo.path,
+  title: seo.title,
+  description: seo.description,
+  image: seo.image,
+});
 
 export default async function HomePage() {
   const cms = await getCmsPage("home");

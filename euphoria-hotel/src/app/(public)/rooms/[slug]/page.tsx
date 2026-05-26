@@ -9,9 +9,11 @@ import { RoomCard } from "@/components/public/room-card";
 import { RoomBookingSidebar } from "@/components/public/room-booking-sidebar";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/motion/reveal";
 import { Badge } from "@/components/ui/badge";
+import { JsonLd } from "@/components/seo/json-ld";
 
 import { getAllRooms, getRoomBySlug } from "@/lib/queries/rooms";
 import { siteConfig } from "@/lib/site";
+import { absoluteUrl, buildBreadcrumbJsonLd, buildRoomJsonLd } from "@/lib/seo";
 
 export async function generateStaticParams() {
   const rooms = await getAllRooms().catch(() => []);
@@ -24,9 +26,35 @@ export async function generateMetadata(
   const { slug } = await props.params;
   const room = await getRoomBySlug(slug);
   if (!room) return { title: "Room not found" };
+  const title = `${room.name} Room in Egbeda, Lagos`;
+  const description = `${room.tagline} ${room.description}`;
   return {
-    title: room.name,
-    description: room.tagline,
+    title,
+    description,
+    alternates: {
+      canonical: absoluteUrl(`/rooms/${room.slug}`),
+    },
+    openGraph: {
+      type: "website",
+      url: absoluteUrl(`/rooms/${room.slug}`),
+      title,
+      description,
+      siteName: siteConfig.name,
+      images: [
+        {
+          url: absoluteUrl(room.thumbnail),
+          width: 1200,
+          height: 630,
+          alt: `${room.name} at ${siteConfig.name}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [absoluteUrl(room.thumbnail)],
+    },
   };
 }
 
@@ -38,9 +66,15 @@ export default async function RoomDetailPage(
   if (!room) notFound();
 
   const related = allRooms.filter((r) => r.slug !== room.slug).slice(0, 3);
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Rooms", path: "/rooms" },
+    { name: room.name, path: `/rooms/${room.slug}` },
+  ]);
 
   return (
     <>
+      <JsonLd data={[buildRoomJsonLd(room), breadcrumbJsonLd]} />
       <article className="relative pb-24">
         {/* Hero / breadcrumb */}
         <div className="relative overflow-hidden bg-[var(--color-charcoal)] pb-18 pt-32 text-white">

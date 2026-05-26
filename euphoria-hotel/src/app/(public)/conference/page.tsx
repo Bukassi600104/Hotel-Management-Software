@@ -19,12 +19,16 @@ import { ConferenceInquiryForm } from "@/components/public/conference-inquiry-fo
 import { siteConfig } from "@/lib/site";
 import { getCmsPage } from "@/lib/cms/content";
 import { textContent } from "@/lib/cms/defaults";
+import { buildPageMetadata, findPublicSeo } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Conference Room",
-  description:
-    "Boardroom-grade venues, configured to your agenda — soundproofed, lit on dimmers, and supported by a dedicated coordinator.",
-};
+const seo = findPublicSeo("/conference")!;
+
+export const metadata: Metadata = buildPageMetadata({
+  path: seo.path,
+  title: seo.title,
+  description: seo.description,
+  image: seo.image,
+});
 
 const features = [
   {

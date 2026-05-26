@@ -9,12 +9,16 @@ import {
 } from "@/components/public/guest-service-blocks";
 import { getCmsPage } from "@/lib/cms/content";
 import { textContent } from "@/lib/cms/defaults";
+import { buildPageMetadata, findPublicSeo } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Laundry Service",
-  description:
-    "Hilton Euphoria Hotel laundry service tariff for washing and ironing guest clothing.",
-};
+const seo = findPublicSeo("/laundry")!;
+
+export const metadata: Metadata = buildPageMetadata({
+  path: seo.path,
+  title: seo.title,
+  description: seo.description,
+  image: seo.image,
+});
 
 export default async function LaundryPage() {
   const cms = await getCmsPage("laundry");

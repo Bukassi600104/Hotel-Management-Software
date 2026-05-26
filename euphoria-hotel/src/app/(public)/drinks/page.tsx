@@ -11,12 +11,16 @@ import {
 } from "@/components/public/guest-service-blocks";
 import { getCmsPage } from "@/lib/cms/content";
 import { textContent } from "@/lib/cms/defaults";
+import { buildPageMetadata, findPublicSeo } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Drink Menu",
-  description:
-    "Hilton Euphoria Hotel bar menu with soft drinks, wine, champagne, spirits, cocktails, beer, and yoghurt.",
-};
+const seo = findPublicSeo("/drinks")!;
+
+export const metadata: Metadata = buildPageMetadata({
+  path: seo.path,
+  title: seo.title,
+  description: seo.description,
+  image: seo.image,
+});
 
 const drinkImages: Record<string, string> = {
   "Soft Drinks & Juice": "/hotel-assets/menu/soft-drinks-juice.jpg",

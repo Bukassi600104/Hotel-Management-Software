@@ -14,6 +14,10 @@ import { buildPricingBreakdown } from "@/lib/utils/pricing";
 export const metadata: Metadata = {
   title: "Confirm your booking",
   description: "Review your stay and complete the reservation.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 type SearchParams = Promise<{

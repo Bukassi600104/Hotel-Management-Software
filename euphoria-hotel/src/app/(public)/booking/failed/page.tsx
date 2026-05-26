@@ -6,7 +6,13 @@ import { AlertCircle, ArrowLeft, Phone } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
 import { siteConfig } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Booking incomplete" };
+export const metadata: Metadata = {
+  title: "Booking incomplete",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 type SearchParams = Promise<{ reason?: string }>;
 

@@ -20,12 +20,16 @@ import {
 } from "@/components/public/guest-service-blocks";
 import { getCmsPage } from "@/lib/cms/content";
 import { textContent } from "@/lib/cms/defaults";
+import { buildPageMetadata, findPublicSeo } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Restaurant & Bar Menu",
-  description:
-    "Food, breakfast, drinks, wine, cocktails, and bar service at Hilton Euphoria Hotel.",
-};
+const seo = findPublicSeo("/menu")!;
+
+export const metadata: Metadata = buildPageMetadata({
+  path: seo.path,
+  title: seo.title,
+  description: seo.description,
+  image: seo.image,
+});
 
 const foodImages: Record<string, string> = {
   "Protein, Fried, Peppered & Pepper Soup": "/hotel-assets/menu/protein-fried-pepper.jpg",

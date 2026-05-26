@@ -21,12 +21,16 @@ import {
 } from "@/components/public/guest-service-blocks";
 import { getCmsPage } from "@/lib/cms/content";
 import { textContent } from "@/lib/cms/defaults";
+import { buildPageMetadata, findPublicSeo } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Guest Guide",
-  description:
-    "Hilton Euphoria Hotel guest guide with service extensions, breakfast schedule, restaurant, bar, pool, gym, and security information.",
-};
+const seo = findPublicSeo("/guest-guide")!;
+
+export const metadata: Metadata = buildPageMetadata({
+  path: seo.path,
+  title: seo.title,
+  description: seo.description,
+  image: seo.image,
+});
 
 const serviceIconMap = {
   "front desk": Headphones,

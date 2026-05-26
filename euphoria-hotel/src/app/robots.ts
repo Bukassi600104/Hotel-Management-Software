@@ -6,7 +6,20 @@ export default function robots(): MetadataRoute.Robots {
   const base = siteConfig.url.replace(/\/$/, "");
   return {
     rules: [
-      { userAgent: "*", allow: "/", disallow: ["/booking/"] },
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: [
+          "/admin/",
+          "/api/",
+          "/booking/checkout",
+          "/booking/confirm",
+          "/booking/failed",
+          "/booking/success",
+          "/cms/",
+          "/rooms/*/reserve",
+        ],
+      },
     ],
     sitemap: `${base}/sitemap.xml`,
   };

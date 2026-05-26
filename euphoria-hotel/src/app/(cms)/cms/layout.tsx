@@ -1,7 +1,17 @@
+import type { Metadata } from "next";
+
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { CmsShell } from "@/components/cms/cms-shell";
 import { hasSupabaseAdminEnv, hasSupabasePublicEnv } from "@/lib/supabase/config";
+
+export const metadata: Metadata = {
+  title: "Content Manager",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function CmsLayout({ children }: { children: React.ReactNode }) {
   if (!hasSupabasePublicEnv() || !hasSupabaseAdminEnv()) {

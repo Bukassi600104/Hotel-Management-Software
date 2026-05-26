@@ -16,12 +16,16 @@ import { CountUp } from "@/components/motion/count-up";
 import { facilities } from "@/lib/data/facilities";
 import { getCmsPage } from "@/lib/cms/content";
 import { textContent } from "@/lib/cms/defaults";
+import { buildPageMetadata, findPublicSeo } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "About Us",
-  description:
-    "Quietly placed in Gowon Estate, Egbeda, Euphoria has spent a decade refining a single idea — that hospitality, done patiently, is still the most generous thing a building can offer.",
-};
+const seo = findPublicSeo("/about")!;
+
+export const metadata: Metadata = buildPageMetadata({
+  path: seo.path,
+  title: seo.title,
+  description: seo.description,
+  image: seo.image,
+});
 
 const values = [
   {

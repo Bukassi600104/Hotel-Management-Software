@@ -1,31 +1,20 @@
 import type { MetadataRoute } from "next";
 
 import { rooms } from "@/lib/data/rooms";
-import { siteConfig } from "@/lib/site";
+import { absoluteUrl, publicSeoRoutes } from "@/lib/seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = siteConfig.url.replace(/\/$/, "");
   const now = new Date();
 
-  const staticRoutes: MetadataRoute.Sitemap = [
-    "",
-    "/rooms",
-    "/about",
-    "/conference",
-    "/menu",
-    "/drinks",
-    "/guest-guide",
-    "/laundry",
-    "/contact",
-  ].map((path) => ({
-    url: `${base}${path}`,
+  const staticRoutes: MetadataRoute.Sitemap = publicSeoRoutes.map((route) => ({
+    url: absoluteUrl(route.path),
     lastModified: now,
-    changeFrequency: "monthly",
-    priority: path === "" ? 1 : 0.8,
+    changeFrequency: route.changeFrequency,
+    priority: route.priority,
   }));
 
   const roomRoutes: MetadataRoute.Sitemap = rooms.map((r) => ({
-    url: `${base}/rooms/${r.slug}`,
+    url: absoluteUrl(`/rooms/${r.slug}`),
     lastModified: now,
     changeFrequency: "weekly",
     priority: 0.7,

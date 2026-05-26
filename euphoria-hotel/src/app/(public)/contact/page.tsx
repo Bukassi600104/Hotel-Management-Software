@@ -19,12 +19,16 @@ import {
 import { siteConfig } from "@/lib/site";
 import { getCmsPage } from "@/lib/cms/content";
 import { textContent } from "@/lib/cms/defaults";
+import { buildPageMetadata, findPublicSeo } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description:
-    "Get in touch with Euphoria Hotel. Reservations, events, or a question for the front desk - we are usually quick to reply.",
-};
+const seo = findPublicSeo("/contact")!;
+
+export const metadata: Metadata = buildPageMetadata({
+  path: seo.path,
+  title: seo.title,
+  description: seo.description,
+  image: seo.image,
+});
 
 const socialMap = {
   facebook: FacebookIcon,
