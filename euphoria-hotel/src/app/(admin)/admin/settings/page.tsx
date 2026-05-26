@@ -109,6 +109,23 @@ export default function AdminSettingsPage() {
 
     setChangingPassword(true);
     try {
+      const { prefix, suffix } = await getSha1Parts(nextPassword);
+      const breachResponse = await fetch("/api/admin/password/breach-check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sha1Prefix: prefix, sha1Suffix: suffix }),
+      });
+      const breachData = await breachResponse.json();
+
+      if (!breachResponse.ok) {
+        throw new Error(breachData.error ?? "Could not verify password safety.");
+      }
+      if (breachData.compromised) {
+        throw new Error(
+          `This password appears in known breach datasets${breachData.count ? ` (${breachData.count.toLocaleString()} times)` : ""}. Choose a unique password.`
+        );
+      }
+
       const supabase = createClient();
       const {
         data: { user },
@@ -384,7 +401,7 @@ ALTER TABLE settings ENABLE ROW LEVEL SECURITY;`}
             <div className="mt-5 rounded-xl border border-white/8 bg-black/18 p-3">
               <div className="flex gap-2 text-xs leading-5 text-white/48">
                 <ShieldCheck className="mt-0.5 size-4 shrink-0 text-[#c9a961]" />
-                <span>Minimum 12 characters with uppercase, lowercase, number, and symbol.</span>
+                <span>Minimum 12 characters with uppercase, lowercase, number, symbol, and no known data-breach match.</span>
               </div>
             </div>
 
@@ -449,4 +466,18 @@ function PasswordField({
       />
     </Field>
   );
+}
+
+async function getSha1Parts(value: string) {
+  const data = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest("SHA-1", data);
+  const hash = Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("")
+    .toUpperCase();
+
+  return {
+    prefix: hash.slice(0, 5),
+    suffix: hash.slice(5),
+  };
 }
